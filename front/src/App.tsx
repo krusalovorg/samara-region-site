@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GerbLogo from './assets/gerb.png';
 import PlaceItem from './components/PlaceItem';
 import SearchPanel from './components/SearchPanel';
 import BlockSamara from './components/BlockSamara';
-// import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
+//import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
 
 function App() {
   const [shipsData, setShipsData] = useState(null);
   const [search, setSearch] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const { YMaps, Map, Placemark } = require("@pbe/react-yandex-maps")
 
@@ -35,6 +36,19 @@ function App() {
       console.error('Ошибка при получении данных:', error);
     }
   };
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft -= (scrollRef.current.lastElementChild?.clientWidth || 250);
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft += (scrollRef.current.lastElementChild?.clientWidth || 250);
+    }
+  };
+
 
   useEffect(() => {
 
@@ -71,8 +85,8 @@ function App() {
           </div>
           : <div className='h-[20em]'></div>
       }
-      <BlockSamara/>
-      <section className='px-[5%] mt-[30px]'>
+      <BlockSamara />
+      <section className='px-[5%] mt-[100px]'>
         <h2 style={{
           color: "#2C2C2C",
           fontWeight: "bold",
@@ -82,23 +96,31 @@ function App() {
         }}>
           Лучшее в окрестностях Самарской области
         </h2>
-        <div className='w-full mt-[30px] gap-[30px] overflow-x-none h-fit flex flex-row snap-x snap-mandatory'>
+        <div
+          ref={scrollRef}
+          className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex flex-row scroll-smooth'>
+          <PlaceItem />
+          <PlaceItem />
+          <PlaceItem />
           <PlaceItem />
           <PlaceItem />
           <PlaceItem />
           <PlaceItem />
           <PlaceItem />
         </div>
+        <div className='flex flex-row justify-center items-center mt-[24px]'>
+          <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollLeft}>{'<'}</button>
+          <h2 className='text-[#2C2C2C] font-medium text-md mx-[30px]'>1/16</h2>
+          <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollRight}>{'>'}</button>
+        </div>
       </section>
-      <section className='h-screen w-full px-[5%]'>
-        <YMaps>
-          <div>
-            <Map defaultState={{ center: [55.75, 37.57], zoom: 9 }}>
-              <Placemark defaultGeometry={[55.751574, 37.573856]} />
-            </Map>
-          </div>
-        </YMaps>
-      </section>
+      <YMaps>
+        <section className='h-screen w-full px-[5%]'>
+          <Map className='w-full h-1/2 mt-[100px]' defaultState={{ center: [53.195876, 50.100186], zoom: 9 }}>
+            <Placemark defaultGeometry={[53.195876, 50.100186]} />
+          </Map>
+        </section>
+      </YMaps>
       {/* <section className='h-screen' />
       <section className='h-screen' /> */}
     </div>
