@@ -69,7 +69,7 @@ function App() {
           Туры
         </a>
       </header>
-      <div className='h-[120px]' />
+      <div className='h-[120px] mb-[5em]' />
       <SearchPanel setSearch={setSearch} />
 
       {search == 1 ? <div className='w-full px-[5%] flex justify-center items-center h-[20em]'>
@@ -83,7 +83,7 @@ function App() {
             <PlaceItem />
             <PlaceItem />
           </div>
-          : <div className='h-[20em]'></div>
+          : <div className='h-[5em]'></div>
       }
       <BlockSamara />
       <section className='px-[5%] mt-[100px]'>
