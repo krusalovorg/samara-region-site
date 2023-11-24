@@ -1,13 +1,19 @@
 import ImageCard2 from '../assets/buti2.jpg';
+import { useNavigate } from "react-router-dom";
 
 function PlaceItem({}: {}) {
+    const navigate = useNavigate();
+
     return (
         <div
-            className='rounded-2xl min-w-[35%] h-[250px] relative bg-shadow-g snap-always snap-center'
+            className='rounded-2xl min-w-[35%] h-[250px] relative bg-shadow-g snap-always snap-center cursor-pointer'
             style={{
                 backgroundImage: `url(${ImageCard2})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center"
+            }}
+            onClick={()=>{
+                navigate("/place/1")
             }}>
             {/* <div className='absolute bottom-0 w-full h-1/3 rounded-b-2xl z-[1]' style={{  }} /> */}
             <div className='px-[5%] py-[20px] h-full w-full flex z-[100] relative flex flex-col'>

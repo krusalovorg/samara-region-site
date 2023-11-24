@@ -3,6 +3,7 @@ import GerbLogo from './assets/gerb.png';
 import PlaceItem from './components/PlaceItem';
 import SearchPanel from './components/SearchPanel';
 import BlockSamara from './components/BlockSamara';
+import Header from './components/Header';
 //import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
 
 function App() {
@@ -57,19 +58,7 @@ function App() {
 
   return (
     <div className="w-screen min-h-screen bg-[#FFFAF1]">
-      <header className='w-full absolute top-0 left-0 py-[40px] flex flex-row justify-center items-center z-[1000] px-5'>
-        <img className='absolute left-[5%]' width={64} height={64} src={GerbLogo} />
-        <a className='text-black mx-5 font-[600] font-[Montserrat] cursor-pointer bg-[#D2F881] px-8 py-2 rounded-3xl'>
-          Регион
-        </a>
-        <a className='text-black mx-5 px-8 py-2 font-[600] font-[Montserrat] cursor-pointer'>
-          Маршруты
-        </a>
-        <a className='text-black mx-5 px-8 py-2 font-[600] font-[Montserrat] cursor-pointer'>
-          Туры
-        </a>
-      </header>
-      <div className='h-[120px] mb-[5em]' />
+      <Header/>
       <SearchPanel setSearch={setSearch} />
 
       {search == 1 ? <div className='w-full px-[5%] flex justify-center items-center h-[20em]'>
