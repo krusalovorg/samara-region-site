@@ -1,24 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import CustomRangeInput from './components/CustomRangeInput';
-import ImageCard1 from './assets/buti1.jpg';
-import ImageCard2 from './assets/buti2.jpg';
-import ImageCard3 from './assets/buti3.jpg';
-import ImageCard4 from './assets/buti4.jpg';
-import ImageCard5 from './assets/buti5.jpg';
-import ImageCard6 from './assets/buti6.jpg';
-import ImageCard7 from './assets/buti7.jpg';
-import ImageCard8 from './assets/buti8.jpg';
 import GerbLogo from './assets/gerb.png';
 import PlaceItem from './components/PlaceItem';
-import { Dropdown } from 'flowbite-react';
-
-const userAgentHeader = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36' };
+import SearchPanel from './components/SearchPanel';
+import BlockSamara from './components/BlockSamara';
+// import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
 
 function App() {
   const [shipsData, setShipsData] = useState(null);
-  const [timeToure, setTimeToure] = useState(6);
-  const [searchCategory, setSearchCategory] = useState<string | null>(null);
   const [search, setSearch] = useState(0);
+
+  const { YMaps, Map, Placemark } = require("@pbe/react-yandex-maps")
 
   const fetchData = async () => {
     try {
@@ -45,13 +36,6 @@ function App() {
     }
   };
 
-  function SearchE() {
-    setSearch(1);
-    setTimeout(() => {
-      setSearch(2);
-    }, 2000)
-  }
-
   useEffect(() => {
 
     //fetchData();
@@ -72,29 +56,7 @@ function App() {
         </a>
       </header>
       <div className='h-[120px]' />
-      <div className='w-full px-[5%]'>
-        <div className='bg-[#2C2C2C] px-[40px] py-[35px] rounded-3xl flex flex-row items-strech'>
-          <CustomRangeInput label={"Продолжительность"} value={timeToure} setValue={setTimeToure} />
-          {/* searchCategory == "Места" ? "Отдаленость" : "Продолжительность" */}
-          <Dropdown style={{
-            fontWeight: "medium",
-            background: "#FEEFD7",
-            padding: "0 27px",
-            color: "black",
-            borderRadius: "16px",
-            marginLeft: 20,
-            width: 160
-          }}
-            className='bg-[#D2F881] px-10 py-3 font-medium rounded-xl'
-            label={searchCategory || "Категория"} dismissOnClick={true}>
-            <Dropdown.Item onClick={() => setSearchCategory("Места")}>Места</Dropdown.Item>
-            <Dropdown.Item onClick={() => setSearchCategory("Маршруты")}>Маршруты</Dropdown.Item>
-          </Dropdown>
-          <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium ml-[20px]' onClick={SearchE}>Поиск</button>
-
-          <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium ml-auto'>Все маршруты</button>
-        </div>
-      </div>
+      <SearchPanel setSearch={setSearch} />
 
       {search == 1 ? <div className='w-full px-[5%] flex justify-center items-center h-[20em]'>
         <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
@@ -109,37 +71,7 @@ function App() {
           </div>
           : <div className='h-[20em]'></div>
       }
-      <section
-        className='w-full min-h-screen bg-[#D2F881] rounded-[50px] py-[3%] px-[5%] flex flex-row'
-      >
-        <div className='w-1/2 h-full'>
-          <h1 style={{
-            color: "#2C2C2C",
-            fontWeight: "bold",
-            fontSize: 'calc(90px + 7 * ((100vw - 720px) / 1280))',
-            width: "auto",
-            letterSpacing: -4
-          }}>
-            Самарская Область
-          </h1>
-          <h2 style={{
-            color: "#2C2C2C",
-            fontWeight: "normal",
-            fontSize: 'calc(30px + 7 * ((100vw - 720px) / 1280))',
-            maxWidth: "75%"
-          }}>
-            текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст
-          </h2>
-        </div>
-        <div className='w-1/2 grid grid-cols-2 gap-x-10 gap-y-10'>
-          {[ImageCard1, ImageCard2, ImageCard3, ImageCard4, ImageCard5, ImageCard6,].map((image) => (
-            <img
-              className='w-auto rounded-3xl'
-              src={image}
-            />
-          ))}
-        </div>
-      </section>
+      <BlockSamara/>
       <section className='px-[5%] mt-[30px]'>
         <h2 style={{
           color: "#2C2C2C",
@@ -150,7 +82,7 @@ function App() {
         }}>
           Лучшее в окрестностях Самарской области
         </h2>
-        <div className='w-full mt-[30px] gap-[30px] overflow-x-auto h-fit flex flex-row snap-x snap-mandatory'>
+        <div className='w-full mt-[30px] gap-[30px] overflow-x-none h-fit flex flex-row snap-x snap-mandatory'>
           <PlaceItem />
           <PlaceItem />
           <PlaceItem />
@@ -158,10 +90,14 @@ function App() {
           <PlaceItem />
         </div>
       </section>
-      <section className='h-screen'>
-        {shipsData && (
-          <pre>{JSON.stringify(shipsData, null, 2)}</pre>
-        )}
+      <section className='h-screen w-full px-[5%]'>
+        <YMaps>
+          <div>
+            <Map defaultState={{ center: [55.75, 37.57], zoom: 9 }}>
+              <Placemark defaultGeometry={[55.751574, 37.573856]} />
+            </Map>
+          </div>
+        </YMaps>
       </section>
       {/* <section className='h-screen' />
       <section className='h-screen' /> */}
