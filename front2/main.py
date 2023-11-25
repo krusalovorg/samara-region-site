@@ -22,7 +22,7 @@ try:
                                      "description varchar(2500)," \
                                      "category varchar(50)," \
                                      "images varchar(50)," \
-                                     "coordinates int DEFAULT 0," \
+                                     "coordinates varchar(50)," \
                                      "rate int DEFAULT 0" \
                                      "price int DEFAULT 0,PRIMARY KEY (id));"
                 cursor.execute(create_table_query)
