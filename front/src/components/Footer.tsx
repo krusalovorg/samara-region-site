@@ -46,7 +46,7 @@ function Footer() {
                     </div>
                     <hr className="my-6 border-[#2C2C2C] sm:mx-auto lg:my-8" />
                     <div className="sm:flex sm:items-center sm:justify-between">
-                        <span className="text-sm text-[#2C2C2C] sm:text-center dark:text-gray-400">© 2023 <a href="https://flowbite.com/" className="hover:underline">Flowbite™</a>. All Rights Reserved.
+                        <span className="text-sm text-[#2C2C2C] sm:text-center dark:text-gray-400">© 2023 <a href="https://flowbite.com/" className="hover:underline">Самаратрип™</a>. Все права защищены.
                         </span>
                         <div className="flex mt-4 sm:justify-center sm:mt-0">
                         </div>
