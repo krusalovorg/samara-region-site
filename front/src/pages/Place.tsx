@@ -24,10 +24,10 @@ function Place() {
           </div>
         </div>
         <div className='mt-[30px] gap-x-[10px] flex flex-row'>
-          <Category color={"bg-[#D2F881]"} />
-          <Category color={"bg-[#D2F881]"} />
-          <Category color={"bg-[#D2F881]"} />
-          <Category color={"bg-[#D2F881]"} />
+          <Category text='Достопримечательность' color={"bg-[#D2F881]"} />
+          <Category text='Достопримечательность' color={"bg-[#D2F881]"} />
+          <Category text='Достопримечательность' color={"bg-[#D2F881]"} />
+          <Category text='Достопримечательность' color={"bg-[#D2F881]"} />
         </div>
       </section>
       <section className='px-[5%]'>
