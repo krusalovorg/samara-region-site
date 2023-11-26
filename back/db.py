@@ -82,9 +82,7 @@ def super_print(table_name):
         select_all_rows = f"SELECT * FROM `{table_name}`"
         cursor.execute(select_all_rows)
         rows = cursor.fetchall()
-        for row in rows:
-            print(row)
-        print("#" * 20)
+        return(rows)
 
 
 # delete something
