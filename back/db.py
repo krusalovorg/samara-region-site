@@ -95,9 +95,19 @@ def delete_place(id, table_name):
         connection.commit()
 
 
-@app.route('/')
+@app.route('/places')
 def points_return():
-    return jsonify(super_print('places'), super_print('routes'), super_print('category'))
+    return jsonify(super_print('places'))
+
+
+@app.route('/routes')
+def routes_return():
+    return jsonify(super_print('routes'))
+
+
+@app.route('/category')
+def category_return():
+    return jsonify(super_print('category'))
 
 
 # start code
