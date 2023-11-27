@@ -33,6 +33,7 @@ function SearchPanel({setSearch}: any) {
                         label={searchCategory || "Категория"} dismissOnClick={true}>
                         <Dropdown.Item onClick={() => setSearchCategory("Места")}>Места</Dropdown.Item>
                         <Dropdown.Item onClick={() => setSearchCategory("Маршруты")}>Маршруты</Dropdown.Item>
+                        <Dropdown.Item onClick={() => setSearchCategory("Круизы")}>Круизы</Dropdown.Item>
                     </Dropdown>
                     <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium ml-[20px]' onClick={SearchE}>Поиск</button>
 
