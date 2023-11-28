@@ -145,5 +145,4 @@ def add_places():
 
 # start code
 if __name__ == "__main__":
-    print(super_print('places'))
     app.run()
