@@ -119,28 +119,23 @@ def category_return():
     return jsonify(super_print('category'))
 
 
-@app.route('/send_image/<image_name>', methods=['GET'])
+@app.route('/image/<image_name>', methods=['GET'])
 def send_image(image_name):
     image_path = os.path.join(app.root_path, 'images', image_name)
     return send_file(image_path, as_attachment=True)
 
 
-@app.route('/receive_image', methods=['POST'])
+@app.route('/add/places', methods=['POST'])
 def receive_image():
     if 'image' not in request.files:
-        return 'No image part in the request', 400
+        return jsonify({"success": True, 'message': "no image in request"})
 
     image = request.files['image']
     image.save(os.path.join(app.root_path, 'images', image.filename))
 
-    return 'Image received and saved successfully', 200
-
-
-@app.route('/add/places', methods=['POST'])
-def add_places():
     data = request.json
     fill_table(connection, 'places', data)
-    return "Places added successfully"
+    return jsonify({"success": True})
 
 
 # start code
