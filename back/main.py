@@ -1,9 +1,12 @@
 import pymysql
 from config import host, user, password, db_name
 from flask import Flask, jsonify, request, send_file
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import os
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'your_secret_key'
+jwt = JWTManager(app)
 
 # connect to host
 connection = pymysql.connect(
@@ -100,7 +103,20 @@ def delete_place(id, table_name):
         connection.commit()
 
 
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.json.get('username')
+    passworded = request.json.get('password')
+
+    if username == 'user' and passworded == 'password':
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token), 200
+    else:
+        return jsonify({"msg": "Неверный логин или пароль"}), 401
+
+
 @app.route('/places')
+@jwt_required()
 def points_return():
     category = request.args.get('category')
     if category:
@@ -110,34 +126,45 @@ def points_return():
 
 
 @app.route('/routes')
+@jwt_required()
 def routes_return():
     return jsonify(super_print('routes'))
 
 
 @app.route('/category')
+@jwt_required()
 def category_return():
     return jsonify(super_print('category'))
 
 
-@app.route('/image/<image_name>', methods=['GET'])
+@app.route('/send_image/<image_name>', methods=['GET'])
+@jwt_required()
 def send_image(image_name):
     image_path = os.path.join(app.root_path, 'images', image_name)
     return send_file(image_path, as_attachment=True)
 
 
-@app.route('/add/places', methods=['POST'])
+@app.route('/receive_image', methods=['POST'])
+@jwt_required()
 def receive_image():
     if 'image' not in request.files:
-        return jsonify({"success": True, 'message': "no image in request"})
+        return 'No image part in the request', 400
 
     image = request.files['image']
     image.save(os.path.join(app.root_path, 'images', image.filename))
 
+    return 'Image received and saved successfully', 200
+
+
+@app.route('/add/places', methods=['POST'])
+@jwt_required()
+def add_places():
     data = request.json
     fill_table(connection, 'places', data)
-    return jsonify({"success": True})
+    return "Places added successfully"
 
 
 # start code
 if __name__ == "__main__":
+    print(super_print('places'))
     app.run()
