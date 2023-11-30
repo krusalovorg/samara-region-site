@@ -5,6 +5,7 @@ import './styles/loader.css';
 import App from './App';
 import Place from './pages/Place';
 import Footer from './components/Footer';
+import Admin from './pages/Admin';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: "/place/:id",
     element: <Place/>
+  },
+  {
+    path: "/admin",
+    element: <Admin/>
   }
 ]);
 

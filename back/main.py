@@ -3,10 +3,13 @@ from config import host, user, password, db_name
 from flask import Flask, jsonify, request, send_file
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your_secret_key'
 jwt = JWTManager(app)
+
+CORS(app)
 
 # connect to host
 connection = pymysql.connect(
@@ -110,13 +113,13 @@ def login():
 
     if username == 'user' and passworded == 'password':
         access_token = create_access_token(identity=username)
+        print(access_token, 'token')
         return jsonify(access_token=access_token), 200
     else:
         return jsonify({"msg": "Неверный логин или пароль"}), 401
 
 
 @app.route('/places')
-@jwt_required()
 def points_return():
     category = request.args.get('category')
     if category:
@@ -126,45 +129,35 @@ def points_return():
 
 
 @app.route('/routes')
-@jwt_required()
 def routes_return():
     return jsonify(super_print('routes'))
 
 
 @app.route('/category')
-@jwt_required()
 def category_return():
     return jsonify(super_print('category'))
 
 
 @app.route('/send_image/<image_name>', methods=['GET'])
-@jwt_required()
 def send_image(image_name):
     image_path = os.path.join(app.root_path, 'images', image_name)
     return send_file(image_path, as_attachment=True)
 
-
-@app.route('/receive_image', methods=['POST'])
+@app.route('/add', methods=['POST'])
 @jwt_required()
-def receive_image():
+def add_places():
     if 'image' not in request.files:
         return 'No image part in the request', 400
 
     image = request.files['image']
     image.save(os.path.join(app.root_path, 'images', image.filename))
 
-    return 'Image received and saved successfully', 200
-
-
-@app.route('/add/places', methods=['POST'])
-@jwt_required()
-def add_places():
     data = request.json
     fill_table(connection, 'places', data)
-    return "Places added successfully"
+    return jsonify({"success": True}), 200
 
 
 # start code
 if __name__ == "__main__":
-    print(super_print('places'))
+    #print(super_print('places'))
     app.run()
