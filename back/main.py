@@ -159,5 +159,16 @@ def add_places():
 
 # start code
 if __name__ == "__main__":
-    #print(super_print('places'))
+    tables = ['places', 'routes', 'category']
+    for table in tables:
+        cursor = connection.cursor()
+        cursor.execute("SHOW TABLES LIKE %s", (table,))
+        result = cursor.fetchone()
+        if not result:
+            if table == 'places':
+                create_table_points()
+            elif table == 'routes':
+                create_table_routes()
+            elif table == 'category':
+                create_table_category()
     app.run()
