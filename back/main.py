@@ -78,7 +78,6 @@ def fill_table(connection, table_name, data):
             insert_query = f"INSERT INTO {table_name} (name, card_description, description, category, images, points) VALUES ( %s, %s, %s, %s, %s, %s);"
         elif table_name == 'category':
             insert_query = f"INSERT INTO {table_name} (name, card_description, description) VALUES ( %s, %s, %s);"
-
         for row in data:
             cursor.execute(insert_query, row)
         connection.commit()
@@ -107,6 +106,46 @@ def delete_place(id, table_name):
         connection.commit()
 
 
+def get_place_details(place_id):
+    with connection.cursor() as cursor:
+        select_query = "SELECT * FROM places WHERE id = %s"
+        cursor.execute(select_query, (place_id,))
+        place_details = cursor.fetchone()
+        return place_details
+
+
+def get_routes_details(place_id):
+    with connection.cursor() as cursor:
+        select_query = "SELECT * FROM routes WHERE id = %s"
+        cursor.execute(select_query, (place_id,))
+        place_details = cursor.fetchone()
+        return place_details
+
+
+def get_category_details(place_id):
+    with connection.cursor() as cursor:
+        select_query = "SELECT * FROM category WHERE id = %s"
+        cursor.execute(select_query, (place_id,))
+        place_details = cursor.fetchone()
+        return place_details
+
+
+def get_place_details_name(place_name):
+    with connection.cursor() as cursor:
+        select_query = "SELECT * FROM places WHERE name = %s"
+        cursor.execute(select_query, (place_name,))
+        place_details = cursor.fetchone()
+        return place_details
+
+
+def get_routes_details_name(place_name):
+    with connection.cursor() as cursor:
+        select_query = "SELECT * FROM routes WHERE name = %s"
+        cursor.execute(select_query, (place_name,))
+        place_details = cursor.fetchone()
+        return place_details
+
+
 @app.route('/login', methods=['POST'])
 def login():
     username = request.json.get('username')
@@ -126,7 +165,6 @@ def points_return():
     if category:
         return jsonify(super_print('places', category))
     else:
-        print("places fetch", super_print('places'))
         return jsonify(super_print('places'))
 
 
@@ -145,19 +183,69 @@ def send_image(image_name):
     image_path = os.path.join(app.root_path, 'images', image_name)
     return send_file(image_path, as_attachment=True)
 
-@app.route('/add', methods=['POST'])
-#@jwt_required()
-def add_places():
-    image = request.files['image']
-    print('imaeg',image)
-    path = os.path.join(app.root_path, 'images', image.filename)
-    image.save(path)
 
-    data = request.form.to_dict()
-    data['image'] = image.filename
-    print(data)
+@app.route('/add', methods=['POST'])
+@jwt_required()
+def add_places():
+    if 'image' not in request.files:
+        return 'No image part in the request', 400
+
+    image = request.files['image']
+    image.save(os.path.join(app.root_path, 'images', image.filename))
+
+    data = request.json
     fill_table(connection, 'places', data)
     return jsonify({"success": True}), 200
+
+
+@app.route('/get_place_details', methods=['GET'])
+def return_place_by_id():
+    place_id = request.args.get('id')
+    place_details = get_place_details(place_id)
+    if place_details:
+        return jsonify(place_details)
+    else:
+        return "Place not found"
+
+
+@app.route('/get_routes_details', methods=['GET'])
+def return_route_by_id():
+    place_id = request.args.get('id')
+    place_details = get_routes_details(place_id)
+    if place_details:
+        return jsonify(place_details)
+    else:
+        return "Place not found"
+
+
+@app.route('/get_category_details', methods=['GET'])
+def return_category_by_id():
+    place_id = request.args.get('id')
+    place_details = get_category_details(place_id)
+    if place_details:
+        return jsonify(place_details)
+    else:
+        return "Place not found"
+
+
+@app.route('/get_place_details', methods=['GET'])
+def return_place_by_name():
+    place_id = request.args.get('name')
+    place_details = get_place_details(place_id)
+    if place_details:
+        return jsonify(place_details)
+    else:
+        return "Place not found"
+
+
+@app.route('/get_routes_details', methods=['GET'])
+def return_route_by_name():
+    place_id = request.args.get('name')
+    place_details = get_routes_details(place_id)
+    if place_details:
+        return jsonify(place_details)
+    else:
+        return "Place not found"
 
 
 # start code
