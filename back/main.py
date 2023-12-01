@@ -78,6 +78,7 @@ def fill_table(connection, table_name, data):
             insert_query = f"INSERT INTO {table_name} (name, card_description, description, category, images, points) VALUES ( %s, %s, %s, %s, %s, %s);"
         elif table_name == 'category':
             insert_query = f"INSERT INTO {table_name} (name, card_description, description) VALUES ( %s, %s, %s);"
+
         for row in data:
             cursor.execute(insert_query, row)
         connection.commit()
@@ -125,6 +126,7 @@ def points_return():
     if category:
         return jsonify(super_print('places', category))
     else:
+        print("places fetch", super_print('places'))
         return jsonify(super_print('places'))
 
 
@@ -144,15 +146,16 @@ def send_image(image_name):
     return send_file(image_path, as_attachment=True)
 
 @app.route('/add', methods=['POST'])
-@jwt_required()
+#@jwt_required()
 def add_places():
-    if 'image' not in request.files:
-        return 'No image part in the request', 400
-
     image = request.files['image']
-    image.save(os.path.join(app.root_path, 'images', image.filename))
+    print('imaeg',image)
+    path = os.path.join(app.root_path, 'images', image.filename)
+    image.save(path)
 
-    data = request.json
+    data = request.form.to_dict()
+    data['image'] = image.filename
+    print(data)
     fill_table(connection, 'places', data)
     return jsonify({"success": True}), 200
 

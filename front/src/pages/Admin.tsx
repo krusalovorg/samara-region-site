@@ -61,19 +61,17 @@ function Admin() {
             try {
                 const formDataToSend = new FormData();
                 Object.keys(formData).forEach((key) => {
-                    if (key === 'images') {
-                        formData.images.forEach((file, index) => {
-                            formDataToSend.append(`image${index}`, file);
-                        });
-                    } else {
+                    if (key !== 'images') {
                         formDataToSend.append(key, (formData as any)[key]);
                     }
                 });
-
+                console.log("formData.images", formData.images[0])
+                formDataToSend.append('image', formData.images[0], formData.images[0].name);
                 const response = await fetch('http://127.0.0.1:5000/add', {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${token}`,
+                        //'Content-Type': 'multipart/form-data'
                     },
                     body: formDataToSend,
                 });
@@ -183,9 +181,7 @@ function Admin() {
                             </Map>
                         </section>
                     </YMaps>
-
                 </div>
-
             </div>
         </Login>
     )

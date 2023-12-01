@@ -1,8 +1,22 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import PlaceItem from "./PlaceItem";
+import { Place, getData } from "../utils/backend";
 
 function PlacesList({ }) {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [places, setPlaces] = useState<Place[]>([]);
+
+    async function loadPlaces() {
+        const data = await getData("places");
+
+        if (data) {
+            setPlaces(data as Place[]);
+        }
+    }
+
+    useEffect(() => {
+        loadPlaces();
+    }, [])
 
     const scrollLeft = () => {
         if (scrollRef.current) {
@@ -30,14 +44,9 @@ function PlacesList({ }) {
             <div
                 ref={scrollRef}
                 className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex flex-row scroll-smooth'>
-                <PlaceItem />
-                <PlaceItem />
-                <PlaceItem />
-                <PlaceItem />
-                <PlaceItem />
-                <PlaceItem />
-                <PlaceItem />
-                <PlaceItem />
+                {places && places.length > 0 && places.map((item)=>(
+                    <PlaceItem/>
+                ))}
             </div>
             <div className='flex flex-row justify-center items-center mt-[24px]'>
                 <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollLeft}>{'<'}</button>
