@@ -24,18 +24,18 @@ connection = pymysql.connect(
 # create table with points
 def create_table_points():
     with connection.cursor() as cursor:
-        create_table_query = "CREATE TABLE `places`(id int AUTO_INCREMENT," \
-                             "name varchar(50)," \
-                             "card_description varchar(2500)," \
-                             "description varchar(2500)," \
-                             "category varchar(50)," \
-                             "images varchar(50)," \
-                             "coordinates varchar(2500)," \
+        create_table_query = "CREATE TABLE places(id int AUTO_INCREMENT," \
+                             "name varchar(50) DEFAULT ''," \
+                             "card_description varchar(2500) DEFAULT ''," \
+                             "description varchar(2500) DEFAULT ''," \
+                             "category varchar(50) DEFAULT ''," \
+                             "images varchar(50) DEFAULT ''," \
+                             "coordinates varchar(2500) DEFAULT ''," \
                              "rate int DEFAULT 0 ," \
                              "price int DEFAULT 0 ," \
-                             "city varchar(50)," \
-                             "location varchar(50)," \
-                             "walk BOOLEAN," \
+                             "city varchar(50) DEFAULT ''," \
+                             "location varchar(50) DEFAULT ''," \
+                             "walk BOOLEAN DEFAULT FALSE," \
                              "time int DEFAULT 0," \
                              "PRIMARY KEY (id));"
         cursor.execute(create_table_query)
@@ -73,13 +73,13 @@ def create_table_category():
 def fill_table(connection, table_name, data):
     with connection.cursor() as cursor:
         if table_name == 'places':
-            insert_query = f"INSERT INTO {table_name} (name, card_description, description, category, images, coordinates, rate, price,city,location,walk,time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s);"
+            insert_query = "INSERT INTO places (name, card_description, description, category, images, coordinates, rate, price, city, location, walk, time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
         elif table_name == 'routes':
-            insert_query = f"INSERT INTO {table_name} (name, card_description, description, category, images, points) VALUES ( %s, %s, %s, %s, %s, %s);"
+            insert_query = f"INSERT INTO routes (name, card_description, description, category, images, points) VALUES ( %s, %s, %s, %s, %s, %s);"
         elif table_name == 'category':
-            insert_query = f"INSERT INTO {table_name} (name, card_description, description) VALUES ( %s, %s, %s);"
-        for row in data:
-            cursor.execute(insert_query, row)
+            insert_query = f"INSERT INTO category (name, card_description, description) VALUES ( %s, %s, %s);"
+        print('знаечние добавлено в таблицу')
+        cursor.execute(insert_query, data)
         connection.commit()
 
 
@@ -106,41 +106,17 @@ def delete_place(id, table_name):
         connection.commit()
 
 
-def get_place_details(place_id):
+def get_place_details_id(place_id, table_name):
     with connection.cursor() as cursor:
-        select_query = "SELECT * FROM places WHERE id = %s"
+        select_query = f"SELECT * FROM {table_name} WHERE id = %s"
         cursor.execute(select_query, (place_id,))
         place_details = cursor.fetchone()
         return place_details
 
 
-def get_routes_details(place_id):
+def get_place_details_name(place_name, table_name):
     with connection.cursor() as cursor:
-        select_query = "SELECT * FROM routes WHERE id = %s"
-        cursor.execute(select_query, (place_id,))
-        place_details = cursor.fetchone()
-        return place_details
-
-
-def get_category_details(place_id):
-    with connection.cursor() as cursor:
-        select_query = "SELECT * FROM category WHERE id = %s"
-        cursor.execute(select_query, (place_id,))
-        place_details = cursor.fetchone()
-        return place_details
-
-
-def get_place_details_name(place_name):
-    with connection.cursor() as cursor:
-        select_query = "SELECT * FROM places WHERE name = %s"
-        cursor.execute(select_query, (place_name,))
-        place_details = cursor.fetchone()
-        return place_details
-
-
-def get_routes_details_name(place_name):
-    with connection.cursor() as cursor:
-        select_query = "SELECT * FROM routes WHERE name = %s"
+        select_query = f"SELECT * FROM {table_name} WHERE name = %s"
         cursor.execute(select_query, (place_name,))
         place_details = cursor.fetchone()
         return place_details
@@ -201,7 +177,7 @@ def add_places():
 @app.route('/get_place_details', methods=['GET'])
 def return_place_by_id():
     place_id = request.args.get('id')
-    place_details = get_place_details(place_id)
+    place_details = get_place_details_id(place_id, 'places')
     if place_details:
         return jsonify(place_details)
     else:
@@ -211,7 +187,7 @@ def return_place_by_id():
 @app.route('/get_routes_details', methods=['GET'])
 def return_route_by_id():
     place_id = request.args.get('id')
-    place_details = get_routes_details(place_id)
+    place_details = get_place_details_id(place_id, 'routes')
     if place_details:
         return jsonify(place_details)
     else:
@@ -221,27 +197,27 @@ def return_route_by_id():
 @app.route('/get_category_details', methods=['GET'])
 def return_category_by_id():
     place_id = request.args.get('id')
-    place_details = get_category_details(place_id)
+    place_details = get_place_details_id(place_id, 'category')
     if place_details:
         return jsonify(place_details)
     else:
         return "Place not found"
 
 
-@app.route('/get_place_details', methods=['GET'])
+@app.route('/get_place_details_name', methods=['GET'])
 def return_place_by_name():
     place_id = request.args.get('name')
-    place_details = get_place_details(place_id)
+    place_details = get_place_details_name(place_id, 'places')
     if place_details:
         return jsonify(place_details)
     else:
         return "Place not found"
 
 
-@app.route('/get_routes_details', methods=['GET'])
+@app.route('/get_routes_details_name', methods=['GET'])
 def return_route_by_name():
     place_id = request.args.get('name')
-    place_details = get_routes_details(place_id)
+    place_details = get_place_details_name(place_id, 'route')
     if place_details:
         return jsonify(place_details)
     else:
@@ -251,10 +227,12 @@ def return_route_by_name():
 # start code
 if __name__ == "__main__":
     tables = ['places', 'routes', 'category']
+    #data = ("Example Place", "Short description", "Long description", "Example category", "example.jpg", "12.3456, -78.9101", 5, 100, "Example City", "Example Location", True, 60)
     for table in tables:
         cursor = connection.cursor()
         cursor.execute("SHOW TABLES LIKE %s", (table,))
         result = cursor.fetchone()
+
         if not result:
             if table == 'places':
                 create_table_points()
@@ -262,4 +240,5 @@ if __name__ == "__main__":
                 create_table_routes()
             elif table == 'category':
                 create_table_category()
+    print(super_print('places'))
     app.run()
