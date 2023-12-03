@@ -42,11 +42,11 @@ function App() {
         : search == 2 ?
           <>
             <div className='w-full px-[5%] overflow-x-auto h-fit grid grid-cols-3 gap-4 my-20'>
-              {
+              {/* {
                 shipsData.slice(0, offset).map((item) => (
-                  <PlaceItem data={{ ...item, description: "Речной круиз", category: "Круиз" }} />
+                  <PlaceItem data={item} />
                 ))
-              }
+              } */}
             </div>
             <div className='w-full flex justify-center items-center px-[5%] mb-[20px]'>
             <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={()=>{setOffset(offset+10)}}>

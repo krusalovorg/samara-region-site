@@ -8,10 +8,10 @@ function Header() {
     const [admin, setAdmin] = useState(false);
 
     const url = window.location.pathname;
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         setAdmin(getCookieToken() ? true : false);
-    },[])
+    }, [])
 
     return (
         <>
@@ -31,12 +31,14 @@ function Header() {
                 <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/place' ? 'bg-[#D2F881]' : ''}`}>
                     Точка
                 </a>
-                <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/admin' ? 'bg-[#D2F881]' : ''}`}
-                onClick={() => {
-                    navigate("/admin")
-                }}>
-                    Админ
-                </a>
+                {admin &&
+                    <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/admin' ? 'bg-[#D2F881]' : ''}`}
+                        onClick={() => {
+                            navigate("/admin")
+                        }}>
+                        Админ
+                    </a>
+                }
             </header>
             <div className='h-[120px] mb-[5em]' />
         </>

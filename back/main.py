@@ -1,4 +1,6 @@
 import pymysql
+import requests
+
 from config import host, user, password, db_name
 from flask import Flask, jsonify, request, send_file
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -73,14 +75,15 @@ def create_table_category():
 def fill_table(connection, table_name, data):
     with connection.cursor() as cursor:
         if table_name == 'places':
-            insert_query = "INSERT INTO places (name, card_description, description, category, images, coordinates, rate, price, city, location, walk, time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            insert_query = "INSERT INTO places (name, card_description, description, category, images, coordinates, rate, price, city, location, walk, time) VALUES (%(name)s, %(cardDescription)s, %(description)s, %(category)s, %(image)s, %(coordinates)s, %(rate)s, %(price)s, %(city)s, %(location)s, %(walk)s, %(time)s);"
         elif table_name == 'routes':
             insert_query = f"INSERT INTO routes (name, card_description, description, category, images, points) VALUES ( %s, %s, %s, %s, %s, %s);"
         elif table_name == 'category':
             insert_query = f"INSERT INTO category (name, card_description, description) VALUES ( %s, %s, %s);"
-        print('знаечние добавлено в таблицу')
+        print(data)
         cursor.execute(insert_query, data)
         connection.commit()
+        print('знаечние добавлено в таблицу')
 
 
 # show table
@@ -154,23 +157,30 @@ def category_return():
     return jsonify(super_print('category'))
 
 
-@app.route('/send_image/<image_name>', methods=['GET'])
+@app.route('/image/<image_name>', methods=['GET'])
 def send_image(image_name):
     image_path = os.path.join(app.root_path, 'images', image_name)
     return send_file(image_path, as_attachment=True)
 
 
 @app.route('/add', methods=['POST'])
-@jwt_required()
+#@jwt_required()
 def add_places():
-    if 'image' not in request.files:
-        return 'No image part in the request', 400
+    data = request.form.to_dict()
 
-    image = request.files['image']
-    image.save(os.path.join(app.root_path, 'images', image.filename))
+    if request.files.get("image", False):
+        image = request.files['image']
 
-    data = request.json
-    fill_table(connection, 'places', data)
+        print('imaeg',image)
+        path = os.path.join(app.root_path, 'images', image.filename)
+        image.save(path)
+        data['image'] = image.filename
+
+    if data.get('walk', False):
+        data['walk'] = data['walk'] == 'true'
+    print('data',data)
+
+    fill_table(connection, data.get("type"), data)
     return jsonify({"success": True}), 200
 
 

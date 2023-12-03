@@ -69,3 +69,20 @@ export async function getData(route: "places" | "routes" | "category", category?
         throw error;
     }
 }
+
+export async function getPlaceById(id?: string) {
+    try {
+        const url = url_stat + `/get_place_details?id=${id}`;
+        console.log('fetch url:', url)
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log('data:', data)
+        return data as Place;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}

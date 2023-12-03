@@ -45,7 +45,7 @@ function PlacesList({ }) {
                 ref={scrollRef}
                 className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex flex-row scroll-smooth'>
                 {places && places.length > 0 && places.map((item)=>(
-                    <PlaceItem/>
+                    <PlaceItem data={item}/>
                 ))}
             </div>
             <div className='flex flex-row justify-center items-center mt-[24px]'>

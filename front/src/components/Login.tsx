@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import AdminHeader from './AdminHeader';
 import { getCookieToken } from '../utils/utils';
 
-function Login({ children }: any) {
+function Login({ children, fragment, setFragment }: any) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [token, setToken] = useState('');
-    const [fragment, setFragment] = useState('all');
 
     useEffect(() => {
         const cookieToken = getCookieToken();
