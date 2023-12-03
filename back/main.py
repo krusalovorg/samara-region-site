@@ -163,79 +163,75 @@ def send_image(image_name):
 
 
 @app.route('/add', methods=['POST'])
-#@jwt_required()
+# @jwt_required()
 def add_places():
     data = request.form.to_dict()
 
     if request.files.get("image", False):
         image = request.files['image']
 
-        print('imaeg',image)
+        print('image', image)
         path = os.path.join(app.root_path, 'images', image.filename)
         image.save(path)
         data['image'] = image.filename
 
     if data.get('walk', False):
         data['walk'] = data['walk'] == 'true'
-    print('data',data)
+    print('data', data)
     fill_table(connection, data.get("type"), data)
     return jsonify({"success": True}), 200
 
 
-@app.route('/get_place_details', methods=['GET'])
-def return_place_by_id():
-    place_id = request.args.get('id')
-    place_details = get_place_details_id(place_id, 'places')
-    if place_details:
-        return jsonify(place_details)
+@app.route('/get_details_id', methods=['GET'])
+def return_details_by_id():
+    id = request.args.get('id')
+    table = request.args.get('table_name')
+
+    if table == 'place':
+        details = get_place_details_id(id, 'places')
+    elif table == 'routes':
+        details = get_place_details_id(id, 'routes')
+    elif table == 'category':
+        details = get_place_details_id(id, 'category')
     else:
-        return "Place not found"
+        return "table not found"
 
-
-@app.route('/get_routes_details', methods=['GET'])
-def return_route_by_id():
-    place_id = request.args.get('id')
-    place_details = get_place_details_id(place_id, 'routes')
-    if place_details:
-        return jsonify(place_details)
+    if details:
+        return jsonify(details)
     else:
-        return "Place not found"
+        return "Details not found"
 
 
-@app.route('/get_category_details', methods=['GET'])
-def return_category_by_id():
-    place_id = request.args.get('id')
-    place_details = get_place_details_id(place_id, 'category')
-    if place_details:
-        return jsonify(place_details)
-    else:
-        return "Place not found"
-
-
-@app.route('/get_place_details_name', methods=['GET'])
+@app.route('/get_details_name', methods=['GET'])
 def return_place_by_name():
-    place_id = request.args.get('name')
-    place_details = get_place_details_name(place_id, 'places')
-    if place_details:
-        return jsonify(place_details)
+    id = request.args.get('id')
+    table = request.args.get('table_name')
+
+    if table == 'place':
+        details = get_place_details_name(id, 'places')
+    elif table == 'routes':
+        details = get_place_details_name(id, 'routes')
+
+    else:
+        return "table bot found"
+
+    if details:
+        return jsonify(details)
     else:
         return "Place not found"
 
 
-@app.route('/get_routes_details_name', methods=['GET'])
-def return_route_by_name():
-    place_id = request.args.get('name')
-    place_details = get_place_details_name(place_id, 'route')
-    if place_details:
-        return jsonify(place_details)
-    else:
-        return "Place not found"
+@app.route('/delete', methods=['GET'])
+def return_place_by_name():
+    id = request.args.get('id')
+    table = request.args.get('table_name')
+    delete_place(id, table)
 
 
 # start code
 if __name__ == "__main__":
     tables = ['places', 'routes', 'category']
-    #data = ("Example Place", "Short description", "Long description", "Example category", "example.jpg", "12.3456, -78.9101", 5, 100, "Example City", "Example Location", True, 60)
+    # data = ("Example Place", "Short description", "Long description", "Example category", "example.jpg", "12.3456, -78.9101", 5, 100, "Example City", "Example Location", True, 60)
     for table in tables:
         cursor = connection.cursor()
         cursor.execute("SHOW TABLES LIKE %s", (table,))
