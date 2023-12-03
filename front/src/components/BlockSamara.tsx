@@ -7,6 +7,8 @@ import ImageCard5 from '../assets/buti5.jpg';
 import ImageCard6 from '../assets/buti6.jpg';
 import { YMaps, Map, Placemark, Polyline } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
+import { Place, getData } from '../utils/backend';
+import Category from './Category';
 // import ImageCard7 from './assets/buti7.jpg';
 // import ImageCard8 from './assets/buti8.jpg';
 
@@ -16,8 +18,9 @@ function BlockSamara() {
     const [yamap, setYampas] = useState<YMapsApi | null>(null);
     const [loaded, setLoaded] = useState(false);
     const [information, setInformation] = useState({
-        title: "",
-        description: ""
+        name: "",
+        description: "",
+        category: []
     });
 
     const [search, setSearch] = useState(0);
@@ -27,6 +30,16 @@ function BlockSamara() {
         quest: "Вид отдыха"
     });
     const [typeRoute, setTypeRoute] = useState("");
+    const [places, setPlaces] = useState<Place[]>([]);
+
+    async function loadPlaces() {
+        const data = await getData("places");
+
+        if (data) {
+            setPlaces(data as Place[]);
+        }
+    }
+
 
     console.log('key', process.env.REACT_APP_YANDEX_KEY)
 
@@ -59,7 +72,8 @@ function BlockSamara() {
             // var yandexWayPoint = multiRoute.getWayPoints().get(1);
             console.log('clickckckckkckccxcxcxc')
             setInformation({
-                title: "Маршрут Самара-Тольятти",
+                name: "Маршрут Самара-Тольятти",
+                category: [],
                 description: "Маршрут начнется в Тольятти, городе, известном своим автомобильным производством. Оттуда можно отправиться в Самару, где стоит посетить самарскую набережную Волги, памятники архитектуры и исторические музеи. Затем маршрут приведет вас в село Ягодное, расположенное в живописной местности, где можно насладиться тихой обстановкой и природой. Затем вы отправитесь в Замок Гарибальди, который находится в Московском районе Самары. Это архитектурное сооружение, построенное в стиле средневекового замка. Замок Гарибальди является популярным местом для проведения мероприятий, фотосессий и экскурсий. Этот маршрут предлагает разнообразие от культурных достопримечательностей до природных красот, и будет интересен для любого туриста."
             })
         });
@@ -73,29 +87,28 @@ function BlockSamara() {
     const getRegions = () => {
         if (map && map.current && yamap) {
             // Загружаем границы регионов России
-            
-            (yamap as any)?.borders.load('RU', {
+            map?.current?.borders.load('RU', {
                 lang: 'ru',
                 quality: 2
-            }).then((result:any) => {
+            }).then((result: any) => {
                 // Создадим объект, в котором будут храниться коллекции с нашими регионами.
                 var districtCollections = new yamap.GeoObjectCollection({}, {
-                        fillColor: "#0000aa",
-                        strokeColor: "000000",
-                        strokeOpacity: 0.5,
-                        fillOpacity: 0.5
-                    });
-        
-                result.features.forEach((feature:any) => {
+                    fillColor: "#0000aa",
+                    strokeColor: "000000",
+                    strokeOpacity: 0.5,
+                    fillOpacity: 0.5
+                });
+
+                result.features.forEach((feature: any) => {
                     var iso = feature.properties.iso3166;
                     // Добавим субъект РФ в коллекцию.
-                    if (iso == 'RU-VLA'){
+                    if (iso == 'RU-VLA') {
                         districtCollections.add(new yamap.GeoObject(feature));
                     }
                 });
-        
+
                 map.current.geoObjects.add(districtCollections);
-            })        
+            })
         }
     };
 
@@ -119,6 +132,10 @@ function BlockSamara() {
         }
     }, [yamap])
 
+    useEffect(() => {
+        loadPlaces()
+    }, [])
+
     return (
         <>
             <section
@@ -139,7 +156,15 @@ function BlockSamara() {
                             modules={["multiRouter.MultiRoute"]}
                             defaultState={{ center: [53.2415041, 50.2212463], zoom: 7 }}
                         >
-                            {/* <Placemark defaultGeometry={[53.195876, 50.100186]} /> */}
+                            {
+                                places.map((place) => {
+                                    if (place.coordinates.split(",").length == 2) {
+                                        return <Placemark defaultGeometry={place.coordinates.split(",")} onClick={()=>{
+                                            setInformation(place as any)
+                                        }} />
+                                    }
+                                })
+                            }
                             {/* <Polyline query={{ apikey: "dd278cf2-bbc1-4819-8232-fbba0d13289a" }}
                                 geometry={[
                                     { 
@@ -184,8 +209,13 @@ function BlockSamara() {
                     }} onClick={() => {
                         addRoute(yamap)
                     }}>
-                        {information?.title || "Самарская Область"}
+                        {information?.name || "Самарская Область"}
                     </h1>
+                    {
+                        information?.category && information?.category?.map && information?.category?.map((item: any)=>{
+                            return <Category text={item}/>
+                        })
+                    }
                     <h2 style={{
                         color: "#2C2C2C",
                         fontWeight: "normal",

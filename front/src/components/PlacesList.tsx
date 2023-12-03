@@ -5,6 +5,7 @@ import { Place, getData } from "../utils/backend";
 function PlacesList({ }) {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [places, setPlaces] = useState<Place[]>([]);
+    const [scrolled, setScrolled] = useState(0);
 
     async function loadPlaces() {
         const data = await getData("places");
@@ -20,13 +21,24 @@ function PlacesList({ }) {
 
     const scrollLeft = () => {
         if (scrollRef.current) {
-            scrollRef.current.scrollLeft -= (scrollRef.current.lastElementChild?.clientWidth || 250);
+            const item_width = scrollRef.current.lastElementChild?.clientWidth as any
+            const new_scroll = scrollRef.current.scrollLeft - (item_width || 250);
+            scrollRef.current.scrollLeft = new_scroll;
+            console.log(scrollRef.current.scrollLeft, new_scroll)
+            if ((scrolled - 1) >= 2) {
+                setScrolled(scrolled - 1)
+            }
         }
     };
 
     const scrollRight = () => {
         if (scrollRef.current) {
-            scrollRef.current.scrollLeft += (scrollRef.current.lastElementChild?.clientWidth || 250);
+            const item_width = scrollRef.current.lastElementChild?.clientWidth as any
+            const new_scroll = scrollRef.current.scrollLeft + (item_width || 250);
+            scrollRef.current.scrollLeft = new_scroll;
+            if ((scrolled + 1) <= places.length) {
+                setScrolled(scrolled + 1)
+            }
         }
     };
 
@@ -44,13 +56,13 @@ function PlacesList({ }) {
             <div
                 ref={scrollRef}
                 className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex flex-row scroll-smooth'>
-                {places && places.length > 0 && places.map((item)=>(
-                    <PlaceItem data={item}/>
+                {places && places.length > 0 && places.map((item) => (
+                    <PlaceItem data={item} />
                 ))}
             </div>
             <div className='flex flex-row justify-center items-center mt-[24px]'>
                 <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollLeft}>{'<'}</button>
-                <h2 className='text-[#2C2C2C] font-medium text-md mx-[30px]'>1/16</h2>
+                <h2 className='text-[#2C2C2C] font-medium text-md mx-[30px]'>{scrolled}/{places.length || 1}</h2>
                 <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollRight}>{'>'}</button>
             </div>
         </section>

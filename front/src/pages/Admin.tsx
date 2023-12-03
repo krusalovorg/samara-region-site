@@ -10,7 +10,7 @@ function Admin() {
         <Login fragment={fragment} setFragment={setFragment}>
             <div className='px-[5%] w-full h-full'>
                 {fragment == "place" ?
-                    <FragmentPlaces />
+                    <FragmentPlaces setFragment={setFragment} />
                     : fragment == "category" ?
                         <FragmentCategory/>
                         : <></>

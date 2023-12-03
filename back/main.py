@@ -222,7 +222,7 @@ def return_place_by_name():
 
 
 @app.route('/delete', methods=['GET'])
-def return_place_by_name():
+def delete_by_id():
     id = request.args.get('id')
     table = request.args.get('table_name')
     delete_place(id, table)

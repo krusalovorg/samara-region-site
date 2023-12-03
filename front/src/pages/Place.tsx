@@ -5,20 +5,22 @@ import ImageCard2 from '../assets/buti2.jpg';
 import Category from '../components/Category';
 import { getData, getPlaceById, Place } from '../utils/backend';
 import { getImage } from '../utils/utils';
+import { useParams } from 'react-router-dom';
 
 function PlacePage() {
   const [place, setPlace] = useState<Place | null>(null);
+  const { id } = useParams();
 
   async function loadPlaces() {
-      const data = await getPlaceById("1");
+    const data = await getPlaceById(id || "1");
 
-      if (data) {
-          setPlace(data);
-      }
+    if (data) {
+      setPlace(data);
+    }
   }
 
   useEffect(() => {
-      loadPlaces();
+    loadPlaces();
   }, [])
 
   if (place == null) {
@@ -52,8 +54,10 @@ function PlacePage() {
         </div>
       </section>
       <section className='px-[5%]'>
-        <div className='w-full bg-white rounded-[50px] h-screen mt-[30px]'>
+        <div className='w-full bg-white rounded-[50px] h-screen mt-[30px] px-[20px] pt-[25px]'>
+          <p className='text-xl'>
           {place.description}
+          </p>
         </div>
       </section>
     </div>

@@ -72,7 +72,7 @@ export async function getData(route: "places" | "routes" | "category", category?
 
 export async function getPlaceById(id?: string) {
     try {
-        const url = url_stat + `/get_place_details?id=${id}`;
+        const url = url_stat + `/get_details_id?id=${id}&table_name=place`;
         console.log('fetch url:', url)
         const response = await fetch(url);
         if (!response.ok) {
