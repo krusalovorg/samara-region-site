@@ -78,7 +78,7 @@ def fill_table(connection, table_name, data):
         elif table_name == 'routes':
             insert_query = f"INSERT INTO routes (name, card_description, description, category, images, points) VALUES ( %s, %s, %s, %s, %s, %s);"
         elif table_name == 'category':
-            insert_query = f"INSERT INTO category (name, description) VALUES ( %s, %s);"
+            insert_query = f"INSERT INTO category (name, description) VALUES ( %(name)s, %(description)s);"
         print(data)
         cursor.execute(insert_query, data)
         connection.commit()
@@ -178,7 +178,6 @@ def add_places():
     if data.get('walk', False):
         data['walk'] = data['walk'] == 'true'
     print('data',data)
-
     fill_table(connection, data.get("type"), data)
     return jsonify({"success": True}), 200
 
