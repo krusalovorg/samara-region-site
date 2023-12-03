@@ -64,7 +64,6 @@ def create_table_category():
     with connection.cursor() as cursor:
         create_table_query = "CREATE TABLE `category`(id int AUTO_INCREMENT," \
                              "name varchar(50)," \
-                             "card_description varchar(2500)," \
                              "description varchar(2500)," \
                              "PRIMARY KEY (id));"
         cursor.execute(create_table_query)
@@ -79,7 +78,7 @@ def fill_table(connection, table_name, data):
         elif table_name == 'routes':
             insert_query = f"INSERT INTO routes (name, card_description, description, category, images, points) VALUES ( %s, %s, %s, %s, %s, %s);"
         elif table_name == 'category':
-            insert_query = f"INSERT INTO category (name, card_description, description) VALUES ( %s, %s, %s);"
+            insert_query = f"INSERT INTO category (name, description) VALUES ( %s, %s, %s);"
         print(data)
         cursor.execute(insert_query, data)
         connection.commit()
