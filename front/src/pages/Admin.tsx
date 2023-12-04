@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Login from '../components/Login';
 import FragmentPlaces from './FragmentPlaces';
 import FragmentCategory from './FragmentCategory';
+import FragmentRoutes from './FragmentRoutes';
 
 function Admin() {
     const [fragment, setFragment] = useState('all');
@@ -12,8 +13,9 @@ function Admin() {
                 {fragment == "place" ?
                     <FragmentPlaces setFragment={setFragment} />
                     : fragment == "category" ?
-                        <FragmentCategory/>
-                        : <></>
+                        <FragmentCategory />
+                        : fragment == "routes" ? <FragmentRoutes /> :
+                            <></>
                 }
             </div>
         </Login>
