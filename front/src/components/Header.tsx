@@ -25,11 +25,17 @@ function Header() {
                     }}>
                     Регион
                 </a>
-                <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/routes' ? 'bg-[#D2F881]' : ''}`}>
-                    Маршрут
+                <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/all/routes' ? 'bg-[#D2F881]' : ''}`}
+                    onClick={() => {
+                        navigate("/all/routes")
+                    }}>
+                    Маршруты
                 </a>
-                <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/place' ? 'bg-[#D2F881]' : ''}`}>
-                    Точка
+                <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/all/places' ? 'bg-[#D2F881]' : ''}`}
+                    onClick={() => {
+                        navigate("/all/places")
+                    }}>
+                    Точки
                 </a>
                 {admin &&
                     <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/admin' ? 'bg-[#D2F881]' : ''}`}

@@ -12,7 +12,7 @@ import Category from './Category';
 // import ImageCard7 from './assets/buti7.jpg';
 // import ImageCard8 from './assets/buti8.jpg';
 
-function BlockSamara() {
+function BlockSamara({ places }: { places: Place[] }) {
     // const { YMaps, Map, Placemark } = require("@pbe/react-yandex-maps")
     const map = useRef<any>(null);
     const [yamap, setYampas] = useState<YMapsApi | null>(null);
@@ -30,16 +30,6 @@ function BlockSamara() {
         quest: "Вид отдыха"
     });
     const [typeRoute, setTypeRoute] = useState("");
-    const [places, setPlaces] = useState<Place[]>([]);
-
-    async function loadPlaces() {
-        const data = await getData("places");
-
-        if (data) {
-            setPlaces(data as Place[]);
-        }
-    }
-
 
     console.log('key', process.env.REACT_APP_YANDEX_KEY)
 
@@ -132,14 +122,14 @@ function BlockSamara() {
         }
     }, [yamap])
 
-    useEffect(() => {
-        loadPlaces()
-    }, [])
+    // useEffect(() => {
+    //     loadPlaces()
+    // }, [])
 
     return (
         <>
             <section
-                className='w-full min-h-[80vh] bg-[#D2F881] rounded-[50px] py-[3%] px-[5%] flex flex-row'
+                className='w-full min-h-[80vh] bg-[#D2F881] rounded-[50px] py-[3%] px-[5%] flex sm:flex-col md:flex-row'
             >
                 <div className='w-1/2 pr-[5%]'>
                     {/* {[ImageCard1, ImageCard2, ImageCard3, ImageCard4, ImageCard5, ImageCard6,].map((image) => (
@@ -203,7 +193,7 @@ function BlockSamara() {
                     </YMaps>
 
                 </div>
-                <div className='w-1/2 h-auto flex flex-col'>
+                <div className='sm:w-full md:w-1/2 h-auto flex flex-col'>
                     <h1 style={{
                         color: "#2C2C2C",
                         fontWeight: "bold",
@@ -233,7 +223,7 @@ function BlockSamara() {
                             :
                             <>
                                 <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2'>Интересные факты о самарской области</h1>
-                                <ul className='list-disc max-w-2/3 w-2/3 '>
+                                <ul className='list-disc md:max-w-2/3 sm:w-full md:w-2/3 '>
                                     <li>{"12 апреля 1961 года первый космонавт Земли Юрий Гагарин совершил космический полет на корабле «Восток», выведенном в космос ракетой-носителем «Р-7», на 2/3 созданной в Самаре."}</li>
                                     <li>{"В ходе Великой Отечественной войны (1941-1945) Куйбышев на некоторое время стал запасной столицей страны."}</li>
                                     <li>{"В годы Великой Отечественной войны в Куйбышеве в эвакуации жил и работал величайший композитор двадцатого столетия Дмитрий Шостакович. Здесь была закончена и впервые исполнена его знаменитая Седьмая «Ленинградская» симфония. "}</li>

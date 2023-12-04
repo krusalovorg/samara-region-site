@@ -51,7 +51,7 @@ export async function getData(route: "places" | "routes" | "category", category?
 
     try {
         console.log('fetch url:', url)
-        const response = await fetch(url);
+        const response = await fetch(url, { method: "GET", headers: { 'Content-Type': 'application/json' }});
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }

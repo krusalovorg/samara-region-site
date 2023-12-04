@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import PlaceItem from "./PlaceItem";
 import { Place, Route, getData } from "../utils/backend";
 
-function PlacesList({ }) {
+function PlacesList({places}: {places: Place[]}) {
     const scrollRef = useRef<HTMLDivElement>(null);
     // const [places, setPlaces] = useState<Place[]>([]);
     const [scrolled, setScrolled] = useState(0);
@@ -10,7 +10,7 @@ function PlacesList({ }) {
     const [data, setData] = useState<any[]>([]);
 
     async function loadPlaces() {
-        const places = await getData("places") as any;
+        // const places = await getData("places") as any;
         const routes = await getData("routes") as any;
         const mergedList = places.map((place: any, index: any) => {
             if (index < routes.length) {
@@ -62,7 +62,7 @@ function PlacesList({ }) {
             </h2>
             <div
                 ref={scrollRef}
-                className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex flex-row scroll-smooth'>
+                className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex sm:flex-col md:flex-row scroll-smooth'>
                 {data && data.length > 0 && data.map((item) => (
                     <PlaceItem data={item} />
                 ))}

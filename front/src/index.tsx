@@ -6,6 +6,7 @@ import App from './App';
 import Place from './pages/Place';
 import Footer from './components/Footer';
 import Admin from './pages/Admin';
+import ItemsPage from './pages/Items';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: <Admin/>
+  },
+  {
+    path: "/all/:category",
+    element: <ItemsPage/>
   }
 ]);
 

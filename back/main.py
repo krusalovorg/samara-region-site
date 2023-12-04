@@ -117,7 +117,7 @@ def edit_table(table_name, options, values, id):
 def get_place_details_id(place_id, table_name):
     with connection.cursor() as cursor:
         select_query = f"SELECT * FROM {table_name} WHERE id = %s"
-        cursor.execute(select_query, (place_id,))
+        cursor.execute(select_query, (place_id))
         place_details = cursor.fetchone()
         return place_details
 
@@ -125,7 +125,7 @@ def get_place_details_id(place_id, table_name):
 def get_place_details_name(place_name, table_name):
     with connection.cursor() as cursor:
         select_query = f"SELECT * FROM {table_name} WHERE name = %s"
-        cursor.execute(select_query, (place_name,))
+        cursor.execute(select_query, (place_name))
         place_details = cursor.fetchone()
         return place_details
 
