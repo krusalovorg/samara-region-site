@@ -2,17 +2,29 @@ import React, { useEffect, useState } from 'react';
 
 import { Dropdown } from "flowbite-react";
 import CustomRangeInput from "./CustomRangeInput";
+import { Category, getData } from '../utils/backend';
 
-function SearchPanel({setSearch}: any) {
+function SearchPanel({ setSearch }: any) {
     const [timeToure, setTimeToure] = useState(6);
     const [searchCategory, setSearchCategory] = useState<string | null>(null);
+    const [categorys, setCategorys] = useState<Category[]>([]);
 
-    function SearchE() {
-        setSearch(1);
-        setTimeout(() => {
-            setSearch(2);
-        }, 2000)
+    async function loadCategorys() {
+        const data = await getData('category');
+        if (data) {
+            setCategorys(data);
+        }
     }
+
+    async function SearchE() {
+        setSearch(1);
+
+        setSearch(2);
+    }
+
+    useEffect(() => {
+        loadCategorys();
+    }, [])
 
     return (
         <>
@@ -27,13 +39,18 @@ function SearchPanel({setSearch}: any) {
                         color: "black",
                         borderRadius: "16px",
                         marginLeft: 20,
-                        width: 160
+                        width: 160,
+                        zIndex: 1000
                     }}
-                        className='bg-[#D2F881] px-10 py-3 font-medium rounded-xl'
+                        className='bg-[#D2F881] px-10 py-3 font-medium rounded-xl z-[100]'
                         label={searchCategory || "Категория"} dismissOnClick={true}>
-                        <Dropdown.Item onClick={() => setSearchCategory("Места")}>Места</Dropdown.Item>
+                        {/* <Dropdown.Item onClick={() => setSearchCategory("Места")}>Места</Dropdown.Item>
                         <Dropdown.Item onClick={() => setSearchCategory("Маршруты")}>Маршруты</Dropdown.Item>
                         <Dropdown.Item onClick={() => setSearchCategory("Круизы")}>Круизы</Dropdown.Item>
+ */}
+                        {categorys.map((item) =>
+                            <Dropdown.Item onClick={() => setSearchCategory(item.name)}>{item.name}</Dropdown.Item>
+                        )}
                     </Dropdown>
                     <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium ml-[20px]' onClick={SearchE}>Поиск</button>
 
