@@ -1,18 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import PlaceItem from "./PlaceItem";
-import { Place, getData } from "../utils/backend";
+import { Place, Route, getData } from "../utils/backend";
 
 function PlacesList({ }) {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [places, setPlaces] = useState<Place[]>([]);
+    // const [places, setPlaces] = useState<Place[]>([]);
     const [scrolled, setScrolled] = useState(0);
+    // const [routes, setRoutes] = useState<Route[]>([]);
+    const [data, setData] = useState<any[]>([]);
 
     async function loadPlaces() {
-        const data = await getData("places");
-
-        if (data) {
-            setPlaces(data as Place[]);
-        }
+        const places = await getData("places") as any;
+        const routes = await getData("routes") as any;
+        const mergedList = places.map((place: any, index: any) => {
+            if (index < routes.length) {
+                return [place, routes[index]];
+            } else {
+                return [place];
+            }
+        }).flat();
+        setData(mergedList)
     }
 
     useEffect(() => {
@@ -36,7 +43,7 @@ function PlacesList({ }) {
             const item_width = scrollRef.current.lastElementChild?.clientWidth as any
             const new_scroll = scrollRef.current.scrollLeft + (item_width || 250);
             scrollRef.current.scrollLeft = new_scroll;
-            if ((scrolled + 1) <= places.length) {
+            if ((scrolled + 1) <= data.length) {
                 setScrolled(scrolled + 1)
             }
         }
@@ -56,13 +63,13 @@ function PlacesList({ }) {
             <div
                 ref={scrollRef}
                 className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex flex-row scroll-smooth'>
-                {places && places.length > 0 && places.map((item) => (
+                {data && data.length > 0 && data.map((item) => (
                     <PlaceItem data={item} />
                 ))}
             </div>
             <div className='flex flex-row justify-center items-center mt-[24px]'>
                 <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollLeft}>{'<'}</button>
-                <h2 className='text-[#2C2C2C] font-medium text-md mx-[30px]'>{scrolled}/{places.length || 1}</h2>
+                <h2 className='text-[#2C2C2C] font-medium text-md mx-[30px]'>{scrolled}/{data.length || 1}</h2>
                 <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollRight}>{'>'}</button>
             </div>
         </section>

@@ -1,11 +1,29 @@
 import ImageCard2 from '../assets/buti2.jpg';
 import { useNavigate } from "react-router-dom";
 import Category from './Category';
-import { Place } from '../utils/backend';
+import { Place, getItemById } from '../utils/backend';
 import { getImage } from '../utils/utils';
+import { useEffect, useState } from 'react';
 
-function PlaceItem({ data }: { data?: Place }) {
+function PlaceItem({ data, style }: { data?: Place, style?: any }) {
     const navigate = useNavigate();
+    const [categorys, setCategorys] = useState<any[]>([]);
+
+    async function loadCategorys() {
+        if (data?.category && data?.category?.split(',')?.length > 0) {
+            data?.category?.split(',').map(async (item: any) => {
+                const data = await getItemById(item.id || "1", 'category');
+                console.log('category id fetched', item, data)
+                if (data) {
+                    setCategorys([...categorys, data]);
+                }
+            })
+        }
+    }
+
+    useEffect(() => {
+        loadCategorys();
+    }, [])
 
     return (
         <div
@@ -13,16 +31,19 @@ function PlaceItem({ data }: { data?: Place }) {
             style={{
                 backgroundImage: `url(${data?.images ? getImage(data?.images) : ImageCard2})`,
                 backgroundSize: "cover",
-                backgroundPosition: "center"
+                backgroundPosition: "center",
+                ...style
             }}
             onClick={() => {
-                navigate("/place/"+data?.id)
+                navigate("/place/" + data?.id)
             }}>
             {/* <div className='absolute bottom-0 w-full h-1/3 rounded-b-2xl z-[1]' style={{  }} /> */}
             <div className='px-[5%] py-[20px] h-full w-full flex z-[100] relative flex flex-col'>
                 <div className='flex flex-row gap-x-[10px]'>
-                    <Category text={data?.category || 'Достопримечательность'} />
-                    <Category text={data?.category || 'Достопримечательность'} />
+                    {categorys.map((item) =>
+                        <Category text={item.name} />
+                    )}
+                    {data?.rate == undefined && <Category text={'Маршрут'} />}
                 </div>
 
                 <h2 className='text-white font-bold spacing-[0px] text-3xl mt-auto'>{data?.name || ""}</h2>

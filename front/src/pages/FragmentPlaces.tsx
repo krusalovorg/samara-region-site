@@ -227,7 +227,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                                 const coords = e.get("coords");
                                 console.log('eeerasereres', coords)
                                 setPoint(coords)
-                                setFormData({...formData, coordinates: coords})
+                                setFormData({ ...formData, coordinates: coords })
                             }}
                             defaultState={{ center: [53.195876, 50.100186], zoom: 9 }}>
                             <Clusterer
@@ -237,7 +237,12 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                                 }}
                             >
                                 {point &&
-                                    <Placemark geometry={point} onClick={() => alert('Hello!!!')} />
+                                    <Placemark
+                                        options={{
+                                            iconColor: "red"
+                                        }}
+                                        geometry={point}
+                                    />
                                 }
                             </Clusterer>
                         </Map>

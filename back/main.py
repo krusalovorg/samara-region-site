@@ -75,7 +75,7 @@ def fill_table(connection, table_name, data):
         if table_name == 'places':
             insert_query = "INSERT INTO places (name, card_description, description, category, images, coordinates, rate, price, city, location, walk, time) VALUES (%(name)s, %(cardDescription)s, %(description)s, %(category)s, %(image)s, %(coordinates)s, %(rate)s, %(price)s, %(city)s, %(location)s, %(walk)s, %(time)s);"
         elif table_name == 'routes':
-            insert_query = f"INSERT INTO routes (name, card_description, description, category, images, points) VALUES ( %s, %s, %s, %s, %s, %s);"
+            insert_query = f"INSERT INTO routes (name, card_description, description, category, images, points) VALUES ( %(name)s, %(cardDescription)s, %(description)s, %(category)s, %(image)s, %(points)s);"
         elif table_name == 'category':
             insert_query = f"INSERT INTO category (name, description) VALUES ( %(name)s, %(description)s);"
         print(data)
@@ -172,12 +172,6 @@ def send_image(image_name):
 # @jwt_required()
 def add_places():
     data = request.form.to_dict()
-    arr = [int(x) for x in data['category'].split(',')]
-    categories = []
-    for number in arr:
-          categories.append(get_place_details_id(number,'category'))
-    data['category']=f'{categories}'
-
     if request.files.get("image", False):
         image = request.files['image']
 
@@ -199,7 +193,7 @@ def return_details_by_id():
     id = request.args.get('id')
     table = request.args.get('table_name')
 
-    if table == 'place':
+    if table == 'places':
         details = get_place_details_id(id, 'places')
     elif table == 'routes':
         details = get_place_details_id(id, 'routes')

@@ -70,9 +70,9 @@ export async function getData(route: "places" | "routes" | "category", category?
     }
 }
 
-export async function getPlaceById(id?: string) {
+export async function getItemById(id: string, category: "places" | "routes" | "category") {
     try {
-        const url = url_stat + `/get_details_id?id=${id}&table_name=place`;
+        const url = url_stat + `/get_details_id?id=${id}&table_name=${category}`;
         console.log('fetch url:', url)
         const response = await fetch(url);
         if (!response.ok) {

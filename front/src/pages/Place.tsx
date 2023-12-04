@@ -3,7 +3,7 @@ import GerbLogo from '../assets/gerb.png';
 import Header from '../components/Header';
 import ImageCard2 from '../assets/buti2.jpg';
 import Category from '../components/Category';
-import { getData, getPlaceById, Place } from '../utils/backend';
+import { getData, getItemById, Place } from '../utils/backend';
 import { getImage } from '../utils/utils';
 import { useParams } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ function PlacePage() {
   const { id } = useParams();
 
   async function loadPlaces() {
-    const data = await getPlaceById(id || "1");
+    const data = await getItemById(id || "1", 'places');
 
     if (data) {
       setPlace(data);

@@ -49,26 +49,15 @@ function App() {
               } */}
             </div>
             <div className='w-full flex justify-center items-center px-[5%] mb-[20px]'>
-            <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={()=>{setOffset(offset+10)}}>
-              Раскрыть →
-            </button>
+              <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={() => { setOffset(offset + 10) }}>
+                Раскрыть →
+              </button>
             </div>
           </>
           : <div className='h-[5em]'></div>
       }
       <BlockSamara />
       <PlacesList />
-      <YMaps>
-        <section className='w-full min-h-[50vh] px-[5%]'>
-          <Map className='w-full h-[50vh] my-[100px]' defaultState={{ center: [53.195876, 50.100186], zoom: 9 }}>
-            <Placemark defaultGeometry={[53.195876, 50.100186]} />
-          </Map>
-        </section>
-      </YMaps>
-      <ExcursionList />
-
-      {/* <section className='h-screen' />
-      <section className='h-screen' /> */}
     </div>
   );
 }

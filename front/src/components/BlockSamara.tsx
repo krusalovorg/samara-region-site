@@ -159,9 +159,13 @@ function BlockSamara() {
                             {
                                 places.map((place) => {
                                     if (place.coordinates.split(",").length == 2) {
-                                        return <Placemark defaultGeometry={place.coordinates.split(",")} onClick={()=>{
-                                            setInformation(place as any)
-                                        }} />
+                                        return <Placemark
+                                            options={{
+                                                iconColor: "red"
+                                            }}
+                                            defaultGeometry={place.coordinates.split(",")} onClick={() => {
+                                                setInformation(place as any)
+                                            }} />
                                     }
                                 })
                             }
@@ -212,17 +216,35 @@ function BlockSamara() {
                         {information?.name || "Самарская Область"}
                     </h1>
                     {
-                        information?.category && information?.category?.map && information?.category?.map((item: any)=>{
-                            return <Category text={item}/>
+                        information?.category && information?.category?.map && information?.category?.map((item: any) => {
+                            return <Category text={item} />
                         })
                     }
-                    <h2 style={{
-                        color: "#2C2C2C",
-                        fontWeight: "normal",
-                        maxWidth: "75%"
-                    }} className='text-2xl'>
-                        {information?.description || "текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст"}
-                    </h2>
+
+                    {
+                        information?.description ?
+                            <h2 style={{
+                                color: "#2C2C2C",
+                                fontWeight: "normal",
+                                maxWidth: "75%"
+                            }} className='text-2xl'>
+                                {information?.description}
+                            </h2>
+                            :
+                            <>
+                                <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2'>Интересные факты о самарской области</h1>
+                                <ul className='list-disc max-w-2/3 w-2/3 '>
+                                    <li>{"12 апреля 1961 года первый космонавт Земли Юрий Гагарин совершил космический полет на корабле «Восток», выведенном в космос ракетой-носителем «Р-7», на 2/3 созданной в Самаре."}</li>
+                                    <li>{"В ходе Великой Отечественной войны (1941-1945) Куйбышев на некоторое время стал запасной столицей страны."}</li>
+                                    <li>{"В годы Великой Отечественной войны в Куйбышеве в эвакуации жил и работал величайший композитор двадцатого столетия Дмитрий Шостакович. Здесь была закончена и впервые исполнена его знаменитая Седьмая «Ленинградская» симфония. "}</li>
+                                    <li>{"Пивной завод, построенный в 1881 году в Самаре австрийским дворянином Альфредом фон Вакано, работает до сих пор и является одним из символов города."}</li>
+                                    <li>{"Кумысолечебница Нестора Постникова - второе в мире кумысолечебное заведение (первое открыли в 1854 году тоже в Самарской губернии - в селе Богдановка)."}</li>
+                                    <li>{"Самым крупным и красивым парком дореволюционной Самары считался Струковский сад, в котором впервые был исполнен вальс «На сопках Маньчжурии» (русский вальс начала XX века, посвящённый погибшим в русско-японской войне воинам 214-го резервного Мокшанского пехотного полка. Автор - военный капельмейстер полка Илья Шатров)."}</li>
+                                    <li>{"Всероссийский фестиваль авторской песни имени Валерия Грушина, или просто Грушинский, в 2013 году пройдет в юбилейный сороковой раз."}</li>
+                                    <li>{"Уникальный монумент ракета-носитель «Союз» музея «Самара Космическая» имени Дмитрия Козлова был установлен в Самаре в 2001 году в честь юбилея полета Юрия Гагарина в космос и ракеты Р-7 выпускаемой в Самаре с 1958 года на предприятии ЦСКБ-Прогресс."}</li>
+                                </ul>
+                            </>
+                    }
                     <div className='mt-auto w-full flex flex-col justify-end items-center'>
 
                         {search == 0 && <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={() => StartSearch()}>Подобрать маршрут</button>}

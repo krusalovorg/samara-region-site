@@ -14,7 +14,7 @@ function Admin() {
                     <FragmentPlaces setFragment={setFragment} />
                     : fragment == "category" ?
                         <FragmentCategory />
-                        : fragment == "routes" ? <FragmentRoutes /> :
+                        : fragment == "routes" ? <FragmentRoutes setFragment={setFragment} /> :
                             <></>
                 }
             </div>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Login from '../components/Login';
 import { getCookieToken } from '../utils/utils';
-import { YMaps, Map, Placemark, SearchControl, Clusterer } from '@pbe/react-yandex-maps';
+import { YMaps, Map, Placemark, SearchControl, Clusterer, ObjectManager } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
 import { Category, Place, getData } from '../utils/backend';
+import PlaceItem from '../components/PlaceItem';
 
 function FragmentRoutes({ setFragment }: { setFragment?: any }) {
     const [formData, setFormData] = useState<{
@@ -12,19 +13,19 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
         description: string;
         category: number[];
         images: File[];
-        points: number[]
     }>({
         name: '',
         cardDescription: '',
         description: '',
         category: [],
         images: [] as File[],
-        points: []
     });
 
     const [places, setPlaces] = useState<Place[]>([]);
     const map = useRef<any>(null);
     const [categorys, setCategorys] = useState<Category[]>([]);
+    const [selectPlacesId, setSelectPlacesId] = useState<number[]>([]);
+    const [selectPlaces, setSelectPlaces] = useState<Place[]>([]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target as any;
@@ -65,6 +66,8 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                 });
                 formDataToSend.append('image', formData.images[0], formData.images[0].name);
                 formDataToSend.append("type", "routes");
+                formDataToSend.append("points", selectPlacesId as any);
+
                 const response = await fetch('http://127.0.0.1:5000/add', {
                     method: 'POST',
                     headers: {
@@ -154,6 +157,21 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                         <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={() => { setFragment("category") }}>Добавить</button>
                     </div>
 
+
+                    <div className="mb-6">
+                        <a className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Точки</a>
+                        {
+                            selectPlaces.map((item) => (
+                                <>
+                                    <PlaceItem style={{marginBottom: 12}} data={item} />
+                                </>
+                            ))
+                        }
+
+                        <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-2 w-full' onClick={() => { setFragment("place") }}>Добавить</button>
+                    </div>
+
+
                     <div className="mb-6">
                         <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="file_input">Upload file</label>
                         <input
@@ -177,11 +195,33 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                                     groupByCoordinates: false,
                                 }}
                             >
-                                {/* {points &&
-                                    <Placemark geometry={points[0]} onClick={() => alert('Hello!!!')} />
-                                } */}
+
                                 {places && places.length > 0 && places.map((place) =>
-                                    <Placemark geometry={place?.coordinates?.split(",")} />
+                                    <Placemark
+                                        options={{
+                                            iconColor: selectPlacesId.includes(place.id) ? "red" : "grey",
+                                            // hasBalloon: true,
+                                            // openBalloonOnClick: true,
+                                            // openHintOnHover: true,
+                                            // hasHint: true,
+                                        }}
+                                        properties={{
+                                            hintContent: place.name,
+                                            balloonContent: `${place.name}<br/>${place.card_description}`,
+                                            layoutContent: place.name
+                                        }}
+                                        onClick={() => {
+                                            if (selectPlacesId.includes(place.id)) {
+                                                const new_cat = selectPlacesId.filter(cat => cat !== place.id);
+                                                setSelectPlacesId(new_cat);
+                                                setSelectPlaces(selectPlaces.filter(cat => cat.id !== place.id));
+                                            } else {
+                                                setSelectPlacesId([...selectPlacesId, place.id])
+                                                setSelectPlaces([...selectPlaces, place])
+                                            }
+                                        }}
+                                        modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
+                                        geometry={place?.coordinates?.split(",")} />
                                 )}
                             </Clusterer>
                         </Map>
