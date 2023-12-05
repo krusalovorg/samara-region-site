@@ -83,11 +83,8 @@ def fill_table(connection, table_name, data):
         connection.commit()
         print('знаечние добавлено в таблицу')
 
-
-# show table
-def super_print(table_name, category=None):
-    #connection.ping()  # reconnecting mysql
-    new_connection = pymysql.connect(
+def create_connection():
+    return pymysql.connect(
         host=host,
         port=3306,
         user=user,
@@ -95,6 +92,10 @@ def super_print(table_name, category=None):
         database=db_name,
         cursorclass=pymysql.cursors.DictCursor)
 
+# show table
+def super_print(table_name, category=None):
+    #connection.ping()  # reconnecting mysql
+    new_connection = create_connection()
     with new_connection.cursor() as cursor:
         if category:
             select_all_rows = f"SELECT * FROM {table_name} WHERE category = '{category}'"
@@ -124,6 +125,7 @@ def edit_table(table_name, options, values, id):
 
 #get something from table by id
 def get_place_details_id(place_id, table_name):
+    connection = create_connection()
     with connection.cursor() as cursor:
         select_query = f"SELECT * FROM {table_name} WHERE id = %s"
         cursor.execute(select_query, (place_id))

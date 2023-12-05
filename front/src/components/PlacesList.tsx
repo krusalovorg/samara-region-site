@@ -12,6 +12,7 @@ function PlacesList({places}: {places: Place[]}) {
     async function loadPlaces() {
         // const places = await getData("places") as any;
         const routes = await getData("routes") as any;
+        console.log('places',places)
         const mergedList = places.map((place: any, index: any) => {
             if (index < routes.length) {
                 return [place, routes[index]];
@@ -21,10 +22,6 @@ function PlacesList({places}: {places: Place[]}) {
         }).flat();
         setData(mergedList)
     }
-
-    useEffect(() => {
-        loadPlaces();
-    }, [])
 
     const scrollLeft = () => {
         if (scrollRef.current) {
@@ -48,6 +45,10 @@ function PlacesList({places}: {places: Place[]}) {
             }
         }
     };
+
+    useEffect(() => {
+        loadPlaces();
+    }, [places])
 
     return (
         <section className='px-[5%] mt-[100px]'>
