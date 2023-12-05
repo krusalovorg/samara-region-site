@@ -86,7 +86,16 @@ def fill_table(connection, table_name, data):
 
 # show table
 def super_print(table_name, category=None):
-    with connection.cursor() as cursor:
+    #connection.ping()  # reconnecting mysql
+    new_connection = pymysql.connect(
+        host=host,
+        port=3306,
+        user=user,
+        password=password,
+        database=db_name,
+        cursorclass=pymysql.cursors.DictCursor)
+
+    with new_connection.cursor() as cursor:
         if category:
             select_all_rows = f"SELECT * FROM {table_name} WHERE category = '{category}'"
         else:
