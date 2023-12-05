@@ -52,7 +52,8 @@ def create_table_routes():
                              "description varchar(2500)," \
                              "category varchar(50)," \
                              "images varchar(50)," \
-                             "points varchar(2500), " \
+                             "points varchar(2500)," \
+                             "time int DEFAULT 0, " \
                              "PRIMARY KEY (id));"
         cursor.execute(create_table_query)
         print("Table created successfully")
@@ -83,6 +84,7 @@ def fill_table(connection, table_name, data):
         connection.commit()
         print('знаечние добавлено в таблицу')
 
+
 def create_connection():
     return pymysql.connect(
         host=host,
@@ -92,9 +94,10 @@ def create_connection():
         database=db_name,
         cursorclass=pymysql.cursors.DictCursor)
 
+
 # show table
 def super_print(table_name, category=None):
-    #connection.ping()  # reconnecting mysql
+    # connection.ping()  # reconnecting mysql
     new_connection = create_connection()
     with new_connection.cursor() as cursor:
         if category:
@@ -116,14 +119,16 @@ def delete_place(id, table_name):
         cursor.execute(delete_query)
         connection.commit()
 
-#edit something from table
+
+# edit something from table
 def edit_table(table_name, options, values, id):
     for i in range(len(options)):
         edit_query = f"UPDATE {table_name} SET {options[i]} = '{values[i]}' WHERE id = {id};"
         cursor.execute(edit_query)
         connection.commit()
 
-#get something from table by id
+
+# get something from table by id
 def get_place_details_id(place_id, table_name):
     connection = create_connection()
     with connection.cursor() as cursor:
@@ -132,7 +137,8 @@ def get_place_details_id(place_id, table_name):
         place_details = cursor.fetchone()
         return place_details
 
-#get something from table by name
+
+# get something from table by name
 def get_place_details_name(place_name, table_name):
     with connection.cursor() as cursor:
         select_query = f"SELECT * FROM {table_name} WHERE name = %s"
@@ -140,7 +146,19 @@ def get_place_details_name(place_name, table_name):
         place_details = cursor.fetchone()
         return place_details
 
-#login as admin
+
+def get_routes(time_filter):
+    with connection.cursor() as cursor:
+        query = f"SELECT * FROM routes WHERE time <= {time_filter} ORDER BY time DESC"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        result = []
+        for row in rows:
+            result.append(row)
+        return result
+
+
+# login as admin
 @app.route('/login', methods=['POST'])
 def login():
     username = request.json.get('username')
@@ -153,7 +171,8 @@ def login():
     else:
         return jsonify({"msg": "Неверный логин или пароль"}), 401
 
-#return places
+
+# return places
 @app.route('/places')
 def points_return():
     category = request.args.get('category')
@@ -162,23 +181,27 @@ def points_return():
     else:
         return jsonify(super_print('places'))
 
-#send routes
+
+# send routes
 @app.route('/routes')
 def routes_return():
     return jsonify(super_print('routes'))
 
-#send category
+
+# send category
 @app.route('/category')
 def category_return():
     return jsonify(super_print('category'))
 
-#send image
+
+# send image
 @app.route('/image/<image_name>', methods=['GET'])
 def send_image(image_name):
     image_path = os.path.join(app.root_path, 'images', image_name)
     return send_file(image_path, as_attachment=True)
 
-#add something in table
+
+# add something in table
 @app.route('/add', methods=['POST'])
 # @jwt_required()
 def add_places():
@@ -198,7 +221,8 @@ def add_places():
     fill_table(connection, data.get("type"), data)
     return jsonify({"success": True}), 200
 
-#get somethin by id
+
+# get somethin by id
 @app.route('/get_details_id', methods=['GET'])
 def return_details_by_id():
     id = request.args.get('id')
@@ -218,7 +242,8 @@ def return_details_by_id():
     else:
         return "Details not found"
 
-#get something by name
+
+# get something by name
 @app.route('/get_details_name', methods=['GET'])
 def return_place_by_name():
     id = request.args.get('id')
@@ -237,14 +262,16 @@ def return_place_by_name():
     else:
         return "Place not found"
 
-#delete something
+
+# delete something
 @app.route('/delete', methods=['GET'])
 def delete_by_id():
     id = request.args.get('id')
     table = request.args.get('table_name')
     delete_place(id, table)
 
-#edit something
+
+# edit something
 @app.route('/edit', methods=['GET'])
 def edit_by_id():
     id = request.args.get('id')
@@ -254,12 +281,19 @@ def edit_by_id():
     edit_table(table, options, values, id)
 
 
+@app.route('/get_route_time', methods=['GET'])
+def route_time():
+    time_filter = request.args.get('time_filter')
+    details = get_routes(time_filter)
+    if details:
+        return jsonify(details)
+    else:
+        print('Мавршрутов нет')
+
+
 # start code
 if __name__ == "__main__":
     tables = ['places', 'routes', 'category']
-    #data = ("Example Place", "Short description", "Long description", "1,2", "example.jpg", "12.3456, -78.9101", 5, 100, "Example City", "Example Location", True, 60)
-    #fill_table(connection,'places',data)
-    #print(super_print('places'))
     for table in tables:
         cursor = connection.cursor()
         cursor.execute("SHOW TABLES LIKE %s", (table,))
@@ -272,5 +306,5 @@ if __name__ == "__main__":
             elif table == 'category':
                 create_table_category()
 
-    print(super_print('places'))
+
     app.run()
