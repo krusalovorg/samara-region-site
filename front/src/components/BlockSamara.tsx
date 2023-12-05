@@ -24,12 +24,11 @@ function BlockSamara({ places }: { places: Place[] }) {
     });
 
     const [search, setSearch] = useState(0);
-    const [form, setForm] = useState({
+    const form = {
         one: "Активный",
         two: "Спокойный",
         quest: "Вид отдыха"
-    });
-    const [typeRoute, setTypeRoute] = useState("");
+    };
 
     console.log('key', process.env.REACT_APP_YANDEX_KEY)
 
@@ -74,42 +73,36 @@ function BlockSamara({ places }: { places: Place[] }) {
         setLoaded(true)
     }
 
-    const getRegions = () => {
-        if (map && map.current && yamap) {
-            // Загружаем границы регионов России
-            map?.current?.borders.load('RU', {
-                lang: 'ru',
-                quality: 2
-            }).then((result: any) => {
-                // Создадим объект, в котором будут храниться коллекции с нашими регионами.
-                var districtCollections = new yamap.GeoObjectCollection({}, {
-                    fillColor: "#0000aa",
-                    strokeColor: "000000",
-                    strokeOpacity: 0.5,
-                    fillOpacity: 0.5
-                });
+    // const getRegions = () => {
+    //     if (map && map.current && yamap) {
+    //         // Загружаем границы регионов России
+    //         map?.current?.borders.load('RU', {
+    //             lang: 'ru',
+    //             quality: 2
+    //         }).then((result: any) => {
+    //             // Создадим объект, в котором будут храниться коллекции с нашими регионами.
+    //             var districtCollections = new yamap.GeoObjectCollection({}, {
+    //                 fillColor: "#0000aa",
+    //                 strokeColor: "000000",
+    //                 strokeOpacity: 0.5,
+    //                 fillOpacity: 0.5
+    //             });
 
-                result.features.forEach((feature: any) => {
-                    var iso = feature.properties.iso3166;
-                    // Добавим субъект РФ в коллекцию.
-                    if (iso == 'RU-VLA') {
-                        districtCollections.add(new yamap.GeoObject(feature));
-                    }
-                });
+    //             result.features.forEach((feature: any) => {
+    //                 var iso = feature.properties.iso3166;
+    //                 // Добавим субъект РФ в коллекцию.
+    //                 if (iso == 'RU-VLA') {
+    //                     districtCollections.add(new yamap.GeoObject(feature));
+    //                 }
+    //             });
 
-                map.current.geoObjects.add(districtCollections);
-            })
-        }
-    };
+    //             map.current.geoObjects.add(districtCollections);
+    //         })
+    //     }
+    // };
 
     function StartSearch(event?: string) {
         if (search == 1 && event) {
-            setTypeRoute(event);
-            // setForm({
-            //     one: "",
-            //     two: "",
-            //     quest: ""
-            // })
         }
         if (search < 3) {
             setSearch(search + 1)

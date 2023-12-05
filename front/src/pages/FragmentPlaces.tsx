@@ -3,7 +3,9 @@ import Login from '../components/Login';
 import { getCookieToken } from '../utils/utils';
 import { YMaps, Map, Placemark, SearchControl, Clusterer } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
-import { Category, getData } from '../utils/backend';
+import { Category, Place, deleteById, getData } from '../utils/backend';
+import PlaceItem from '../components/PlaceItem';
+import { useNavigate } from 'react-router-dom';
 
 function FragmentPlaces({ setFragment }: { setFragment?: any }) {
     const [formData, setFormData] = useState<{
@@ -19,6 +21,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         location: string;
         walk: boolean;
         time: number;
+        id?: any;
     }>({
         name: '',
         cardDescription: '',
@@ -32,11 +35,15 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         location: '',
         walk: false,
         time: 0,
+        id: -1
     });
 
     const [point, setPoint] = useState();
+    const [places, setPlaces] = useState<Place[]>([]);
     const map = useRef<any>(null);
     const [categorys, setCategorys] = useState<Category[]>([]);
+    const [type, setType] = useState("add");
+    const navigate = useNavigate();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target as any;
@@ -103,10 +110,17 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         }
     };
 
+    async function handleDelete() {
+        const result = await deleteById(formData?.id, 'places');
+        navigate(0)
+    }
 
     async function loadCategorys() {
         const data = await getData("category");
-
+        const places_data = await getData("places");
+        if (places_data) {
+            setPlaces(places_data as Place[]);
+        }
         if (data) {
             setCategorys(data);
         }
@@ -216,6 +230,10 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                         <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                     </div>
                     <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={handleSubmit}>Добавить</button>
+                    {
+                        type == "edit" &&
+                        <button className='bg-[#ff6f6f] text-white px-10 py-5 rounded-2xl font-medium mt-2 w-full' onClick={handleDelete}>Удалить</button>
+                    }
                 </div>
                 <YMaps>
                     <section className='w-1/2 h-inherit px-[5%]'>
@@ -244,10 +262,35 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                                         geometry={point}
                                     />
                                 }
+                                {
+                                    places && places.length > 0 && places.map(place =>
+                                        <Placemark
+                                            options={{
+                                                iconColor: "red"
+                                            }}
+                                            properties={{
+                                                hintContent: place.name,
+                                                balloonContent: `${place.name}<br/>${place.card_description}`,
+                                                layoutContent: place.name
+                                            }}
+                                            modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}    
+                                            geometry={place.coordinates.split(',')}
+                                        />
+                                    )
+                                }
                             </Clusterer>
                         </Map>
                     </section>
                 </YMaps>
+            </div>
+            <h1 className='text-2xl font-medium text-[#2C2C2C] mt-2'>Все точки</h1>
+            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
+                {places && places.length > 0 && places.map((item) => (
+                    <PlaceItem onClick={() => {
+                        setFormData({ ...item, cardDescription: item.card_description } as any);
+                        setType('edit')
+                    }} data={item as any} />
+                ))}
             </div>
         </>
     )

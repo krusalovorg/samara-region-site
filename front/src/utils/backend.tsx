@@ -70,21 +70,38 @@ export async function getData(route: "places" | "routes" | "category", category?
     }
 }
 
-export async function getItemById(id: string, category: "places" | "routes" | "category") {
-    try {
-        const url = url_stat + `/get_details_id?id=${id}&table_name=${category}`;
-        console.log('fetch url:', url)
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        console.log('data:', data)
-        return data as Place;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error;
-    }
+async function requestData(url: string) { 
+    const response = await fetch(url); 
+    if (!response.ok) { 
+        throw new Error('Network response was not ok'); 
+    } 
+    return response.json(); 
+}
+
+export async function getItemById(id: string, category: "places" | "routes" | "category") { 
+    try { 
+        const url = `${url_stat}/get_details_id?id=${id}&table_name=${category}`; 
+        console.log('fetch url:', url) 
+        const data = await requestData(url); 
+        console.log('data:', data) 
+        return data as Place; 
+    } catch (error) { 
+        console.error('Error fetching data:', error); 
+        throw error; 
+    } 
+} 
+
+export async function deleteById(id: number, category: "places" | "routes" | "category") { 
+    try { 
+        const url = `${url_stat}/delete?id=${id}&table_name=${category}`; 
+        console.log('fetch url:', url) 
+        const data = await requestData(url); 
+        console.log('data:', data) 
+        return data as Place; 
+    } catch (error) { 
+        console.error('Error fetching data:', error); 
+        throw error; 
+    } 
 }
 
 export async function getItemsById(id: string[], category: "places" | "routes" | "category") {

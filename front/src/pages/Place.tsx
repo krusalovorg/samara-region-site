@@ -29,7 +29,7 @@ function PlacePage({ route }: { route?: boolean }) {
       if (data?.points) {
         const result = await getItemsById(data?.points?.split(','), 'places');
         setPoints(result);
-        setTimeout(()=>loadRouters(), 200)
+        setTimeout(()=>loadRouters(result), 1200)
       }
 
       setData(data);
@@ -44,7 +44,7 @@ function PlacePage({ route }: { route?: boolean }) {
     setYampas(ymaps)
   };
 
-  function loadRouters() {
+  function loadRouters(points: any[]) {
     if (yamap == null) return
 
     const extractedCoordinates: any[] = points.map((item) => item.coordinates);
@@ -71,7 +71,7 @@ function PlacePage({ route }: { route?: boolean }) {
 
   // useEffect(() => {
   //   if (points.length > 0) {
-  //     loadRouters();
+  //     setTimeout(()=>loadRouters(), 200)
   //   }
   // }, [points])
 

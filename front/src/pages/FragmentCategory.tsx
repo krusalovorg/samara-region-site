@@ -3,12 +3,13 @@ import Login from '../components/Login';
 import { getCookieToken } from '../utils/utils';
 import { YMaps, Map, Placemark, SearchControl, Clusterer } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
-import { Category, getData } from '../utils/backend';
+import { Category, deleteById, getData } from '../utils/backend';
 
 function FragmentCategory() {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
+        id: -1
     });
     const [type, setType] = useState("add");
     const [selectId, setSelectId] = useState(-1);
@@ -58,6 +59,10 @@ function FragmentCategory() {
         }
     };
 
+    async function handleDelete() {
+        const result = await deleteById(formData?.id, 'places');
+        window.location.reload();
+    }
 
     async function loadCategorys() {
         const data = await getData("category");
@@ -101,7 +106,7 @@ function FragmentCategory() {
                     <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={handleSubmit}>{type == "edit" ? "Обновить" : "Добавить"}</button>
                     {
                         type == "edit" &&
-                        <button className='bg-[#ff6f6f] text-white px-10 py-5 rounded-2xl font-medium mt-2 w-full' onClick={handleSubmit}>Удалить</button>
+                        <button className='bg-[#ff6f6f] text-white px-10 py-5 rounded-2xl font-medium mt-2 w-full' onClick={handleDelete}>Удалить</button>
                     }
                 </div>
                 <section className='w-1/2 h-inherit px-[5%]'>

@@ -5,7 +5,7 @@ import { Place, getItemById } from '../utils/backend';
 import { getImage } from '../utils/utils';
 import { useEffect, useState } from 'react';
 
-function PlaceItem({ data, style }: { data?: Place, style?: any }) {
+function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClick?: any }) {
     const navigate = useNavigate();
     const [categorys, setCategorys] = useState<any[]>([]);
 
@@ -35,7 +35,11 @@ function PlaceItem({ data, style }: { data?: Place, style?: any }) {
                 ...style
             }}
             onClick={() => {
-                navigate(`/${data?.rate == undefined ? "route" : "place"}/${data?.id}`)
+                if (onClick) {
+                    onClick()
+                } else {
+                    navigate(`/${data?.rate == undefined ? "route" : "place"}/${data?.id}`)
+                }
             }}>
             {/* <div className='absolute bottom-0 w-full h-1/3 rounded-b-2xl z-[1]' style={{  }} /> */}
             <div className={`px-[5%] py-[20px] h-full w-full flex z-[100] relative flex flex-col`}>
