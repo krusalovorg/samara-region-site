@@ -129,19 +129,19 @@ function BlockSamara({ places }: { places: Place[] }) {
     return (
         <>
             <section
-                className='w-full min-h-[80vh] bg-[#D2F881] rounded-[50px] py-[3%] px-[5%] flex sm:flex-col md:flex-row'
+                className='w-full min-h-[80vh] bg-[#D2F881] rounded-[50px] py-[3%] px-[5%] flex max-md:flex-col flex-row'
             >
-                <div className='w-1/2 pr-[5%]'>
+                <div className='max-md:w-full max-md:h-[500px] w-1/2 pr-[5%]'>
                     {/* {[ImageCard1, ImageCard2, ImageCard3, ImageCard4, ImageCard5, ImageCard6,].map((image) => (
                         <img
                             className='w-auto rounded-3xl'
                             src={image}
                         />
                     ))} */}
-                    <YMaps >
+                    <YMaps>
                         <Map
                             instanceRef={map}
-                            className='w-full h-full'
+                            className='w-full h-full max-md-[500px] max-h-[75vh]'
                             onLoad={addRoute}
                             modules={["multiRouter.MultiRoute"]}
                             defaultState={{ center: [53.2415041, 50.2212463], zoom: 7 }}
@@ -193,7 +193,7 @@ function BlockSamara({ places }: { places: Place[] }) {
                     </YMaps>
 
                 </div>
-                <div className='sm:w-full md:w-1/2 h-auto flex flex-col'>
+                <div className='max-md:w-full w-1/2 h-auto flex flex-col'>
                     <h1 style={{
                         color: "#2C2C2C",
                         fontWeight: "bold",
@@ -223,7 +223,7 @@ function BlockSamara({ places }: { places: Place[] }) {
                             :
                             <>
                                 <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2'>Интересные факты о самарской области</h1>
-                                <ul className='list-disc md:max-w-2/3 sm:w-full md:w-2/3 '>
+                                <ul className='list-disc max-w-2/3 max-md:w-full w-2/3 '>
                                     <li>{"12 апреля 1961 года первый космонавт Земли Юрий Гагарин совершил космический полет на корабле «Восток», выведенном в космос ракетой-носителем «Р-7», на 2/3 созданной в Самаре."}</li>
                                     <li>{"В ходе Великой Отечественной войны (1941-1945) Куйбышев на некоторое время стал запасной столицей страны."}</li>
                                     <li>{"В годы Великой Отечественной войны в Куйбышеве в эвакуации жил и работал величайший композитор двадцатого столетия Дмитрий Шостакович. Здесь была закончена и впервые исполнена его знаменитая Седьмая «Ленинградская» симфония. "}</li>

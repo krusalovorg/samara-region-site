@@ -35,10 +35,10 @@ function PlaceItem({ data, style }: { data?: Place, style?: any }) {
                 ...style
             }}
             onClick={() => {
-                navigate("/place/" + data?.id)
+                navigate(`/${data?.rate == undefined ? "route" : "place"}/${data?.id}`)
             }}>
             {/* <div className='absolute bottom-0 w-full h-1/3 rounded-b-2xl z-[1]' style={{  }} /> */}
-            <div className='px-[5%] py-[20px] h-full w-full flex z-[100] relative flex flex-col'>
+            <div className={`px-[5%] py-[20px] h-full w-full flex z-[100] relative flex flex-col`}>
                 <div className='flex flex-row gap-x-[10px]'>
                     {categorys.map((item) =>
                         <Category text={item.name} />

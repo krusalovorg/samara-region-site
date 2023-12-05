@@ -4,6 +4,7 @@ import { Dropdown } from "flowbite-react";
 import CustomRangeInput from "./CustomRangeInput";
 import { Category, Place, Route, getData } from '../utils/backend';
 import PlaceItem from './PlaceItem';
+import useIsMobile from './isMobile';
 
 function SearchPanel() {
     const [timeToure, setTimeToure] = useState(6);
@@ -13,6 +14,7 @@ function SearchPanel() {
     const [search, setSearch] = useState(0);
     const [data, setData] = useState<Route[] | Place[]>([]);
     const [objectsSearch, setObjectsSearch] = useState<string[]>([]);
+    const isMobile = useIsMobile();
 
     async function loadCategorys() {
         const data = await getData('category');
@@ -31,7 +33,7 @@ function SearchPanel() {
 
     async function SearchE() {
         setSearch(1);
-        objectsSearch.map(async (item)=>{
+        objectsSearch.map(async (item) => {
             const new_data = await getData(item as any);
             if (new_data) {
                 setData([...data, ...new_data] as any)
@@ -47,20 +49,22 @@ function SearchPanel() {
     return (
         <>
             <div className='w-full px-[5%]'>
-                <div className='bg-[#2C2C2C] px-[40px] py-[35px] rounded-3xl flex h-fit sm:gap-y-2 flex-col md:flex-row items-strech'>
+                <div className='bg-[#2C2C2C] px-[40px] py-[35px] rounded-3xl flex h-fit max-md:gap-y-2 flex-col md:flex-row items-strech'>
                     <CustomRangeInput label={"Продолжительность"} value={timeToure} setValue={setTimeToure} />
                     {/* searchCategory == "Места" ? "Отдаленость" : "Продолжительность" */}
-                    <Dropdown style={{
-                        fontWeight: "medium",
-                        background: "#FEEFD7",
-                        padding: "0 27px",
-                        color: "black",
-                        borderRadius: "16px",
-                        marginLeft: 20,
-                        width: 160,
-                        zIndex: 1000
-                    }}
-                        className='bg-[#D2F881] px-10 py-3 font-medium rounded-xl z-[100]'
+                    <Dropdown
+                        style={{
+                            fontWeight: "medium",
+                            background: "#FEEFD7",
+                            padding: "0 27px",
+                            color: "black",
+                            borderRadius: "16px",
+                            marginLeft: isMobile ? 0 : 20,
+                            width: isMobile ? "100%" : 160,
+                            zIndex: 1000,
+                            height: isMobile ? 60 : ""
+                        }}
+                        className='bg-[#D2F881] px-10 py-3 font-medium rounded-xl z-[100] w-[160px]'
                         label={searchCategory || "Категория"} dismissOnClick={true}>
                         {/* <Dropdown.Item onClick={() => setSearchCategory("Места")}>Места</Dropdown.Item>
                         <Dropdown.Item onClick={() => setSearchCategory("Маршруты")}>Маршруты</Dropdown.Item>
@@ -74,7 +78,7 @@ function SearchPanel() {
                     <div className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium md:ml-[20px] flex justify-center items-center'>
                         <input
                             checked={objectsSearch.includes("routes")}
-                            onChange={(event)=>handleUpdateCheckbox('routes')}
+                            onChange={(event) => handleUpdateCheckbox('routes')}
                             type="checkbox"
                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                         <label htmlFor="checked-checkbox" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Маршруты</label>
@@ -82,7 +86,7 @@ function SearchPanel() {
                     <div className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium md:ml-[20px] flex justify-center items-center'>
                         <input
                             checked={objectsSearch.includes("places")}
-                            onChange={(event)=>handleUpdateCheckbox('places')}
+                            onChange={(event) => handleUpdateCheckbox('places')}
                             type="checkbox"
                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                         <label htmlFor="checked-checkbox" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Туристические точки</label>

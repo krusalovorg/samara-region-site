@@ -12,14 +12,14 @@ function Footer() {
                             </a>
                         </div>
                         <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-                            <div>
+                            {/* <div>
                                 <h2 className="mb-6 text-sm font-semibold text-[#2C2C2C] uppercase dark:text-white">Партнеры</h2>
                                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
                                     <li className="mb-4">
                                         <a href="https://nikoturs.ru/" target={"_blank"} className="hover:underline">Нико Турс</a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> */}
                             <div>
                                 <h2 className="mb-6 text-sm font-semibold text-[#2C2C2C] uppercase dark:text-white">Разработчики</h2>
                                 <ul className="text-gray-500 dark:text-gray-400 font-medium">

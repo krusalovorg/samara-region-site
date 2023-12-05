@@ -51,7 +51,7 @@ export async function getData(route: "places" | "routes" | "category", category?
 
     try {
         console.log('fetch url:', url)
-        const response = await fetch(url, { method: "GET", headers: { 'Content-Type': 'application/json' }});
+        const response = await fetch(url, { method: "GET", headers: { 'Content-Type': 'application/json' } });
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -85,4 +85,13 @@ export async function getItemById(id: string, category: "places" | "routes" | "c
         console.error('Error fetching data:', error);
         throw error;
     }
+}
+
+export async function getItemsById(id: string[], category: "places" | "routes" | "category") {
+    let result: any[] = [];
+    for (const item of id) {
+        const res = await getItemById(item, category);
+        result.push(res);
+    }
+    return result;
 }
