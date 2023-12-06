@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 function FragmentPlaces({ setFragment }: { setFragment?: any }) {
     const [formData, setFormData] = useState<{
         name: string;
-        cardDescription: string;
+        card_description: string;
         description: string;
         category: number[];
         images: File[];
@@ -24,7 +24,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         id?: any;
     }>({
         name: '',
-        cardDescription: '',
+        card_description: '',
         description: '',
         category: [],
         images: [] as File[],
@@ -87,10 +87,12 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                         formDataToSend.append(key, (formData as any)[key]);
                     }
                 });
-                console.log("formData.images", formData.images[0])
-                formDataToSend.append('image', formData.images[0], formData.images[0].name);
+                if (formData.images.length > 0) {
+                    console.log("formData.images", formData.images)
+                    formDataToSend.append('image', formData.images[0], formData.images[0].name);    
+                }
                 formDataToSend.append("type", "places");
-                const response = await fetch('http://127.0.0.1:5000/add', {
+                const response = await fetch(`http://127.0.0.1:5000/${type == 'edit' ? "edit" : "add"}`, {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -98,7 +100,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                     },
                     body: formDataToSend,
                 });
-
+                document.location.reload();
                 if (response.ok) {
                     console.log('Data added successfully');
                 } else {
@@ -127,7 +129,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
     }
 
     useEffect(() => {
-        loadCategorys();
+        loadCategorys();//da
     }, [])
 
     return (
@@ -152,8 +154,8 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                     <div className="mb-6">
                         <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Краткое описание</label>
                         <textarea id="message"
-                            value={formData.cardDescription} onChange={handleInputChange}
-                            name='cardDescription'
+                            value={formData.card_description} onChange={handleInputChange}
+                            name='card_description'
                             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Гора стрельная..."></textarea>
                     </div>
 
@@ -208,8 +210,9 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                         {
                             categorys.map((item) => (
                                 <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${formData.category.includes(item.id) ? " bg-white" : ""}`} onClick={() => {
-                                    if (formData.category.includes(item.id)) {
-                                        const new_cat = formData.category.filter(cat => cat !== item.id);
+                                    if (formData?.category?.includes(item.id)) {
+                                        console.log(formData?.category)
+                                        const new_cat = formData?.category?.filter(cat => cat !== item.id);
                                         setFormData({ ...formData, category: new_cat })
                                     } else {
                                         setFormData({ ...formData, category: [...formData.category, item.id] })
@@ -217,7 +220,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                                 }}>{item.name}</button>
                             ))
                         }
-
+                        <button className='bg-[#b9eaff] px-10 py-5 rounded-2xl font-medium my-2 w-full' onClick={() => { loadCategorys() }}>Обновить категории</button>
                         <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={() => { setFragment("category") }}>Добавить</button>
                     </div>
 
@@ -229,7 +232,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                             aria-describedby="file_input_help" id="file_input" type="file" />
                         <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                     </div>
-                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={handleSubmit}>Добавить</button>
+                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={handleSubmit}>{type == 'edit' ? "Сохранить" : "Добавить"}</button>
                     {
                         type == "edit" &&
                         <button className='bg-[#ff6f6f] text-white px-10 py-5 rounded-2xl font-medium mt-2 w-full' onClick={handleDelete}>Удалить</button>
@@ -273,7 +276,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                                                 balloonContent: `${place.name}<br/>${place.card_description}`,
                                                 layoutContent: place.name
                                             }}
-                                            modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}    
+                                            modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
                                             geometry={place.coordinates.split(',')}
                                         />
                                     )
@@ -287,7 +290,10 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
                 {places && places.length > 0 && places.map((item) => (
                     <PlaceItem onClick={() => {
-                        setFormData({ ...item, cardDescription: item.card_description } as any);
+                        console.log(item.coordinates, item?.coordinates.split(','), item?.category?.split(","))
+
+                        setPoint((item?.coordinates.split(',') as any) || [0,0])
+                        setFormData({ ...item, card_description: item.card_description, images: [], category: [],  coordinates: item?.coordinates.split(',') } as any);
                         setType('edit')
                     }} data={item as any} />
                 ))}

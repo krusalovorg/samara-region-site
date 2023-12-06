@@ -1,13 +1,16 @@
+from datetime import timedelta
+
 import pymysql
 import requests
 from config import host, user, password, db_name
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, jsonify, request, send_file, Response
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import os
 from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your_secret_key'
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 jwt = JWTManager(app)
 
 CORS(app)
@@ -74,9 +77,9 @@ def create_table_category():
 def fill_table(connection, table_name, data):
     with connection.cursor() as cursor:
         if table_name == 'places':
-            insert_query = "INSERT INTO places (name, card_description, description, category, images, coordinates, rate, price, city, location, walk, time) VALUES (%(name)s, %(cardDescription)s, %(description)s, %(category)s, %(image)s, %(coordinates)s, %(rate)s, %(price)s, %(city)s, %(location)s, %(walk)s, %(time)s);"
+            insert_query = "INSERT INTO places (name, card_description, description, category, images, coordinates, rate, price, city, location, walk, time) VALUES (%(name)s, %(card_description)s, %(description)s, %(category)s, %(image)s, %(coordinates)s, %(rate)s, %(price)s, %(city)s, %(location)s, %(walk)s, %(time)s);"
         elif table_name == 'routes':
-            insert_query = f"INSERT INTO routes (name, card_description, description, category, images, points) VALUES ( %(name)s, %(cardDescription)s, %(description)s, %(category)s, %(image)s, %(points)s);"
+            insert_query = f"INSERT INTO routes (name, card_description, description, category, images, points) VALUES ( %(name)s, %(card_description)s, %(description)s, %(category)s, %(image)s, %(points)s);"
         elif table_name == 'category':
             insert_query = f"INSERT INTO category (name, description) VALUES ( %(name)s, %(description)s);"
         print(data)
@@ -100,8 +103,9 @@ def super_print(table_name, category=None):
     # connection.ping()  # reconnecting mysql
     new_connection = create_connection()
     with new_connection.cursor() as cursor:
-        if category:
-            select_all_rows = f"SELECT * FROM {table_name} WHERE category = '{category}'"
+        if category and int(category) > -1:
+            select_all_rows = f"SELECT * FROM {table_name} WHERE category LIKE '%{category}%'"
+            print(select_all_rows)
         else:
             select_all_rows = f"SELECT * FROM {table_name}"
         cursor.execute(select_all_rows)
@@ -114,16 +118,21 @@ def super_print(table_name, category=None):
 
 # delete something from table
 def delete_place(id, table_name):
+    connection = create_connection()
     with connection.cursor() as cursor:
-        delete_query = f"DELETE FROM `{table_name}` WHERE id = {id};"
+        delete_query = f"DELETE FROM {table_name} WHERE id = {id};"
+        print(delete_query)
         cursor.execute(delete_query)
         connection.commit()
+        print('delete',super_print('category'))
+    return Response(status=200)
 
 
 # edit something from table
-def edit_table(table_name, options, values, id):
-    for i in range(len(options)):
-        edit_query = f"UPDATE {table_name} SET {options[i]} = '{values[i]}' WHERE id = {id};"
+def edit_table(table_name, changes, id):
+    for key, value in changes.items():
+        edit_query = f"UPDATE {table_name} SET {key} = '{value}' WHERE id = {id};"
+        print(edit_query)
         cursor.execute(edit_query)
         connection.commit()
 
@@ -133,6 +142,7 @@ def get_place_details_id(place_id, table_name):
     connection = create_connection()
     with connection.cursor() as cursor:
         select_query = f"SELECT * FROM {table_name} WHERE id = %s"
+        print(select_query.replace('%s', place_id))
         cursor.execute(select_query, (place_id))
         place_details = cursor.fetchone()
         return place_details
@@ -147,15 +157,38 @@ def get_place_details_name(place_name, table_name):
         return place_details
 
 
-def get_routes(time_filter):
+def get_routes_filtred(time_filter, category_filter):
+    connection = create_connection()
     with connection.cursor() as cursor:
-        query = f"SELECT * FROM routes WHERE time <= {time_filter} ORDER BY time DESC"
+        if int(category_filter) == -1:
+            query = f"SELECT * FROM routes WHERE time <= {time_filter} ORDER BY time DESC"
+            print("search only by time", query)
+        else:
+            query = f"SELECT * FROM routes WHERE time <= {time_filter} AND category LIKE '%{category_filter}%' ORDER BY time DESC"
         cursor.execute(query)
         rows = cursor.fetchall()
         result = []
         for row in rows:
             result.append(row)
         return result
+
+def get_objects_arr(arr, table_name):
+    category_ids = arr.split(",")
+    result = []
+    for category_id in category_ids:
+        category_details = get_place_details_id(category_id, table_name)
+        result.append(category_details)
+    return result
+
+def get_full_object(route_id, table_name):
+    object_details = get_place_details_id(route_id, table_name)
+    print('get place route',object_details)
+    object_details['category'] = get_objects_arr(object_details["category"], 'category')
+
+    if table_name == 'routes':
+        object_details['points'] = get_objects_arr(object_details["points"], 'places')
+
+    return object_details
 
 
 # login as admin
@@ -176,6 +209,7 @@ def login():
 @app.route('/places')
 def points_return():
     category = request.args.get('category')
+    print(category)
     if category:
         return jsonify(super_print('places', category))
     else:
@@ -185,7 +219,18 @@ def points_return():
 # send routes
 @app.route('/routes')
 def routes_return():
-    return jsonify(super_print('routes'))
+    category = request.args.get('category')
+    time = request.args.get("time")
+
+    if time:
+        if category:
+            return jsonify(get_routes_filtred(time, category))
+        else:
+            return jsonify(get_routes_filtred(time, -1))
+    elif category:
+        return jsonify(super_print('routes', category))
+    else:
+        return jsonify(super_print('routes'))
 
 
 # send category
@@ -203,7 +248,7 @@ def send_image(image_name):
 
 # add something in table
 @app.route('/add', methods=['POST'])
-# @jwt_required()
+@jwt_required()
 def add_places():
     data = request.form.to_dict()
     if request.files.get("image", False):
@@ -229,9 +274,9 @@ def return_details_by_id():
     table = request.args.get('table_name')
 
     if table == 'places':
-        details = get_place_details_id(id, 'places')
+        details = get_full_object(id, 'places')
     elif table == 'routes':
-        details = get_place_details_id(id, 'routes')
+        details = get_full_object(id, 'routes')
     elif table == 'category':
         details = get_place_details_id(id, 'category')
     else:
@@ -265,31 +310,32 @@ def return_place_by_name():
 
 # delete something
 @app.route('/delete', methods=['GET'])
+@jwt_required()
 def delete_by_id():
     id = request.args.get('id')
     table = request.args.get('table_name')
     delete_place(id, table)
-
+    return jsonify({'success': True})
 
 # edit something
-@app.route('/edit', methods=['GET'])
+@app.route('/edit', methods=['POST'])
+@jwt_required()
 def edit_by_id():
-    id = request.args.get('id')
-    table = request.args.get('table_name')
-    options = request.args.get('options')
-    values = request.args.get('values')
-    edit_table(table, options, values, id)
+    data = request.form.to_dict()
+    if request.files.get("image", False):
+        image = request.files['image']
 
-
-@app.route('/get_route_time', methods=['GET'])
-def route_time():
-    time_filter = request.args.get('time_filter')
-    details = get_routes(time_filter)
-    if details:
-        return jsonify(details)
-    else:
-        print('Мавршрутов нет')
-
+        print('image', image)
+        path = os.path.join(app.root_path, 'images', image.filename)
+        image.save(path)
+        data['image'] = image.filename
+    print('get data for edit',data.get("type", None))
+    type_table = data.get("type")
+    id_obj = data.get("id")
+    del data['type']
+    del data['id']
+    edit_table(type_table, data, id_obj)
+    return jsonify({'success': True})
 
 # start code
 if __name__ == "__main__":

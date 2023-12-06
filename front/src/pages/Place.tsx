@@ -12,43 +12,51 @@ import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
 
 function PlacePage({ route }: { route?: boolean }) {
   const [data, setData] = useState<any>(null);
-  const [categorys, setCategorys] = useState<CategoryType[]>([]);
   const [points, setPoints] = useState<Place[]>([]);
   const map = useRef<any>(null);
   const [yamap, setYampas] = useState<YMapsApi | null>(null);
   const [loaded, setLoaded] = useState(false);
   const { id } = useParams();
+  const [offset, setOffset] = useState(3);
 
   async function loadPlaces() {
     const data: any = await getItemById(id || "1", route ? "routes" : 'places');
+    console.log('set data', data, route ? "routes" : 'places')
 
     if (data) {
-      const result = await getItemsById(data?.category?.split(','), 'category');
-      setCategorys(result);
-
       if (data?.points) {
-        const result = await getItemsById(data?.points?.split(','), 'places');
-        setPoints(result);
-        setTimeout(()=>loadRouters(result), 1200)
+        // const result = await getItemsById(data?.points?.split(','), 'places');
+        setPoints(data?.points);
+      } else {
+        const places_all = await getData("places") as Place[]
+        console.log('places alll',places_all)
+        setPoints(places_all);
       }
-
+      console.log('set data', data)
       setData(data);
     }
   }
 
   useEffect(() => {
     loadPlaces();
-  }, [])
+  }, [id])
 
   const addRoute = (ymaps: any) => {
     setYampas(ymaps)
+    console.log("loaded ymaps", points)
+    if (points) {
+      console.log('points add obne time wisn now')
+      if (data?.points) {
+        setTimeout(() => loadRouters(data?.points, ymaps), 1200)
+      }
+    }
   };
 
-  function loadRouters(points: any[]) {
+  function loadRouters(points: any[], yamap?: YMapsApi) {
     if (yamap == null) return
-
+    console.log("loadddsadedse")
     const extractedCoordinates: any[] = points.map((item) => item.coordinates);
-    console.log(extractedCoordinates)
+    //console.log(extractedCoordinates)
     const multiRoute = new yamap.multiRouter.MultiRoute(
       {
         referencePoints: extractedCoordinates,
@@ -65,7 +73,7 @@ function PlacePage({ route }: { route?: boolean }) {
     console.log('multiRoute', multiRoute)
 
     const res = map?.current.geoObjects?.add(multiRoute);
-    console.log(res)
+    console.log('trwsugoil', res)
     setLoaded(true)
   }
 
@@ -103,12 +111,12 @@ function PlacePage({ route }: { route?: boolean }) {
           </div>
         </div>
         <div className='mt-[30px] gap-x-[10px] flex flex-row'>
-          {categorys?.map((item) => <Category text={item.name} color={"bg-[#D2F881]"} />)}
+          {data?.category && data?.category?.map((item: any) => <Category text={item.name} color={"bg-[#D2F881]"} />)}
         </div>
       </section>
-      <section className={'px-[5%] flex md:flex-row mt-[30px] items-stretch'}>
+      <section className={'px-[5%] flex max-md:flex-col md:flex-row mt-[30px] items-stretch'}>
         <div className={`w-full md:w-[70%] bg-white rounded-[50px] h-auto px-[36px] py-[30px]`}>
-          <p className='text-xl mb-[30px]'>
+          <p className='text-xl mb-[30px] leading-[150%]'>
             {data.description}
           </p>
 
@@ -121,7 +129,7 @@ function PlacePage({ route }: { route?: boolean }) {
               defaultState={{ center: [53.2415041, 50.2212463], zoom: 7 }}
             >
               {data?.points ?
-                points.map((point) => {
+                points && points.length > 0 && points.map((point) => {
                   if (point.coordinates.split(",").length == 2) {
                     return <Placemark
                       options={{
@@ -143,10 +151,12 @@ function PlacePage({ route }: { route?: boolean }) {
         </div>
         <div className='md:w-[30%] ml-[20px] gap-[20px] flex flex-col'>
           <h1 className='text-2xl font-medium text-[#2C2C2C]'>{data?.points ? "Все точки маршрута" : "Другие точки"}</h1>
-          {data?.points ? points?.map((item: any) => {
-            console.log(item)
+          {points?.slice(0,offset).map((item: any) => {
             return <PlaceItem data={item} />
-          }) : <></>}
+          })}
+          <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px] mx-auto' onClick={() => { setOffset(offset + 3) }}>
+            Раскрыть →
+          </button>
         </div>
       </section>
     </div>

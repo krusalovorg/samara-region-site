@@ -1,18 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import PlaceItem from "./PlaceItem";
 import { Place, Route, getData } from "../utils/backend";
+import useIsMobile from "./isMobile";
+import { useNavigate } from "react-router-dom";
 
-function PlacesList({places}: {places: Place[]}) {
+function PlacesList({ places }: { places: Place[] }) {
     const scrollRef = useRef<HTMLDivElement>(null);
     // const [places, setPlaces] = useState<Place[]>([]);
-    const [scrolled, setScrolled] = useState(0);
+    const [scrolled, setScrolled] = useState(2);
     // const [routes, setRoutes] = useState<Route[]>([]);
     const [data, setData] = useState<any[]>([]);
+    const isMobile = useIsMobile();
+    const navigate = useNavigate();
+    const [offset, setOffset] = useState(3);
 
     async function loadPlaces() {
         // const places = await getData("places") as any;
         const routes = await getData("routes") as any;
-        console.log('places',places)
+        console.log('places', places)
         const mergedList = places.map((place: any, index: any) => {
             if (index < routes.length) {
                 return [place, routes[index]];
@@ -63,16 +68,24 @@ function PlacesList({places}: {places: Place[]}) {
             </h2>
             <div
                 ref={scrollRef}
-                className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex sm:flex-col md:flex-row scroll-smooth'>
-                {data && data.length > 0 && data.map((item) => (
+                className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex max-md:flex-col md:flex-row scroll-smooth'>
+                {data && data.length > 0 && data.slice(0, isMobile ? 1000 : offset).map((item) => (
                     <PlaceItem data={item} />
                 ))}
             </div>
-            <div className='flex flex-row justify-center items-center mt-[24px]'>
-                <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollLeft}>{'<'}</button>
-                <h2 className='text-[#2C2C2C] font-medium text-md mx-[30px]'>{scrolled}/{data.length || 1}</h2>
-                <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollRight}>{'>'}</button>
-            </div>
+            {isMobile ?
+                offset < data.length ?
+                    <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={() => { setOffset(offset + 3) }}>
+                        Раскрыть →
+                    </button>
+                    : <></>
+                :
+                <div className='flex flex-row justify-center items-center mt-[24px]'>
+                    <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollLeft}>{'<'}</button>
+                    <h2 className='text-[#2C2C2C] font-medium text-md mx-[30px]'>{scrolled}/{data.length || 1}</h2>
+                    <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollRight}>{'>'}</button>
+                </div>
+            }
         </section>
     )
 }

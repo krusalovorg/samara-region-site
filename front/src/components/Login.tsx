@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminHeader from './AdminHeader';
 import { getCookieToken } from '../utils/utils';
+import Header from './Header';
 
 function Login({ children, fragment, setFragment }: any) {
     const [username, setUsername] = useState('');
@@ -12,6 +13,13 @@ function Login({ children, fragment, setFragment }: any) {
         const cookieToken = getCookieToken();
         if (cookieToken) {
             setToken(cookieToken.split('=')[1]);
+        }
+    }, []);
+
+    useEffect(() => {
+        const currentFragment = window.location.hash.substr(1);
+        if (currentFragment) {
+            setFragment(currentFragment);
         }
     }, []);
 
@@ -52,6 +60,7 @@ function Login({ children, fragment, setFragment }: any) {
                     </>
                 ) : (
                     <>
+                    <Header/>
                         <div className='w-full max-w-lg px-10 py-8 mx-auto bg-white border rounded-lg shadow-2xl'>
                             <div className='max-w-md mx-auto space-y-3'>
                                 <h3 className="text-lg font-semibold">Вход</h3>

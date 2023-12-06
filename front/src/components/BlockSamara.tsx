@@ -7,7 +7,7 @@ import ImageCard5 from '../assets/buti5.jpg';
 import ImageCard6 from '../assets/buti6.jpg';
 import { YMaps, Map, Placemark, Polyline } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
-import { Place, getData } from '../utils/backend';
+import { Place, Route, getData } from '../utils/backend';
 import Category from './Category';
 // import ImageCard7 from './assets/buti7.jpg';
 // import ImageCard8 from './assets/buti8.jpg';
@@ -37,10 +37,10 @@ function BlockSamara({ places }: { places: Place[] }) {
         setYampas(ymaps)
     };
 
-    function loadRouters() {
+    function loadRouters(route: Route) {
         if (loaded || yamap == null) return
-        const pointA = [53.202025, 50.096821]; // Москва
-        const pointB = [53.513222, 49.410331]; // Санкт-Петербург
+
+        //const extractedCoordinates: any[] = route?.points.split(',')?.map((item) => item.coordinates);
 
         const multiRoute = new yamap.multiRouter.MultiRoute(
             {
@@ -59,11 +59,10 @@ function BlockSamara({ places }: { places: Place[] }) {
 
         multiRoute.events.add("click", () => {
             // var yandexWayPoint = multiRoute.getWayPoints().get(1);
-            console.log('clickckckckkckccxcxcxc')
             setInformation({
-                name: "Маршрут Самара-Тольятти",
+                name: route.name,
                 category: [],
-                description: "Маршрут начнется в Тольятти, городе, известном своим автомобильным производством. Оттуда можно отправиться в Самару, где стоит посетить самарскую набережную Волги, памятники архитектуры и исторические музеи. Затем маршрут приведет вас в село Ягодное, расположенное в живописной местности, где можно насладиться тихой обстановкой и природой. Затем вы отправитесь в Замок Гарибальди, который находится в Московском районе Самары. Это архитектурное сооружение, построенное в стиле средневекового замка. Замок Гарибальди является популярным местом для проведения мероприятий, фотосессий и экскурсий. Этот маршрут предлагает разнообразие от культурных достопримечательностей до природных красот, и будет интересен для любого туриста."
+                description: route.description
             })
         });
 
@@ -111,7 +110,7 @@ function BlockSamara({ places }: { places: Place[] }) {
 
     useEffect(() => {
         if (yamap !== null) {
-            loadRouters()
+            //loadRouters()
         }
     }, [yamap])
 

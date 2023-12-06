@@ -33,16 +33,14 @@ export type Place = {
 
 const url_stat = "http://127.0.0.1:5000"
 
-export async function getData(route: "places" | "routes" | "category", category?: string) {
+export async function getData(route: "places" | "routes" | "category", category?: string | number, time?: number) {
     let url = url_stat;
-    if (route === 'places') {
+    if (route === 'places' || route === 'routes') {
         if (category) {
-            url += `/places?category=${category}`;
+            url += `/${route}?category=${category}&time=${time||24}`;
         } else {
-            url += '/places';
+            url += '/'+route;
         }
-    } else if (route === 'routes') {
-        url += '/routes';
     } else if (route === 'category') {
         url += '/category';
     } else {
@@ -56,7 +54,7 @@ export async function getData(route: "places" | "routes" | "category", category?
             throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log('data:', data)
+        //console.log('data:', data)
         if (route === 'places') {
             return data as Place[];
         } else if (route === 'routes') {
@@ -83,7 +81,7 @@ export async function getItemById(id: string, category: "places" | "routes" | "c
         const url = `${url_stat}/get_details_id?id=${id}&table_name=${category}`; 
         console.log('fetch url:', url) 
         const data = await requestData(url); 
-        console.log('data:', data) 
+        //console.log('data:', data) 
         return data as Place; 
     } catch (error) { 
         console.error('Error fetching data:', error); 
@@ -96,7 +94,7 @@ export async function deleteById(id: number, category: "places" | "routes" | "ca
         const url = `${url_stat}/delete?id=${id}&table_name=${category}`; 
         console.log('fetch url:', url) 
         const data = await requestData(url); 
-        console.log('data:', data) 
+        //console.log('data:', data) 
         return data as Place; 
     } catch (error) { 
         console.error('Error fetching data:', error); 

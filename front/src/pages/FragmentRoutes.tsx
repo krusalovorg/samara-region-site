@@ -3,22 +3,24 @@ import Login from '../components/Login';
 import { getCookieToken } from '../utils/utils';
 import { YMaps, Map, Placemark, SearchControl, Clusterer, ObjectManager } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
-import { Category, Place, getData } from '../utils/backend';
+import { Category, Place, Route, getData } from '../utils/backend';
 import PlaceItem from '../components/PlaceItem';
 
 function FragmentRoutes({ setFragment }: { setFragment?: any }) {
     const [formData, setFormData] = useState<{
         name: string;
-        cardDescription: string;
+        card_description: string;
         description: string;
         category: number[];
         images: File[];
+        time: number;
     }>({
         name: '',
-        cardDescription: '',
+        card_description: '',
         description: '',
         category: [],
         images: [] as File[],
+        time: 1
     });
 
     const [places, setPlaces] = useState<Place[]>([]);
@@ -26,6 +28,8 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
     const [categorys, setCategorys] = useState<Category[]>([]);
     const [selectPlacesId, setSelectPlacesId] = useState<number[]>([]);
     const [selectPlaces, setSelectPlaces] = useState<Place[]>([]);
+    const [type, setType] = useState("add");
+    const [routes, setRoutes] = useState<Route[]>([]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target as any;
@@ -64,18 +68,20 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                         formDataToSend.append(key, (formData as any)[key]);
                     }
                 });
-                formDataToSend.append('image', formData.images[0], formData.images[0].name);
+                if (formData.images.length > 0) {
+                    formDataToSend.append('image', formData.images[0], formData.images[0].name);
+                }
                 formDataToSend.append("type", "routes");
                 formDataToSend.append("points", selectPlacesId as any);
 
-                const response = await fetch('http://127.0.0.1:5000/add', {
+                const response = await fetch(`http://127.0.0.1:5000/${type == 'edit' ? 'edit' : "add"}`, {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                     body: formDataToSend,
                 });
-
+                document.location.reload();
                 if (response.ok) {
                     console.log('Data added successfully');
                 } else {
@@ -91,7 +97,10 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
     async function load() {
         const places = await getData("places");
         const category = await getData("category");
-
+        const routes_all = await getData('routes');
+        if (routes_all) {
+            setRoutes(routes_all as Route[])
+        }
         if (category) {
             setCategorys(category);
         }
@@ -126,8 +135,8 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                     <div className="mb-6">
                         <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Краткое описание</label>
                         <textarea id="message"
-                            value={formData.cardDescription} onChange={handleInputChange}
-                            name='cardDescription'
+                            value={formData.card_description} onChange={handleInputChange}
+                            name='card_description'
                             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Гора стрельная..."></textarea>
                     </div>
 
@@ -137,6 +146,21 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                             value={formData.description} onChange={handleInputChange}
                             name="description"
                             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Гора стрельная..."></textarea>
+                    </div>
+
+                    <div className="mb-6">
+                        <label
+                            htmlFor="default-input"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Продолжительность (ч.)
+                        </label>
+                        <input
+                            type="number"
+                            name='time'
+                            id="default-input"
+                            value={formData.time}
+                            onChange={handleInputChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                     </div>
 
                     <div className="mb-6">
@@ -163,7 +187,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                         {
                             selectPlaces.map((item) => (
                                 <>
-                                    <PlaceItem style={{marginBottom: 12}} data={item} />
+                                    <PlaceItem style={{ marginBottom: 12 }} data={item} />
                                 </>
                             ))
                         }
@@ -227,6 +251,15 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                         </Map>
                     </section>
                 </YMaps>
+            </div>
+            <h1 className='text-2xl font-medium text-[#2C2C2C] mt-2'>Все маршруты</h1>
+            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
+                {routes && routes.length > 0 && routes.map((item) => (
+                    <PlaceItem onClick={() => {
+                        setFormData({ ...item, card_description: item.card_description, images: [] } as any);
+                        setType('edit')
+                    }} data={item as any} />
+                ))}
             </div>
         </>
     )

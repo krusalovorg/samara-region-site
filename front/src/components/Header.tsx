@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import GerbLogo from '../assets/gerb.png';
 import { useNavigate } from 'react-router-dom';
 import { getCookieToken } from '../utils/utils';
+import useIsMobile from './isMobile';
 
 function Header() {
     const navigate = useNavigate();
     const [admin, setAdmin] = useState(false);
+    const isMobile = useIsMobile();
 
     const url = window.location.pathname;
 
@@ -19,12 +21,13 @@ function Header() {
                 <img className='absolute left-[5%] cursor-pointer' onClick={() => {
                     navigate("/")
                 }} width={64} height={64} src={GerbLogo} />
+                {!isMobile &&
                 <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/' ? 'bg-[#D2F881]' : ''}`}
                     onClick={() => {
                         navigate("/")
                     }}>
                     Регион
-                </a>
+                </a>}
                 <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/all/routes' ? 'bg-[#D2F881]' : ''}`}
                     onClick={() => {
                         navigate("/all/routes")

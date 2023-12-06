@@ -9,7 +9,10 @@ import useIsMobile from './isMobile';
 function SearchPanel() {
     const [timeToure, setTimeToure] = useState(6);
     const [searchCategory, setSearchCategory] = useState<string | null>(null);
+    const [categoryId, setCategoryId] = useState<number>(-1);
+
     const [categorys, setCategorys] = useState<Category[]>([]);
+
     const [offset, setOffset] = useState(10);
     const [search, setSearch] = useState(0);
     const [data, setData] = useState<Route[] | Place[]>([]);
@@ -31,20 +34,36 @@ function SearchPanel() {
         }
     }
 
+    async function getDataCategory(type: "places" | "routes") {
+        let new_data: any = await getData(type as any, categoryId, timeToure);
+        return new_data
+    }
+
     async function SearchE() {
         setSearch(1);
-        objectsSearch.map(async (item) => {
-            const new_data = await getData(item as any);
-            if (new_data) {
-                setData([...data, ...new_data] as any)
-            }
-        })
+        let new_data: any = [];
+        if (objectsSearch.includes('places')) {
+            const places_data = await getDataCategory('places');
+            new_data = places_data
+        }
+        if (objectsSearch.includes('routes')) {
+            const route_data = await getDataCategory('routes');
+            new_data = [...new_data, ...route_data]
+        }
+        console.log('get new data', new_data, objectsSearch)
+        setData(new_data)
         setSearch(2);
     }
 
     useEffect(() => {
         loadCategorys();
     }, [])
+
+    useEffect(() => {
+        if (objectsSearch.length > 0 && search == 2) {
+            SearchE();
+        }
+    }, [categoryId])
 
     return (
         <>
@@ -64,14 +83,22 @@ function SearchPanel() {
                             zIndex: 1000,
                             height: isMobile ? 60 : ""
                         }}
-                        className='bg-[#D2F881] px-10 py-3 font-medium rounded-xl z-[100] w-[160px]'
+                        className='bg-[#D2F881] px-10 py-3 font-medium rounded-xl z-[1000] w-fit'
                         label={searchCategory || "Категория"} dismissOnClick={true}>
                         {/* <Dropdown.Item onClick={() => setSearchCategory("Места")}>Места</Dropdown.Item>
                         <Dropdown.Item onClick={() => setSearchCategory("Маршруты")}>Маршруты</Dropdown.Item>
                         <Dropdown.Item onClick={() => setSearchCategory("Круизы")}>Круизы</Dropdown.Item>
  */}
-                        {categorys.map((item) =>
-                            <Dropdown.Item onClick={() => setSearchCategory(item.name)}>{item.name}</Dropdown.Item>
+                        <Dropdown.Item className='flex justify-center items-center' onClick={() => {
+                            setCategoryId(-1)
+                            setSearchCategory("Все")
+                        }}>Все</Dropdown.Item>
+
+                        {categorys.map((item: Category) =>
+                            <Dropdown.Item className='flex justify-center items-center' onClick={() => {
+                                setCategoryId(item?.id)
+                                setSearchCategory(item.name)
+                            }}>{item.name}</Dropdown.Item>
                         )}
                     </Dropdown>
                     {/* <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium ml-[20px]' onClick={SearchE}>Поиск</button> */}
@@ -104,18 +131,28 @@ function SearchPanel() {
             </div>
                 : search == 2 ?
                     <>
-                        <div className='w-full px-[5%] overflow-x-auto h-fit grid grid-cols-3 gap-4 my-20'>
-                            {
+                        <div className='w-full px-[5%] overflow-x-auto h-fit grid grid-cols-3 gap-4 my-20 relative transition-all	'>
+                            {data.length > 0 ?
                                 data.slice(0, offset).map((item) => (
                                     <PlaceItem data={item as any} />
                                 ))
+                                :
+                                <>
+                                    <div />
+                                    <h1 className='m-auto z-10 text-2xl'>
+                                        Результаты не найдены
+                                    </h1>
+                                    <div />
+                                </>
                             }
                         </div>
-                        <div className='w-full flex justify-center items-center px-[5%] mb-[20px]'>
-                            <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={() => { setOffset(offset + 10) }}>
-                                Раскрыть →
-                            </button>
-                        </div>
+                        {data.length >= offset &&
+                            <div className='w-full flex justify-center items-center px-[5%] mb-[20px]'>
+                                <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={() => { setOffset(offset + 10) }}>
+                                    Раскрыть →
+                                </button>
+                            </div>
+                        }
                     </>
                     : <div className='h-[5em]'></div>
             }

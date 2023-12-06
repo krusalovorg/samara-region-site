@@ -2,7 +2,7 @@ import ImageCard2 from '../assets/buti2.jpg';
 import { useNavigate } from "react-router-dom";
 import Category from './Category';
 import { Place, getItemById } from '../utils/backend';
-import { getImage } from '../utils/utils';
+import { declOfHours, getImage } from '../utils/utils';
 import { useEffect, useState } from 'react';
 
 function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClick?: any }) {
@@ -11,13 +11,17 @@ function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClic
 
     async function loadCategorys() {
         if (data?.category && data?.category?.split(',')?.length > 0) {
-            data?.category?.split(',').map(async (item: any) => {
-                const data = await getItemById(item.id || "1", 'category');
-                console.log('category id fetched', item, data)
+            console.log('data ',data.category)
+            let all_data = [];
+            for (const category_id of data?.category?.split(',')) {
+                console.log('category id fetched', category_id)
+                const data = await getItemById(category_id, 'category');
+                console.log('result gert', data)
                 if (data) {
-                    setCategorys([...categorys, data]);
+                    all_data.push(data);
                 }
-            })
+            }
+            setCategorys(all_data);
         }
     }
 
@@ -42,7 +46,7 @@ function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClic
                 }
             }}>
             {/* <div className='absolute bottom-0 w-full h-1/3 rounded-b-2xl z-[1]' style={{  }} /> */}
-            <div className={`px-[5%] py-[20px] h-full w-full flex z-[100] relative flex flex-col`}>
+            <div className={`px-[5%] py-[20px] h-full w-full flex z-[10] relative flex flex-col`}>
                 <div className='flex flex-row gap-x-[10px]'>
                     {categorys.map((item) =>
                         <Category text={item.name} />
@@ -52,6 +56,12 @@ function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClic
 
                 <h2 className='text-white font-bold spacing-[0px] text-3xl mt-auto'>{data?.name || ""}</h2>
                 <h3 className='text-white spacing-[0px] text-lg mt-1'>{data?.card_description || ""}</h3>
+                {
+                    data?.time ?
+                    <h3 className='text-white spacing-[0px] text-md mt-1'>Продолжительность: {data?.time} {declOfHours(data?.time) || ""}</h3>
+                    :
+                    <></>
+                }
             </div>
         </div>
     )

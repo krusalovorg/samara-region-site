@@ -37,15 +37,17 @@ function FragmentCategory() {
                 formDataToSend.append("type", "category");
                 formDataToSend.append("name", formData.name);
                 formDataToSend.append("description", formData.description);
+                formDataToSend.append("id", formData.id + '');
                 console.log(formDataToSend.get('type'))
-                const response = await fetch('http://127.0.0.1:5000/add', {
+                const response = await fetch(`http://127.0.0.1:5000/${type =='edit' ? 'edit' : "add"}`, {
                     method: 'POST',
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        'Authorization': `Bearer ${token}`,
                         //'Content-Type': 'multipart/form-data'
                     },
                     body: formDataToSend,
                 });
+                loadCategorys();
 
                 if (response.ok) {
                     console.log('Data added successfully');
@@ -60,8 +62,8 @@ function FragmentCategory() {
     };
 
     async function handleDelete() {
-        const result = await deleteById(formData?.id, 'places');
-        window.location.reload();
+        const result = await deleteById(formData?.id, 'category');
+        loadCategorys();
     }
 
     async function loadCategorys() {
