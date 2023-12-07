@@ -112,7 +112,7 @@ function PlacePage({ route }: { route?: boolean }) {
           </div>
         </div>
         <div className='mt-[30px] gap-x-[10px] flex flex-row'>
-          {data?.category && data?.category?.map((item: any) => <Category text={item.name} description={item.description} color={"bg-[#D2F881]"} />)}
+          {data?.category && data?.category?.map((item: any) => <Category text={item?.name} description={item?.description} color={"bg-[#D2F881]"} />)}
         </div>
       </section>
       <section className={'px-[5%] flex max-md:flex-col md:flex-row mt-[30px] items-stretch'}>
