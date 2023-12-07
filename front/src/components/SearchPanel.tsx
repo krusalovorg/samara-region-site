@@ -81,9 +81,10 @@ function SearchPanel() {
                             marginLeft: isMobile ? 0 : 20,
                             width: isMobile ? "100%" : 160,
                             zIndex: 1000,
+                            fontSize: 16,
                             height: isMobile ? 60 : ""
                         }}
-                        className='bg-[#D2F881] px-10 py-3 font-medium rounded-xl z-[1000] w-fit'
+                        className='bg-[#D2F881] px-10 py-3 text-[16px] font-medium rounded-xl z-[1000] w-fit'
                         label={searchCategory || "Категория"} dismissOnClick={true}>
                         {/* <Dropdown.Item onClick={() => setSearchCategory("Места")}>Места</Dropdown.Item>
                         <Dropdown.Item onClick={() => setSearchCategory("Маршруты")}>Маршруты</Dropdown.Item>
@@ -108,7 +109,7 @@ function SearchPanel() {
                             onChange={(event) => handleUpdateCheckbox('routes')}
                             type="checkbox"
                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                        <label htmlFor="checked-checkbox" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Маршруты</label>
+                        <label htmlFor="checked-checkbox" className="ms-2 text-[16px] font-medium text-gray-900 dark:text-gray-300">Маршруты</label>
                     </div>
                     <div className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium md:ml-[20px] flex justify-center items-center'>
                         <input
@@ -116,7 +117,7 @@ function SearchPanel() {
                             onChange={(event) => handleUpdateCheckbox('places')}
                             type="checkbox"
                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                        <label htmlFor="checked-checkbox" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Туристические точки</label>
+                        <label htmlFor="checked-checkbox" className="ms-2 text-[16px] font-medium text-gray-900 dark:text-gray-300">Туристические точки</label>
                     </div>
 
                     <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium md:ml-auto'

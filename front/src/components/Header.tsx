@@ -17,7 +17,7 @@ function Header() {
 
     return (
         <>
-            <header className='w-full absolute top-0 left-0 py-[40px] flex flex-row max-md:justify-start max-md:pl-[100px] md:justify-center items-center z-[1000] px-5'>
+            <header className='w-full absolute top-0 left-0 max-md:pl-[100px] py-[40px] flex flex-row max-md:justify-start md:justify-center items-center z-[1000] md:px-5'>
                 <img className='absolute left-[5%] cursor-pointer' onClick={() => {
                     navigate("/")
                 }} width={64} height={64} src={GerbLogo} />
