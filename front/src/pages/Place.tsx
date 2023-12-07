@@ -39,6 +39,7 @@ function PlacePage({ route }: { route?: boolean }) {
 
   useEffect(() => {
     loadPlaces();
+    window.scrollTo(0, 0);
   }, [id])
 
   const addRoute = (ymaps: any) => {

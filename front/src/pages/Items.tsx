@@ -27,6 +27,7 @@ function ItemsPage() {
 
   useEffect(() => {
     loadPlaces();
+    window.scrollTo(0, 0);
   }, [category])
 
   if (loading) {
