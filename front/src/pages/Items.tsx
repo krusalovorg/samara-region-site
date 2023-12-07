@@ -42,7 +42,7 @@ function ItemsPage() {
       <div className='px-[5%] w-full h-full'>
         <Header />
         <h1 className='text-2xl font-medium text-[#2C2C2C]'>Все {category == 'routes' ? "маршруты" : "туристические точки"}</h1>
-        <p className='text-xl font-regular sm:w-full md:w-2/3 text-[#2C2C2C] mt-2'>
+        <p className='text-xl font-regular sm:w-full md:w-2/3 text-[#2C2C2C] mt-2 leading-[150%]'>
           {description[category as ("routes" | "places")]}
         </p>
         <div className='grid max-md:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>

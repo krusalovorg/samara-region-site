@@ -12,7 +12,7 @@ export type Route = {
     description: string;
     category: string;
     images: string;
-    points: string;
+    points: Place[];
 };
 
 export type Place = {
@@ -20,7 +20,7 @@ export type Place = {
     name: string;
     card_description: string;
     description: string;
-    category: string;
+    category: Category[] | string;
     images: string;
     coordinates: string;
     rate: number;

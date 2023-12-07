@@ -131,7 +131,7 @@ function SearchPanel() {
             </div>
                 : search == 2 ?
                     <>
-                        <div className='w-full px-[5%] overflow-x-auto h-fit grid grid-cols-3 gap-4 my-20 relative transition-all	'>
+                        <div className='max-md:grid-cols-1 w-full px-[5%] overflow-x-auto h-fit grid grid-cols-3 gap-4 my-20 relative transition-all'>
                             {data.length > 0 ?
                                 data.slice(0, offset).map((item) => (
                                     <PlaceItem data={item as any} />

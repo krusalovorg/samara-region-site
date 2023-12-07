@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import ImageCard2 from '../assets/buti2.jpg';
 import Category from '../components/Category';
 import { Category as CategoryType, getItemsById, getData, getItemById, Place, Route } from '../utils/backend';
-import { getImage } from '../utils/utils';
+import { declOfHours, getImage } from '../utils/utils';
 import { useParams } from 'react-router-dom';
 import PlaceItem from '../components/PlaceItem';
 import { Placemark, YMaps, Map } from '@pbe/react-yandex-maps';
@@ -29,7 +29,7 @@ function PlacePage({ route }: { route?: boolean }) {
         setPoints(data?.points);
       } else {
         const places_all = await getData("places") as Place[]
-        console.log('places alll',places_all)
+        console.log('places alll', places_all)
         setPoints(places_all);
       }
       console.log('set data', data)
@@ -111,7 +111,7 @@ function PlacePage({ route }: { route?: boolean }) {
           </div>
         </div>
         <div className='mt-[30px] gap-x-[10px] flex flex-row'>
-          {data?.category && data?.category?.map((item: any) => <Category text={item.name} color={"bg-[#D2F881]"} />)}
+          {data?.category && data?.category?.map((item: any) => <Category text={item.name} description={item.description} color={"bg-[#D2F881]"} />)}
         </div>
       </section>
       <section className={'px-[5%] flex max-md:flex-col md:flex-row mt-[30px] items-stretch'}>
@@ -119,6 +119,16 @@ function PlacePage({ route }: { route?: boolean }) {
           <p className='text-xl mb-[30px] leading-[150%]'>
             {data.description}
           </p>
+
+          {data.time ? <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Продолжительность: {data?.time} {declOfHours(data.time)}</h3> : <></>}
+          {data.points ?
+
+            <>
+              <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Точек: {data.points.length}</h3>
+              <h3 className='text-xl text-[#2C2C2C] mb-[30px] leading-[150%]'>Города: {data.points.map((item: any) => item?.city).join(", ")}</h3>
+            </>
+            : <></>
+          }
 
           <YMaps query={{ apikey: "dd278cf2-bbc1-4819-8232-fbba0d13289a" }}>
             <Map
@@ -151,12 +161,14 @@ function PlacePage({ route }: { route?: boolean }) {
         </div>
         <div className='md:w-[30%] ml-[20px] gap-[20px] flex flex-col'>
           <h1 className='text-2xl font-medium text-[#2C2C2C]'>{data?.points ? "Все точки маршрута" : "Другие точки"}</h1>
-          {points?.slice(0,offset).map((item: any) => {
+          {points?.slice(0, offset).map((item: any) => {
             return <PlaceItem data={item} />
           })}
-          <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px] mx-auto' onClick={() => { setOffset(offset + 3) }}>
-            Раскрыть →
-          </button>
+          {offset < points.length &&
+            <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px] mx-auto' onClick={() => { setOffset(offset + 3) }}>
+              Раскрыть →
+            </button>
+          }
         </div>
       </section>
     </div>

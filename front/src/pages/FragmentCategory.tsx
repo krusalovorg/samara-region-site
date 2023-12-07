@@ -4,6 +4,7 @@ import { getCookieToken } from '../utils/utils';
 import { YMaps, Map, Placemark, SearchControl, Clusterer } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
 import { Category, deleteById, getData } from '../utils/backend';
+import Alert from '../components/Alert';
 
 function FragmentCategory() {
     const [formData, setFormData] = useState({
@@ -16,6 +17,9 @@ function FragmentCategory() {
 
     const [categorys, setCategorys] = useState<Category[]>([]);
 
+    const [alertShow, setAlertShow] = useState(false);
+    const [alertContent, setAlertContent] = useState("Успешно!");
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target as any;
         setFormData((prevState) => ({
@@ -23,6 +27,14 @@ function FragmentCategory() {
             [name]: type === 'checkbox' ? checked : value,
         }));
     };
+
+    function alert(text: string) {
+        setAlertShow(true);
+        setAlertContent(text);
+        setTimeout(() => {
+            setAlertShow(false);
+        }, 1500)
+    }
 
     const handleSubmit = async () => {
         const cookieToken = getCookieToken();
@@ -39,7 +51,7 @@ function FragmentCategory() {
                 formDataToSend.append("description", formData.description);
                 formDataToSend.append("id", formData.id + '');
                 console.log(formDataToSend.get('type'))
-                const response = await fetch(`http://127.0.0.1:5000/${type =='edit' ? 'edit' : "add"}`, {
+                const response = await fetch(`http://127.0.0.1:5000/${type == 'edit' ? 'edit' : "add"}`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -51,11 +63,14 @@ function FragmentCategory() {
 
                 if (response.ok) {
                     console.log('Data added successfully');
+                    alert("Успешно!");
                     loadCategorys();
                 } else {
+                    alert("Произошла ошибка");
                     console.error('Failed to add data');
                 }
             } catch (error) {
+                alert("Произошла ошибка");
                 console.error('Error:', error);
             }
         }
@@ -63,6 +78,7 @@ function FragmentCategory() {
 
     async function handleDelete() {
         const result = await deleteById(formData?.id, 'category');
+        alert("Успешно");
         loadCategorys();
     }
 
@@ -80,6 +96,7 @@ function FragmentCategory() {
 
     return (
         <>
+            {alertShow && <Alert content={alertContent}/>}
             <div className="flex flex-row w-[100%] justify-between">
                 <div className='flex flex-col w-[50%]'>
                     <div className="mb-6">
@@ -116,7 +133,7 @@ function FragmentCategory() {
                         <a className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Категории</a>
                         {
                             categorys.map((item) => (
-                                <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${selectId == item.id ? "bg-white" : ""}`} onClick={()=>{
+                                <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${selectId == item.id ? "bg-white" : ""}`} onClick={() => {
                                     setFormData(item)
                                     if (selectId == item.id) {
                                         setSelectId(-1)

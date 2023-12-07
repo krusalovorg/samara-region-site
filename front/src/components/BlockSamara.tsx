@@ -9,6 +9,8 @@ import { YMaps, Map, Placemark, Polyline } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
 import { Place, Route, getData } from '../utils/backend';
 import Category from './Category';
+import { declOfHours } from '../utils/utils';
+import useIsMobile from './isMobile';
 // import ImageCard7 from './assets/buti7.jpg';
 // import ImageCard8 from './assets/buti8.jpg';
 
@@ -17,13 +19,15 @@ function BlockSamara({ places }: { places: Place[] }) {
     const map = useRef<any>(null);
     const [yamap, setYampas] = useState<YMapsApi | null>(null);
     const [loaded, setLoaded] = useState(false);
-    const [information, setInformation] = useState({
+    const isMobile = useIsMobile();
+    const [information, setInformation] = useState<any>({
         name: "",
         description: "",
         category: []
     });
 
     const [search, setSearch] = useState(0);
+    const [routes, setRoutes] = useState<Route[]>([]);
     const form = {
         one: "Активный",
         two: "Спокойный",
@@ -38,13 +42,13 @@ function BlockSamara({ places }: { places: Place[] }) {
     };
 
     function loadRouters(route: Route) {
-        if (loaded || yamap == null) return
+        if (yamap == null) return
 
-        //const extractedCoordinates: any[] = route?.points.split(',')?.map((item) => item.coordinates);
+        const extractedCoordinates: any[] = (route?.points as Place[])?.map((item) => item.coordinates);
 
         const multiRoute = new yamap.multiRouter.MultiRoute(
             {
-                referencePoints: ['Тольятти', 'Самара', 'Ягодное', [53.821868, 49.085659]],
+                referencePoints: extractedCoordinates,
                 // params: {
                 //     routingMode: "masstransit"
                 // }
@@ -60,8 +64,9 @@ function BlockSamara({ places }: { places: Place[] }) {
         multiRoute.events.add("click", () => {
             // var yandexWayPoint = multiRoute.getWayPoints().get(1);
             setInformation({
+                ...route,
                 name: route.name,
-                category: [],
+                //category: [],
                 description: route.description
             })
         });
@@ -69,39 +74,17 @@ function BlockSamara({ places }: { places: Place[] }) {
         const res = map?.current.geoObjects?.add(multiRoute);
         console.log(res)
         //getRegions();
-        setLoaded(true)
     }
 
-    // const getRegions = () => {
-    //     if (map && map.current && yamap) {
-    //         // Загружаем границы регионов России
-    //         map?.current?.borders.load('RU', {
-    //             lang: 'ru',
-    //             quality: 2
-    //         }).then((result: any) => {
-    //             // Создадим объект, в котором будут храниться коллекции с нашими регионами.
-    //             var districtCollections = new yamap.GeoObjectCollection({}, {
-    //                 fillColor: "#0000aa",
-    //                 strokeColor: "000000",
-    //                 strokeOpacity: 0.5,
-    //                 fillOpacity: 0.5
-    //             });
-
-    //             result.features.forEach((feature: any) => {
-    //                 var iso = feature.properties.iso3166;
-    //                 // Добавим субъект РФ в коллекцию.
-    //                 if (iso == 'RU-VLA') {
-    //                     districtCollections.add(new yamap.GeoObject(feature));
-    //                 }
-    //             });
-
-    //             map.current.geoObjects.add(districtCollections);
-    //         })
-    //     }
-    // };
-
-    function StartSearch(event?: string) {
+    async function StartSearch(event?: any) {
         if (search == 1 && event) {
+            const data_route = await getData('routes', event) as Route[];
+            if (data_route) {
+                setRoutes(data_route as Route[])
+                for (const route of data_route) {
+                    await loadRouters(route as Route);
+                }
+            }
         }
         if (search < 3) {
             setSearch(search + 1)
@@ -130,7 +113,7 @@ function BlockSamara({ places }: { places: Place[] }) {
                             src={image}
                         />
                     ))} */}
-                    <YMaps>
+                    <YMaps query={{ apikey: "dd278cf2-bbc1-4819-8232-fbba0d13289a" }}>
                         <Map
                             instanceRef={map}
                             className='w-full h-full max-md-[500px] max-h-[75vh]'
@@ -189,29 +172,43 @@ function BlockSamara({ places }: { places: Place[] }) {
                     <h1 style={{
                         color: "#2C2C2C",
                         fontWeight: "bold",
-                        fontSize: 'calc(90px + 7 * ((100vw - 720px) / 1280))',
+                        fontSize: isMobile ? 48 : 'calc(80px + 7 * ((100vw - 720px) / 1280))',
                         width: "auto",
-                        letterSpacing: -4
+                        letterSpacing: isMobile ? 1 : -4
                     }} onClick={() => {
                         addRoute(yamap)
                     }}>
                         {information?.name || "Самарская Область"}
                     </h1>
-                    {
-                        information?.category && information?.category?.map && information?.category?.map((item: any) => {
-                            return <Category text={item} />
-                        })
-                    }
+                    <div className='flex flex-row my-[10px] gap-x-2'>
+                        {
+                            information?.category && information?.category?.length > 0 && information?.category?.map((item: any) => {
+                                console.log('descr', item.description)
+                                return <Category text={item.name} description={item.description} />
+                            })
+                        }
+                    </div>
 
                     {
                         information?.description ?
-                            <h2 style={{
-                                color: "#2C2C2C",
-                                fontWeight: "normal",
-                                maxWidth: "75%"
-                            }} className='text-2xl'>
-                                {information?.description}
-                            </h2>
+                            <>
+                                <h2 style={{
+                                    color: "#2C2C2C",
+                                    fontWeight: "normal",
+                                    maxWidth: "75%"
+                                }} className='md:text-2xl max-md:text-xl'>
+                                    {information?.description}
+                                </h2>
+                                {information.time ? <h3 className='text-xl text-[#2C2C2C] my-[15px] leading-[150%]'>Продолжительность: {information?.time} {declOfHours(information.time)}</h3> : <></>}
+                                {information.points ?
+
+                                    <>
+                                        <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Точек: {information?.points.length}</h3>
+                                        <h3 className='text-xl text-[#2C2C2C] leading-[150%]'>Города: {information?.points.map((item: any) => item?.city).join(", ")}</h3>
+                                    </>
+                                    : <></>
+                                }
+                            </>
                             :
                             <>
                                 <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2'>Интересные факты о самарской области</h1>
@@ -227,15 +224,15 @@ function BlockSamara({ places }: { places: Place[] }) {
                                 </ul>
                             </>
                     }
-                    <div className='mt-auto w-full flex flex-col justify-end items-center'>
+                    <div className='mt-auto w-full flex flex-col justify-end items-center' style={isMobile ? {marginTop: 12} : {}}>
 
                         {search == 0 && <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={() => StartSearch()}>Подобрать маршрут</button>}
                         {search == 1 &&
                             <>
                                 <h1 className='text-[#2C2C2C] font-medium text-2xl mb-[20px]'>{form.quest}</h1>
                                 <div className='w-full flex flex-row justify-between'>
-                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(form.one)}>{form.one}</button>
-                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(form.two)}>{form.two}</button>
+                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(8)}>{form.one}</button>
+                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(6)}>{form.two}</button>
                                 </div>
                             </>
                         }

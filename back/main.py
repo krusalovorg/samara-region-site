@@ -191,6 +191,13 @@ def get_full_object(route_id, table_name):
     return object_details
 
 
+def get_arr_full_object(routes, table_name):
+    for index, item in enumerate(routes):
+        object_details = get_full_object(str(item.get('id')), table_name)
+        routes[index] = object_details
+    return routes
+
+
 # login as admin
 @app.route('/login', methods=['POST'])
 def login():
@@ -211,9 +218,9 @@ def points_return():
     category = request.args.get('category')
     print(category)
     if category:
-        return jsonify(super_print('places', category))
+        return jsonify(get_arr_full_object(super_print('places', category), 'places'))
     else:
-        return jsonify(super_print('places'))
+        return jsonify(get_arr_full_object(super_print('places'), 'places'))
 
 
 # send routes
@@ -224,13 +231,13 @@ def routes_return():
 
     if time:
         if category:
-            return jsonify(get_routes_filtred(time, category))
+            return jsonify(get_arr_full_object(get_routes_filtred(time, category), 'routes'))
         else:
-            return jsonify(get_routes_filtred(time, -1))
+            return jsonify(get_arr_full_object(get_routes_filtred(time, -1), 'routes'))
     elif category:
-        return jsonify(super_print('routes', category))
+        return jsonify(get_arr_full_object(super_print('routes', category), 'routes'))
     else:
-        return jsonify(super_print('routes'))
+        return jsonify(get_arr_full_object(super_print('routes'), 'routes'))
 
 
 # send category

@@ -6,6 +6,7 @@ import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
 import { Category, Place, deleteById, getData } from '../utils/backend';
 import PlaceItem from '../components/PlaceItem';
 import { useNavigate } from 'react-router-dom';
+import Alert from '../components/Alert';
 
 function FragmentPlaces({ setFragment }: { setFragment?: any }) {
     const [formData, setFormData] = useState<{
@@ -44,6 +45,16 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
     const [categorys, setCategorys] = useState<Category[]>([]);
     const [type, setType] = useState("add");
     const navigate = useNavigate();
+    const [alertShow, setAlertShow] = useState(false);
+    const [alertContent, setAlertContent] = useState("Успешно!");
+
+    function alert(text: string) {
+        setAlertShow(true);
+        setAlertContent(text);
+        setTimeout(() => {
+            setAlertShow(false);
+        }, 1500)
+    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target as any;
@@ -89,7 +100,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                 });
                 if (formData.images.length > 0) {
                     console.log("formData.images", formData.images)
-                    formDataToSend.append('image', formData.images[0], formData.images[0].name);    
+                    formDataToSend.append('image', formData.images[0], formData.images[0].name);
                 }
                 formDataToSend.append("type", "places");
                 const response = await fetch(`http://127.0.0.1:5000/${type == 'edit' ? "edit" : "add"}`, {
@@ -102,11 +113,14 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                 });
                 document.location.reload();
                 if (response.ok) {
+                    alert("Успешно!");
                     console.log('Data added successfully');
                 } else {
+                    alert("Произошла ошибка");
                     console.error('Failed to add data');
                 }
             } catch (error) {
+                alert("Произошла ошибка");
                 console.error('Error:', error);
             }
         }
@@ -114,6 +128,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
 
     async function handleDelete() {
         const result = await deleteById(formData?.id, 'places');
+        alert("Успешно!");
         navigate(0)
     }
 
@@ -134,6 +149,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
 
     return (
         <>
+            {alertShow && <Alert content={alertContent} />}
             <div className="flex flex-row w-[100%] justify-between">
                 <div className='flex flex-col w-[50%]'>
                     <div className="mb-6">
@@ -290,10 +306,10 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
                 {places && places.length > 0 && places.map((item) => (
                     <PlaceItem onClick={() => {
-                        console.log(item.coordinates, item?.coordinates.split(','), item?.category?.split(","))
+                        // console.log(item.coordinates, item?.coordinates.split(','), item?.category?.split(","))
 
-                        setPoint((item?.coordinates.split(',') as any) || [0,0])
-                        setFormData({ ...item, card_description: item.card_description, images: [], category: [],  coordinates: item?.coordinates.split(',') } as any);
+                        setPoint((item?.coordinates.split(',') as any) || [0, 0])
+                        setFormData({ ...item, card_description: item.card_description, images: [], category: [], coordinates: item?.coordinates.split(',') } as any);
                         setType('edit')
                     }} data={item as any} />
                 ))}

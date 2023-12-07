@@ -3,8 +3,10 @@ import Login from '../components/Login';
 import { getCookieToken } from '../utils/utils';
 import { YMaps, Map, Placemark, SearchControl, Clusterer, ObjectManager } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
-import { Category, Place, Route, getData } from '../utils/backend';
+import { Category, Place, Route, deleteById, getData } from '../utils/backend';
 import PlaceItem from '../components/PlaceItem';
+import Alert from '../components/Alert';
+import { useNavigate } from 'react-router-dom';
 
 function FragmentRoutes({ setFragment }: { setFragment?: any }) {
     const [formData, setFormData] = useState<{
@@ -14,13 +16,15 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
         category: number[];
         images: File[];
         time: number;
+        id: any;
     }>({
         name: '',
         card_description: '',
         description: '',
         category: [],
         images: [] as File[],
-        time: 1
+        time: 1,
+        id: -1
     });
 
     const [places, setPlaces] = useState<Place[]>([]);
@@ -30,6 +34,17 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
     const [selectPlaces, setSelectPlaces] = useState<Place[]>([]);
     const [type, setType] = useState("add");
     const [routes, setRoutes] = useState<Route[]>([]);
+    const [alertShow, setAlertShow] = useState(false);
+    const [alertContent, setAlertContent] = useState("Успешно!");
+    const navigate = useNavigate();
+
+    function alert(text: string) {
+        setAlertShow(true);
+        setAlertContent(text);
+        setTimeout(() => {
+            setAlertShow(false);
+        }, 1500)
+    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target as any;
@@ -83,16 +98,24 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                 });
                 document.location.reload();
                 if (response.ok) {
+                    alert("Успешно!");
                     console.log('Data added successfully');
                 } else {
+                    alert("Произошла ошибка");
                     console.error('Failed to add data');
                 }
             } catch (error) {
+                alert("Произошла ошибка");
                 console.error('Error:', error);
             }
         }
     };
 
+    async function handleDelete() {
+        const result = await deleteById(formData?.id, 'routes');
+        alert("Успешно!");
+        navigate(0)
+    }
 
     async function load() {
         const places = await getData("places");
@@ -115,6 +138,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
 
     return (
         <>
+            {alertShow && <Alert content={alertContent} />}
             <div className="flex flex-row w-[100%] justify-between">
                 <div className='flex flex-col w-[50%]'>
                     <div className="mb-6">
@@ -205,6 +229,11 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                         <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                     </div>
                     <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium mt-auto w-full' onClick={handleSubmit}>Добавить</button>
+
+                    {
+                        type == "edit" &&
+                        <button className='bg-[#ff6f6f] text-white px-10 py-5 rounded-2xl font-medium mt-2 w-full' onClick={handleDelete}>Удалить</button>
+                    }
                 </div>
                 <YMaps>
                     <section className='w-1/2 h-inherit px-[5%]'>
