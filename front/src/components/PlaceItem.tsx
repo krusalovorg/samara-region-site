@@ -51,7 +51,7 @@ function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClic
             <div className={`px-[5%] py-[20px] h-full w-full flex z-[10] relative flex flex-col`}>
                 <div className='flex flex-row gap-x-[10px]'>
                     {categorys && categorys.length > 0 && categorys?.map((item: any) =>
-                        <Category text={item.name} description={item.description}/>
+                        <Category text={item?.name} description={item?.description}/>
                     )}
                     {data?.rate == undefined && <Category description={"В этой категории вы найдете увлекательные маршруты, составленные специально для путешественников, включающие несколько точек туристического интереса."} text={'Маршрут'} />}
                 </div>

@@ -183,8 +183,7 @@ function BlockSamara({ places }: { places: Place[] }) {
                     <div className='flex flex-row my-[10px] gap-x-2'>
                         {
                             information?.category && information?.category?.length > 0 && information?.category?.map((item: any) => {
-                                console.log('descr', item.description)
-                                return <Category text={item.name} description={item.description} />
+                                return <Category text={item?.name} description={item?.description} />
                             })
                         }
                     </div>
