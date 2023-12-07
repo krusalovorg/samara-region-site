@@ -204,7 +204,7 @@ def login():
     username = request.json.get('username')
     passworded = request.json.get('password')
 
-    if username == 'user' and passworded == 'password':
+    if username == user and passworded == password:
         access_token = create_access_token(identity=username)
         print(access_token, 'token')
         return jsonify(access_token=access_token), 200
