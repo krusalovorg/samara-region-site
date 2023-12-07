@@ -62,22 +62,24 @@ function PlacesList({ places }: { places: Place[] }) {
                 fontWeight: "bold",
                 fontSize: 'calc(30px + 7 * ((100vw - 720px) / 1280))',
                 width: "auto",
-                letterSpacing: -2
+                letterSpacing: -1
             }}>
                 Лучшее в окрестностях Самарской области
             </h2>
             <div
                 ref={scrollRef}
                 className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex max-md:flex-col md:flex-row scroll-smooth'>
-                {data && data.length > 0 && data.slice(0, isMobile ? 1000 : offset).map((item) => (
+                {data && data.length > 0 && data.slice(0, isMobile ? offset : 1000).map((item) => (
                     <PlaceItem data={item} />
                 ))}
             </div>
             {isMobile ?
                 offset < data.length ?
-                    <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={() => { setOffset(offset + 3) }}>
-                        Раскрыть →
-                    </button>
+                    <div className="w-full flex justify-center mt-[20px]">
+                        <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={() => { setOffset(offset + 3) }}>
+                            Раскрыть →
+                        </button>
+                    </div>
                     : <></>
                 :
                 <div className='flex flex-row justify-center items-center mt-[24px]'>
