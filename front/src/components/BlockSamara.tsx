@@ -200,12 +200,13 @@ function BlockSamara({ places }: { places: Place[] }) {
                                 }} className='md:text-2xl max-md:text-xl'>
                                     {information?.description}
                                 </h2>
-                                {information.time ? <h3 className='text-xl text-[#2C2C2C] my-[15px] leading-[150%]'>Продолжительность: {information?.time} {declOfHours(information.time)}</h3> : <></>}
+                                {information.time}
+                                {information.time ? <h3 className='md:text-2xl max-md:text-xl text-[#2C2C2C] my-[15px] leading-[150%]'>Продолжительность: {information?.time} {declOfHours(information.time)}</h3> : <></>}
                                 {information.points ?
 
                                     <>
-                                        <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Точек: {information?.points.length}</h3>
-                                        <h3 className='text-xl text-[#2C2C2C] leading-[150%]'>Города: {information?.points?.map((item: any) => item?.city).filter((value: any, index: any, self: any) => self.indexOf(value) === index).join(", ")}</h3>
+                                        <h3 className='md:text-2xl max-md:text-xl text-[#2C2C2C] my-[15px] leading-[150%]'>Точек: {information?.points.length}</h3>
+                                        <h3 className='md:text-2xl max-md:text-xl text-[#2C2C2C] leading-[150%]'>Города: {information?.points?.map((item: any) => item?.city).filter((value: any, index: any, self: any) => self.indexOf(value) === index).join(", ")}</h3>
                                     </>
                                     : <></>
                                 }
