@@ -5,7 +5,7 @@ import FragmentCategory from './FragmentCategory';
 import FragmentRoutes from './FragmentRoutes';
 
 function Admin() {
-    const [fragment, setFragment] = useState('all');
+    const [fragment, setFragment] = useState('place');
     window.scrollTo(0, 0);
     return (
         <Login fragment={fragment} setFragment={setFragment}>
@@ -15,7 +15,7 @@ function Admin() {
                     : fragment == "category" ?
                         <FragmentCategory />
                         : fragment == "routes" ? <FragmentRoutes setFragment={setFragment} /> :
-                            <></>
+                            <FragmentPlaces setFragment={setFragment} />
                 }
             </div>
         </Login>

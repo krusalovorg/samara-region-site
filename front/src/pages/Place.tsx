@@ -5,7 +5,7 @@ import ImageCard2 from '../assets/buti2.jpg';
 import Category from '../components/Category';
 import { Category as CategoryType, getItemsById, getData, getItemById, Place, Route } from '../utils/backend';
 import { declOfHours, getImage } from '../utils/utils';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PlaceItem from '../components/PlaceItem';
 import { Placemark, YMaps, Map } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
@@ -18,22 +18,27 @@ function PlacePage({ route }: { route?: boolean }) {
   const [loaded, setLoaded] = useState(false);
   const { id } = useParams();
   const [offset, setOffset] = useState(3);
+  const navigate = useNavigate();
 
   async function loadPlaces() {
-    const data: any = await getItemById(id || "1", route ? "routes" : 'places');
-    console.log('set data', data, route ? "routes" : 'places')
+    try {
+      const data: any = await getItemById(id || "1", route ? "routes" : 'places');
+      console.log('set data', data, route ? "routes" : 'places')
 
-    if (data) {
-      if (data?.points) {
-        // const result = await getItemsById(data?.points?.split(','), 'places');
-        setPoints(data?.points);
-      } else {
-        const places_all = await getData("places") as Place[]
-        console.log('places alll', places_all)
-        setPoints(places_all);
+      if (data) {
+        if (data?.points) {
+          // const result = await getItemsById(data?.points?.split(','), 'places');
+          setPoints(data?.points);
+        } else {
+          const places_all = await getData("places") as Place[]
+          console.log('places alll', places_all)
+          setPoints(places_all);
+        }
+        console.log('set data', data)
+        setData(data);
       }
-      console.log('set data', data)
-      setData(data);
+    } catch (err) {
+      navigate('/')
     }
   }
 

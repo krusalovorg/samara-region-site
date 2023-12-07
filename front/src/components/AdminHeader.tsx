@@ -16,12 +16,6 @@ function AdminHeader({ setFragment, fragment }: { setFragment: any, fragment: an
                 <img className='absolute left-[5%] cursor-pointer' onClick={() => {
                     navigate("/")
                 }} width={64} height={64} src={GerbLogo} />
-                <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${fragment == 'all' ? 'bg-[#D2F881]' : ''}`}
-                    onClick={() => {
-                        navigateWithFragment('all')
-                    }}>
-                    Всё
-                </a>
                 <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${fragment == 'place' ? 'bg-[#D2F881]' : ''}`}
                     onClick={() => {
                         navigateWithFragment('place')
