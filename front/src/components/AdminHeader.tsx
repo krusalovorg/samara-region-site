@@ -26,7 +26,7 @@ function AdminHeader({ setFragment, fragment }: { setFragment: any, fragment: an
                     onClick={() => {
                         navigateWithFragment('place')
                     }}>
-                    Точки
+                    Места
                 </a>
                 <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${fragment == 'category' ? 'bg-[#D2F881]' : ''}`}
                     onClick={() => {

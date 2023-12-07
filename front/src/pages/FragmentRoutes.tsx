@@ -207,7 +207,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
 
 
                     <div className="mb-6">
-                        <a className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Точки</a>
+                        <a className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Места</a>
                         {
                             selectPlaces.map((item) => (
                                 <>

@@ -302,7 +302,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                     </section>
                 </YMaps>
             </div>
-            <h1 className='text-2xl font-medium text-[#2C2C2C] mt-2'>Все точки</h1>
+            <h1 className='text-2xl font-medium text-[#2C2C2C] mt-2'>Все места</h1>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
                 {places && places.length > 0 && places.map((item) => (
                     <PlaceItem onClick={() => {

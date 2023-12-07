@@ -104,7 +104,7 @@ function BlockSamara({ places }: { places: Place[] }) {
     return (
         <>
             <section
-                className='w-full min-h-[80vh] bg-[#D2F881] rounded-[50px] py-[3%] px-[5%] flex max-md:flex-col flex-row'
+                className='w-full min-h-[80vh] bg-[#D2F881] max-md:rounded-[16px] md:rounded-[50px] py-[3%] px-[5%] flex max-md:flex-col flex-row'
             >
                 <div className='max-md:w-full max-md:h-[500px] w-1/2 md:pr-[5%]'>
                     {/* {[ImageCard1, ImageCard2, ImageCard3, ImageCard4, ImageCard5, ImageCard6,].map((image) => (

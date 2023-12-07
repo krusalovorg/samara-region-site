@@ -5435,6 +5435,10 @@ li {
     row-gap: 0.5rem;
   }
 
+  .max-md\:rounded-\[16px\] {
+    border-radius: 16px;
+  }
+
   .max-md\:px-3 {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
@@ -5593,6 +5597,10 @@ li {
 
   .md\:justify-between {
     justify-content: space-between;
+  }
+
+  .md\:rounded-\[50px\] {
+    border-radius: 50px;
   }
 
   .md\:px-5 {

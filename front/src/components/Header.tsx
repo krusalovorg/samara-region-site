@@ -38,7 +38,7 @@ function Header() {
                     onClick={() => {
                         navigate("/all/places")
                     }}>
-                    Точки
+                    Места
                 </a>
                 {admin &&
                     <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/admin' ? 'bg-[#D2F881]' : ''}`}
