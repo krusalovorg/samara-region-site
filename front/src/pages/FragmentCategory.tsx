@@ -3,7 +3,7 @@ import Login from '../components/Login';
 import { getCookieToken } from '../utils/utils';
 import { YMaps, Map, Placemark, SearchControl, Clusterer } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
-import { Category, deleteById, getData } from '../utils/backend';
+import { Category, URL_SERVER, deleteById, getData } from '../utils/backend';
 import Alert from '../components/Alert';
 
 function FragmentCategory() {
@@ -51,7 +51,7 @@ function FragmentCategory() {
                 formDataToSend.append("description", formData.description);
                 formDataToSend.append("id", formData.id + '');
                 console.log(formDataToSend.get('type'))
-                const response = await fetch(`http://127.0.0.1:5000/${type == 'edit' ? 'edit' : "add"}`, {
+                const response = await fetch(URL_SERVER+`/${type == 'edit' ? 'edit' : "add"}`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,

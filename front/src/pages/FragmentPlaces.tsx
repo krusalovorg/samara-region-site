@@ -3,7 +3,7 @@ import Login from '../components/Login';
 import { getCookieToken } from '../utils/utils';
 import { YMaps, Map, Placemark, SearchControl, Clusterer } from '@pbe/react-yandex-maps';
 import { YMapsApi } from '@pbe/react-yandex-maps/typings/util/typing';
-import { Category, Place, deleteById, getData } from '../utils/backend';
+import { Category, Place, URL_SERVER, deleteById, getData } from '../utils/backend';
 import PlaceItem from '../components/PlaceItem';
 import { useNavigate } from 'react-router-dom';
 import Alert from '../components/Alert';
@@ -103,7 +103,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                     formDataToSend.append('image', formData.images[0], formData.images[0].name);
                 }
                 formDataToSend.append("type", "places");
-                const response = await fetch(`http://127.0.0.1:5000/${type == 'edit' ? "edit" : "add"}`, {
+                const response = await fetch(URL_SERVER+`/${type == 'edit' ? "edit" : "add"}`, {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${token}`,

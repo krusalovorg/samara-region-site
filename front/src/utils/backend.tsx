@@ -31,10 +31,10 @@ export type Place = {
     time: number;
 };
 
-const url_stat = "http://62.217.182.153:5000"
+export const URL_SERVER = "http://62.217.182.153:5000"
 
 export async function getData(route: "places" | "routes" | "category", category?: string | number, time?: number) {
-    let url = url_stat;
+    let url = URL_SERVER;
     if (route === 'places' || route === 'routes') {
         if (category) {
             url += `/${route}?category=${category}&time=${time||24}`;
@@ -78,7 +78,7 @@ async function requestData(url: string) {
 
 export async function getItemById(id: string, category: "places" | "routes" | "category") { 
     try { 
-        const url = `${url_stat}/get_details_id?id=${id}&table_name=${category}`; 
+        const url = `${URL_SERVER}/get_details_id?id=${id}&table_name=${category}`; 
         console.log('fetch url:', url) 
         const data = await requestData(url); 
         //console.log('data:', data) 
@@ -91,7 +91,7 @@ export async function getItemById(id: string, category: "places" | "routes" | "c
 
 export async function deleteById(id: number, category: "places" | "routes" | "category") { 
     try { 
-        const url = `${url_stat}/delete?id=${id}&table_name=${category}`; 
+        const url = `${URL_SERVER}/delete?id=${id}&table_name=${category}`; 
         console.log('fetch url:', url) 
         const data = await requestData(url); 
         //console.log('data:', data) 

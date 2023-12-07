@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminHeader from './AdminHeader';
 import { getCookieToken } from '../utils/utils';
 import Header from './Header';
+import { URL_SERVER } from '../utils/backend';
 
 function Login({ children, fragment, setFragment }: any) {
     const [username, setUsername] = useState('');
@@ -24,7 +25,7 @@ function Login({ children, fragment, setFragment }: any) {
     }, []);
 
     const handleLogin = () => {
-        fetch('http://127.0.0.1:5000/login', {
+        fetch(URL_SERVER+'/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
