@@ -85,6 +85,8 @@ function BlockSamara({ places }: { places: Place[] }) {
                     await loadRouters(route as Route);
                 }
             }
+            // setSearch(0);
+            // return
         }
         if (search < 3) {
             setSearch(search + 1)
@@ -203,7 +205,7 @@ function BlockSamara({ places }: { places: Place[] }) {
 
                                     <>
                                         <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Точек: {information?.points.length}</h3>
-                                        <h3 className='text-xl text-[#2C2C2C] leading-[150%]'>Города: {information?.points.map((item: any) => item?.city).join(", ")}</h3>
+                                        <h3 className='text-xl text-[#2C2C2C] leading-[150%]'>Города: {information?.points?.map((item: any) => item?.city).filter((value: any, index: any, self: any) => self.indexOf(value) === index).join(", ")}</h3>
                                     </>
                                     : <></>
                                 }
@@ -229,8 +231,8 @@ function BlockSamara({ places }: { places: Place[] }) {
                             <>
                                 <h1 className='text-[#2C2C2C] font-medium text-2xl mb-[20px]'>{form.quest}</h1>
                                 <div className='w-full flex flex-row justify-between'>
-                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(8)}>{form.one}</button>
-                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(6)}>{form.two}</button>
+                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(1)}>{form.one}</button>
+                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(2)}>{form.two}</button>
                                 </div>
                             </>
                         }

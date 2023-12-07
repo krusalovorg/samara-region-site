@@ -123,15 +123,15 @@ function PlacePage({ route }: { route?: boolean }) {
       <section className={'px-[5%] flex max-md:flex-col md:flex-row mt-[30px] items-stretch'}>
         <div className={`w-full md:w-[70%] bg-white rounded-[50px] h-auto px-[36px] py-[30px]`}>
           <p className='text-xl mb-[30px] leading-[150%]'>
-            {data.description}
+            {data?.description}
           </p>
 
-          {data.time ? <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Продолжительность: {data?.time} {declOfHours(data.time)}</h3> : <></>}
-          {data.points ?
+          {data?.time ? <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Продолжительность: {data?.time} {declOfHours(data.time)}</h3> : <></>}
+          {data?.points ?
 
             <>
-              <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Точек: {data.points.length}</h3>
-              <h3 className='text-xl text-[#2C2C2C] mb-[30px] leading-[150%]'>Города: {data.points.map((item: any) => item?.city).join(", ")}</h3>
+              <h3 className='text-xl text-[#2C2C2C] mb-[15px] leading-[150%]'>Точек: {data?.points?.length}</h3>
+              <h3 className='text-xl text-[#2C2C2C] mb-[30px] leading-[150%]'>Города: {data?.points?.map((item: any) => item?.city).filter((value: any, index: any, self: any) => self.indexOf(value) === index).join(", ")}</h3>
             </>
             : <></>
           }
