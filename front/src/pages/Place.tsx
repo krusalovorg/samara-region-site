@@ -161,7 +161,7 @@ function PlacePage({ route }: { route?: boolean }) {
 
         </div>
         <div className='md:w-[30%] max-md:mt-[20px] md:ml-[20px] gap-[20px] flex flex-col'>
-          <h1 className='text-2xl font-medium text-[#2C2C2C]'>{data?.points ? "Все места маршрута" : "Другие места"}</h1>
+          <h1 className='text-2xl font-medium text-[#2C2C2C]'>{data?.points ? "Все точки маршрута" : "Другие места"}</h1>
           {points?.slice(0, offset).map((item: any) => {
             return <PlaceItem data={item} />
           })}
