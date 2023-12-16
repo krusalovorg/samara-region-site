@@ -96,7 +96,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                     },
                     body: formDataToSend,
                 });
-                document.location.reload();
+                //document.location.reload();
                 if (response.ok) {
                     alert("Успешно!");
                     console.log('Data added successfully');
