@@ -2741,10 +2741,6 @@ video {
   padding-bottom: 20px;
 }
 
-.pr-\[5\%\] {
-  padding-right: 5%;
-}
-
 .pt-0 {
   padding-top: 0px;
 }
@@ -5391,20 +5387,16 @@ li {
 }
 
 @media not all and (min-width: 768px) {
+  .max-md\:mb-\[10px\] {
+    margin-bottom: 10px;
+  }
+
   .max-md\:ml-0 {
     margin-left: 0px;
   }
 
-  .max-md\:mt-\[10px\] {
-    margin-top: 10px;
-  }
-
   .max-md\:mt-\[20px\] {
     margin-top: 20px;
-  }
-
-  .max-md\:mb-\[10px\] {
-    margin-bottom: 10px;
   }
 
   .max-md\:h-\[500px\] {

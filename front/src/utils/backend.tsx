@@ -31,7 +31,7 @@ export type Place = {
     time: number;
 };
 
-export const URL_SERVER = "http://62.217.182.153:5000"
+export const URL_SERVER = "http://5.35.93.250:5000"
 
 export async function getData(route: "places" | "routes" | "category", category?: string | number, time?: number) {
     let url = URL_SERVER;

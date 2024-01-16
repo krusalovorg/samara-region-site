@@ -200,7 +200,6 @@ function BlockSamara({ places }: { places: Place[] }) {
                                 }} className='md:text-2xl max-md:text-xl'>
                                     {information?.description}
                                 </h2>
-                                {information.time}
                                 {information.time ? <h3 className='md:text-2xl max-md:text-xl text-[#2C2C2C] my-[15px] leading-[150%]'>Продолжительность: {information?.time} {declOfHours(information.time)}</h3> : <></>}
                                 {information.points ?
 
@@ -232,8 +231,8 @@ function BlockSamara({ places }: { places: Place[] }) {
                             <>
                                 <h1 className='text-[#2C2C2C] font-medium text-2xl mb-[20px]'>{form.quest}</h1>
                                 <div className='w-full flex flex-row justify-between'>
-                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(1)}>{form.one}</button>
-                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(2)}>{form.two}</button>
+                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(4)}>{form.one}</button>
+                                    <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium w-[49%]' onClick={() => StartSearch(1)}>{form.two}</button>
                                 </div>
                             </>
                         }

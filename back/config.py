@@ -1,4 +1,4 @@
 host = "localhost"  # localhost
 user = "root"
-password = "12345678"
+password = "KrusMy3283!"
 db_name = "MYSQL"
