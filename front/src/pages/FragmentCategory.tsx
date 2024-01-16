@@ -77,7 +77,12 @@ function FragmentCategory() {
     };
 
     async function handleDelete() {
-        const result = await deleteById(formData?.id, 'category');
+        const cookieToken = getCookieToken();
+        let token = '';
+        if (cookieToken) {
+            token = cookieToken.split('=')[1];
+        }
+        const result = await deleteById(formData?.id, 'category', token);
         alert("Успешно");
         loadCategorys();
     }

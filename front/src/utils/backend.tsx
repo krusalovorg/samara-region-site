@@ -90,11 +90,22 @@ export async function getItemById(id: string, category: "places" | "routes" | "c
     } 
 } 
 
-export async function deleteById(id: number, category: "places" | "routes" | "category") { 
+export async function deleteById(id: number, category: "places" | "routes" | "category", token: string) { 
     try { 
         const url = `${URL_SERVER}/delete?id=${id}&table_name=${category}`; 
         console.log('fetch url:', url) 
-        const data = await requestData(url); 
+
+        const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }); 
+        if (!response.ok) { 
+            throw new Error('Network response was not ok'); 
+        } 
+        const data = await response.json(); 
+    
         //console.log('data:', data) 
         return data as Place; 
     } catch (error) { 

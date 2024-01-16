@@ -127,7 +127,12 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
     };
 
     async function handleDelete() {
-        const result = await deleteById(formData?.id, 'places');
+        const cookieToken = getCookieToken();
+        let token = '';
+        if (cookieToken) {
+            token = cookieToken.split('=')[1];
+        }
+        const result = await deleteById(formData?.id, 'places', token);
         alert("Успешно!");
         navigate(0)
     }

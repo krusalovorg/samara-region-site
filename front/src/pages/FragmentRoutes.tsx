@@ -96,7 +96,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                     },
                     body: formDataToSend,
                 });
-                //document.location.reload();
+                document.location.reload();
                 if (response.ok) {
                     alert("Успешно!");
                     console.log('Data added successfully');
@@ -112,7 +112,12 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
     };
 
     async function handleDelete() {
-        const result = await deleteById(formData?.id, 'routes');
+        const cookieToken = getCookieToken();
+        let token = '';
+        if (cookieToken) {
+            token = cookieToken.split('=')[1];
+        }
+        const result = await deleteById(formData?.id, 'routes', token);
         alert("Успешно!");
         navigate(0)
     }
