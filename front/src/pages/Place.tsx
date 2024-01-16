@@ -254,7 +254,41 @@ function PlacePage({ route }: { route?: boolean }) {
             <></>
           )}
 
-          <div className="mb-4 flex max-md:flex-col min-md:flex-row">
+          <YMaps query={{ apikey: "dd278cf2-bbc1-4819-8232-fbba0d13289a" }}>
+            <Map
+              instanceRef={map}
+              className="w-full h-[500px] rounded-lg"
+              onLoad={addRoute}
+              modules={["multiRouter.MultiRoute"]}
+              defaultState={{ center: [53.2415041, 50.2212463], zoom: 7 }}
+            >
+              {data?.points ? (
+                points &&
+                points.length > 0 &&
+                points.map((point) => {
+                  if (point.coordinates.split(",").length == 2) {
+                    return (
+                      <Placemark
+                        options={{
+                          iconColor: "red",
+                        }}
+                        defaultGeometry={point.coordinates.split(",")}
+                      />
+                    );
+                  }
+                })
+              ) : (
+                <Placemark
+                  options={{
+                    iconColor: "red",
+                  }}
+                  defaultGeometry={data?.coordinates.split(",")}
+                />
+              )}
+            </Map>
+          </YMaps>
+
+          <div className="mt-4 flex max-md:flex-col min-md:flex-row">
             <div className="max-md:mx-auto">
               <QRCode
                 logoImage={GerbLogo}
@@ -350,40 +384,6 @@ function PlacePage({ route }: { route?: boolean }) {
 
             </div>
           </div>
-
-          <YMaps query={{ apikey: "dd278cf2-bbc1-4819-8232-fbba0d13289a" }}>
-            <Map
-              instanceRef={map}
-              className="w-full h-[500px] rounded-lg"
-              onLoad={addRoute}
-              modules={["multiRouter.MultiRoute"]}
-              defaultState={{ center: [53.2415041, 50.2212463], zoom: 7 }}
-            >
-              {data?.points ? (
-                points &&
-                points.length > 0 &&
-                points.map((point) => {
-                  if (point.coordinates.split(",").length == 2) {
-                    return (
-                      <Placemark
-                        options={{
-                          iconColor: "red",
-                        }}
-                        defaultGeometry={point.coordinates.split(",")}
-                      />
-                    );
-                  }
-                })
-              ) : (
-                <Placemark
-                  options={{
-                    iconColor: "red",
-                  }}
-                  defaultGeometry={data?.coordinates.split(",")}
-                />
-              )}
-            </Map>
-          </YMaps>
         </div>
         <div className="md:w-[30%] max-md:mt-[20px] md:ml-[20px] gap-[20px] flex flex-col">
           <h1 className="text-2xl font-medium text-[#2C2C2C]">
