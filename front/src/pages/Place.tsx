@@ -118,7 +118,7 @@ function PlacePage({ route }: { route?: boolean }) {
     if (yamap == null) return;
     console.log('update coordL::::::::::::::::::::::::::::::::::::', data?.coordinates)
     map.current.geoObjects.removeAll()
-    const placemark = new yamap.Placemark(data?.coordinates.split(","),
+    const placemark = new yamap.Placemark(data?.coordinates?.split(","),
       {
       },
       {
@@ -139,7 +139,7 @@ function PlacePage({ route }: { route?: boolean }) {
   function loadRouters(points: any[], yamap?: YMapsApi) {
     if (yamap == null) return;
     console.log("loadddsadedse");
-    const extractedCoordinates: any[] = points.map((item) => item.coordinates);
+    const extractedCoordinates: any[] = points.map((item) => item?.coordinates);
     //console.log(extractedCoordinates)
     const multiRoute = new yamap.multiRouter.MultiRoute(
       {
@@ -266,13 +266,13 @@ function PlacePage({ route }: { route?: boolean }) {
                 points &&
                 points.length > 0 &&
                 points.map((point) => {
-                  if (point.coordinates.split(",").length == 2) {
+                  if (point?.coordinates?.split(",").length == 2) {
                     return (
                       <Placemark
                         options={{
                           iconColor: "red",
                         }}
-                        defaultGeometry={point.coordinates.split(",")}
+                        defaultGeometry={point?.coordinates?.split(",")}
                       />
                     );
                   }
@@ -282,7 +282,7 @@ function PlacePage({ route }: { route?: boolean }) {
                   options={{
                     iconColor: "red",
                   }}
-                  defaultGeometry={data?.coordinates.split(",")}
+                  defaultGeometry={data?.coordinates?.split(",")}
                 />
               )}
             </Map>
