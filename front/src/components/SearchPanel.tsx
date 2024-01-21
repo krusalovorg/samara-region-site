@@ -97,7 +97,7 @@ function SearchPanel() {
 
                         {categorys.map((item: Category) =>
                             <Dropdown.Item className='flex justify-center items-center' onClick={() => {
-                                setCategoryId(item?.id)
+                                setCategoryId(item?._id)
                                 setSearchCategory(item.name)
                             }}>{item.name}</Dropdown.Item>
                         )}

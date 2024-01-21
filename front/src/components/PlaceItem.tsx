@@ -44,7 +44,7 @@ function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClic
                 if (onClick) {
                     onClick()
                 } else {
-                    navigate(`/${data?.rate == undefined ? "route" : "place"}/${data?.id}`)
+                    navigate(`/${data?.rate == undefined ? "route" : "place"}/${data?._id}`)
                 }
             }}>
             {/* <div className='absolute bottom-0 w-full h-1/3 rounded-b-2xl z-[1]' style={{  }} /> */}

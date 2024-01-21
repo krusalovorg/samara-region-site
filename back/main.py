@@ -16,7 +16,7 @@ CORS(app)
 # connect to MongoDB
 cluster = MongoClient("mongodb://localhost:27017")
 db = cluster["samara_region_site"]
-points = db['points']
+places = db['places']
 routes = db['routes']
 category = db['category']
 accounts = db['accounts']
@@ -24,8 +24,8 @@ accounts = db['accounts']
 
 # fill collection
 def fill_collection(collection, data):
-    if collection == 'points':
-        points.insert_one(data)
+    if collection == 'places':
+        result = places.insert_one(data)
     elif collection == 'routes':
         routes.insert_one(data)
     elif collection == 'category':
@@ -145,7 +145,8 @@ def add_places():
 
     if data.get('walk', False):
         data['walk'] = data['walk'] == 'true'
-
+    if data.get("_id"):
+        del data['_id']
     print('data', data)
     fill_collection(data['type'], data)
     return jsonify({"success": True}), 200

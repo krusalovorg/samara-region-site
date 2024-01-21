@@ -16,7 +16,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
         category: number[];
         images: File[];
         time: number;
-        id: any;
+        _id: any;
     }>({
         name: '',
         card_description: '',
@@ -24,7 +24,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
         category: [],
         images: [] as File[],
         time: 1,
-        id: -1
+        _id: -1
     });
 
     const [places, setPlaces] = useState<Place[]>([]);
@@ -117,7 +117,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
         if (cookieToken) {
             token = cookieToken.split('=')[1];
         }
-        const result = await deleteById(formData?.id, 'routes', token);
+        const result = await deleteById(formData?._id, 'routes', token);
         alert("Успешно!");
         navigate(0)
     }
@@ -196,12 +196,12 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                         <a className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Категории</a>
                         {
                             categorys.map((item) => (
-                                <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${formData.category.includes(item.id) ? " bg-white" : ""}`} onClick={() => {
-                                    if (formData.category.includes(item.id)) {
-                                        const new_cat = formData.category.filter(cat => cat !== item.id);
+                                <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${formData.category.includes(item._id) ? " bg-white" : ""}`} onClick={() => {
+                                    if (formData.category.includes(item._id)) {
+                                        const new_cat = formData.category.filter(cat => cat !== item._id);
                                         setFormData({ ...formData, category: new_cat })
                                     } else {
-                                        setFormData({ ...formData, category: [...formData.category, item.id] })
+                                        setFormData({ ...formData, category: [...formData.category, item._id] })
                                     }
                                 }}>{item.name}</button>
                             ))
@@ -257,7 +257,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                                 {places && places.length > 0 && places.map((place) =>
                                     <Placemark
                                         options={{
-                                            iconColor: selectPlacesId.includes(place.id) ? "red" : "grey",
+                                            iconColor: selectPlacesId.includes(place._id) ? "red" : "grey",
                                             // hasBalloon: true,
                                             // openBalloonOnClick: true,
                                             // openHintOnHover: true,
@@ -269,12 +269,12 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                                             layoutContent: place.name
                                         }}
                                         onClick={() => {
-                                            if (selectPlacesId.includes(place.id)) {
-                                                const new_cat = selectPlacesId.filter(cat => cat !== place.id);
+                                            if (selectPlacesId.includes(place._id)) {
+                                                const new_cat = selectPlacesId.filter(cat => cat !== place._id);
                                                 setSelectPlacesId(new_cat);
-                                                setSelectPlaces(selectPlaces.filter(cat => cat.id !== place.id));
+                                                setSelectPlaces(selectPlaces.filter(cat => cat._id !== place._id));
                                             } else {
-                                                setSelectPlacesId([...selectPlacesId, place.id])
+                                                setSelectPlacesId([...selectPlacesId, place._id])
                                                 setSelectPlaces([...selectPlaces, place])
                                             }
                                         }}

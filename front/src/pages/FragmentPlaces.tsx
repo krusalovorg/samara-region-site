@@ -22,7 +22,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         location: string;
         walk: boolean;
         time: number;
-        id?: any;
+        _id?: any;
     }>({
         name: '',
         card_description: '',
@@ -36,7 +36,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         location: '',
         walk: false,
         time: 0,
-        id: -1
+        _id: -1
     });
 
     const [point, setPoint] = useState();
@@ -111,7 +111,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                     },
                     body: formDataToSend,
                 });
-                document.location.reload();
+                //document.location.reload();
                 if (response.ok) {
                     alert("Успешно!");
                     console.log('Data added successfully');
@@ -132,7 +132,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         if (cookieToken) {
             token = cookieToken.split('=')[1];
         }
-        const result = await deleteById(formData?.id, 'places', token);
+        const result = await deleteById(formData?._id, 'places', token);
         alert("Успешно!");
         navigate(0)
     }
@@ -230,13 +230,13 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                         <a className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Категории</a>
                         {
                             categorys.map((item) => (
-                                <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${formData.category.includes(item.id) ? " bg-white" : ""}`} onClick={() => {
-                                    if (formData?.category?.includes(item.id)) {
+                                <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${formData.category.includes(item._id) ? " bg-white" : ""}`} onClick={() => {
+                                    if (formData?.category?.includes(item._id)) {
                                         console.log(formData?.category)
-                                        const new_cat = formData?.category?.filter(cat => cat !== item.id);
+                                        const new_cat = formData?.category?.filter(cat => cat !== item._id);
                                         setFormData({ ...formData, category: new_cat })
                                     } else {
-                                        setFormData({ ...formData, category: [...formData.category, item.id] })
+                                        setFormData({ ...formData, category: [...formData.category, item._id] })
                                     }
                                 }}>{item.name}</button>
                             ))

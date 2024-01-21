@@ -1,12 +1,12 @@
 export type Category = {
-    id: number;
+    _id: any;
     name: string;
     card_description: string;
     description: string;
 };
 
 export type Route = {
-    id: number;
+    _id: any;
     name: string;
     card_description: string;
     description: string;
@@ -16,7 +16,7 @@ export type Route = {
 };
 
 export type Place = {
-    id: number;
+    _id: any;
     name: string;
     card_description: string;
     description: string;
@@ -31,7 +31,7 @@ export type Place = {
     time: number;
 };
 
-export const URL_SERVER = "http://5.35.93.250:5000"
+export const URL_SERVER = "http://127.0.0.1:5000"
 export const URL_SITE = "http://5.35.93.250"
 
 export async function getData(route: "places" | "routes" | "category", category?: string | number, time?: number) {

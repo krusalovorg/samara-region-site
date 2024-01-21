@@ -10,7 +10,7 @@ function FragmentCategory() {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
-        id: -1
+        _id: -1
     });
     const [type, setType] = useState("add");
     const [selectId, setSelectId] = useState(-1);
@@ -49,7 +49,7 @@ function FragmentCategory() {
                 formDataToSend.append("type", "category");
                 formDataToSend.append("name", formData.name);
                 formDataToSend.append("description", formData.description);
-                formDataToSend.append("id", formData.id + '');
+                formDataToSend.append("_id", formData?._id + '');
                 console.log(formDataToSend.get('type'))
                 const response = await fetch(URL_SERVER+`/${type == 'edit' ? 'edit' : "add"}`, {
                     method: 'POST',
@@ -82,7 +82,7 @@ function FragmentCategory() {
         if (cookieToken) {
             token = cookieToken.split('=')[1];
         }
-        const result = await deleteById(formData?.id, 'category', token);
+        const result = await deleteById(formData?._id, 'category', token);
         alert("Успешно");
         loadCategorys();
     }
@@ -138,14 +138,14 @@ function FragmentCategory() {
                         <a className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Категории</a>
                         {
                             categorys.map((item) => (
-                                <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${selectId == item.id ? "bg-white" : ""}`} onClick={() => {
+                                <button className={`bg-[#FEEFD7] px-10 py-3 mb-[10px] rounded-2xl font-medium mt-auto w-full ${selectId == item._id ? "bg-white" : ""}`} onClick={() => {
                                     setFormData(item)
-                                    if (selectId == item.id) {
+                                    if (selectId == item._id) {
                                         setSelectId(-1)
                                         setType("add")
                                     } else {
                                         setType("edit")
-                                        setSelectId(item.id)
+                                        setSelectId(item._id)
                                     }
                                 }}>{item.name}</button>
                             ))
