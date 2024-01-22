@@ -1,6 +1,6 @@
 import json
 from datetime import timedelta
-
+from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 from flask import Flask, jsonify, request, send_file, Response
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -24,16 +24,9 @@ routes = db['routes']
 category = db['category']
 accounts = db['accounts']
 
-# fill collection
+
 def fill_collection(collection, data):
-    if collection == 'places':
-        places.insert_one(data)
-    elif collection == 'routes':
-        routes.insert_one(data)
-    elif collection == 'category':
-        category.insert_one(data)
-    elif collection == 'accounts':
-        accounts.insert_one(data)
+    db[collection].insert_one(data)
     print('Data added to collection')
 
 def serialize_object(obj):
@@ -41,7 +34,7 @@ def serialize_object(obj):
         return str(obj)
     raise TypeError(repr(obj) + " is not JSON serializable")
 
-# show collection
+
 def super_print(collection_name, category=None):
     if category and int(category) > -1:
         query = {"category": {"$regex": category}}
@@ -75,7 +68,7 @@ def super_print(collection_name, category=None):
     else:
         result = list(db[collection_name].find(query))
     serialized_result = json.loads(json.dumps(result, default=serialize_object))
-    #for components in serialized_result:
+    # for components in serialized_result:
     #    components['_id'] = str(components['_id'])
     return serialized_result
 
@@ -94,7 +87,7 @@ def edit_collection(collection_name, changes, id):
 
 # get something from collection by id
 def get_place_details_id(place_id, collection_name):
-    print('place id get',place_id, collection_name)
+    print('place id get', place_id, collection_name)
     details = list(db[collection_name].aggregate([
         {
             "$match": {"_id": ObjectId(place_id)}
@@ -118,7 +111,6 @@ def get_place_details_id(place_id, collection_name):
                 }
         }
     ]))[0]
-    # details['_id'] = str(details['_id'])
     serialized_result = json.loads(json.dumps(details, default=serialize_object))
     return serialized_result
 
@@ -150,6 +142,96 @@ def get_place_details_name(place_name, collection_name):
     ]))[0]
     serialized_result = json.loads(json.dumps(details, default=serialize_object))
     return serialized_result
+
+
+def find_in_database(email=None):
+    if accounts.find_one({"email": email}):
+        return accounts.find_one({"email": email})['password']
+
+
+def find_fav(email, fav):
+    if fav == 'places':
+        return accounts.find_one({"email": email})['fav_places']
+    elif fav == 'routes':
+        return accounts.find_obne({"email": email})['fav_routes']
+
+
+def get_user():
+    if accounts.find_one({"email": get_jwt_identity()}):
+        result = accounts.find_one({"email": get_jwt_identity()})
+        result['_id'] = str(result['_id'])
+        return result
+
+
+# sign up
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    data['password'] = generate_password_hash(data['password'], method='pbkdf2:sha256')
+    fill_collection('accounts', data)
+    return jsonify({'message': 'User registered successfully'})
+
+
+# log in
+@app.route('/login_user', methods=['POST'])
+def login_user():
+    data = request.get_json()
+    user_password = data['password']
+    email = data['email']
+    print('password', find_in_database(email=email), user_password)
+    if check_password_hash(find_in_database(email=email), user_password):
+        access_token = create_access_token(identity=email)
+        return jsonify(access_token=access_token), 200
+    else:
+        return jsonify({'message': 'incorrect password'})
+
+
+@app.route('/add_favorite_place', methods=['POST'])
+@jwt_required()
+def add_favorite_place():
+    data = request.get_json()
+    data['place_id'] = ObjectId(data['place_id'])
+    # Extract user_id from JWT token
+    email = get_jwt_identity()
+    if not email:
+        return jsonify({'message': 'User Em ail not found in JWT token'}), 400
+
+    db['accounts'].update_one({"email": email}, {"$set": data})
+
+    return jsonify({'message': 'Favorite place added successfully'}), 200
+
+
+# Add a new route for adding routes to favorites
+@app.route('/add_favorite_route', methods=['POST'])
+@jwt_required()
+def add_favorite_place():
+    data = request.get_json()
+    data['route_id'] = ObjectId(data['route_id'])
+    # Extract user_id from JWT token
+    email = get_jwt_identity()
+    if not email:
+        return jsonify({'message': 'User Email not found in JWT token'}), 400
+
+    db['accounts'].update_one({"email": email}, {"$set": data})
+
+    return jsonify({'message': 'Favorite place added successfully'}), 200
+
+
+@app.route('/get_all_places', methods=['GET'])
+@jwt_required()
+def get_all_places():
+    email = get_jwt_identity()
+    places_all = find_fav(email, 'places')
+    return jsonify(places_all)
+
+
+# Route to get all routes
+@app.route('/get_all_routes', methods=['GET'])
+@jwt_required()
+def get_all_routes():
+    email = get_jwt_identity()
+    routes_all = find_fav(email, 'routes')
+    return jsonify(routes_all)
 
 
 # login as admin
@@ -214,6 +296,7 @@ def toFluidObjectId(data, name):
     if data.get(name) and isinstance(data.get(name, [0])[0], str):
         data[name] = [ObjectId(category_id) for category_id in json.loads(data.get(name))]
     return data
+
 
 # add something in collection
 @app.route('/add', methods=['POST'])
@@ -301,7 +384,7 @@ def edit_by_id():
     del data['_id']
     data = toFluidObjectId(data, "category")
     data = toFluidObjectId(data, "points")
-    print('data edit',data)
+    print('data edit', data)
     edit_collection(type_collection, data, id_obj)
     return jsonify({'success': True})
 
