@@ -21,7 +21,7 @@ export type Place = {
     card_description: string;
     description: string;
     category: Category[] | string;
-    images: string;
+    image: string;
     coordinates: string;
     rate: number;
     price: number;

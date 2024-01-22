@@ -1,4 +1,7 @@
+import json
 from datetime import timedelta
+
+from bson import ObjectId
 from flask import Flask, jsonify, request, send_file, Response
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
@@ -21,11 +24,10 @@ routes = db['routes']
 category = db['category']
 accounts = db['accounts']
 
-
 # fill collection
 def fill_collection(collection, data):
     if collection == 'places':
-        result = places.insert_one(data)
+        places.insert_one(data)
     elif collection == 'routes':
         routes.insert_one(data)
     elif collection == 'category':
@@ -34,6 +36,10 @@ def fill_collection(collection, data):
         accounts.insert_one(data)
     print('Data added to collection')
 
+def serialize_object(obj):
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    raise TypeError(repr(obj) + " is not JSON serializable")
 
 # show collection
 def super_print(collection_name, category=None):
@@ -42,36 +48,108 @@ def super_print(collection_name, category=None):
     else:
         query = {}
 
-    result = list(db[collection_name].find(query))
-    for components in result:
-        components['_id'] = str(components['_id'])
-    return result
+    if collection_name == 'places' or collection_name == 'routes':
+        result = list(db[collection_name].aggregate([
+            {
+                "$match": query
+            },
+            {
+                "$lookup":
+                    {
+                        "from": "category",
+                        "localField": "category",
+                        "foreignField": "_id",
+                        "as": "category"
+                    }
+            },
+            {
+                "$lookup":
+                    {
+                        "from": "places",
+                        "localField": "points",
+                        "foreignField": "_id",
+                        "as": "points"
+                    }
+            }
+        ]))
+    else:
+        result = list(db[collection_name].find(query))
+    serialized_result = json.loads(json.dumps(result, default=serialize_object))
+    #for components in serialized_result:
+    #    components['_id'] = str(components['_id'])
+    return serialized_result
 
 
 # delete something from collection
 def delete_place(id, collection_name):
-    db[collection_name].delete_one({"_id": id})
+    db[collection_name].delete_one({"_id": ObjectId(id)})
     print('delete', super_print('category'))
     return Response(status=200)
 
 
 # edit something from collection
 def edit_collection(collection_name, changes, id):
-    db[collection_name].update_one({"_id": id}, {"$set": changes})
+    db[collection_name].update_one({"_id": ObjectId(id)}, {"$set": changes})
 
 
 # get something from collection by id
 def get_place_details_id(place_id, collection_name):
-    details = db[collection_name].find_one({"_id": place_id})
-    details['_id'] = str(details['_id'])
-    return details
+    print('place id get',place_id, collection_name)
+    details = list(db[collection_name].aggregate([
+        {
+            "$match": {"_id": ObjectId(place_id)}
+        },
+        {
+            "$lookup":
+                {
+                    "from": "category",
+                    "localField": "category",
+                    "foreignField": "_id",
+                    "as": "category"
+                }
+        },
+        {
+            "$lookup":
+                {
+                    "from": "places",
+                    "localField": "points",
+                    "foreignField": "_id",
+                    "as": "points"
+                }
+        }
+    ]))[0]
+    # details['_id'] = str(details['_id'])
+    serialized_result = json.loads(json.dumps(details, default=serialize_object))
+    return serialized_result
 
 
 # get something from collection by name
 def get_place_details_name(place_name, collection_name):
-    details = db[collection_name].find_one({"name": place_name})
-    details['_id'] = str(details['_id'])
-    return details
+    details = list(db[collection_name].aggregate([
+        {
+            "$match": {"name": place_name}
+        },
+        {
+            "$lookup":
+                {
+                    "from": "category",
+                    "localField": "category",
+                    "foreignField": "_id",
+                    "as": "category"
+                }
+        },
+        {
+            "$lookup":
+                {
+                    "from": "places",
+                    "localField": "points",
+                    "foreignField": "_id",
+                    "as": "points"
+                }
+        }
+    ]))[0]
+    serialized_result = json.loads(json.dumps(details, default=serialize_object))
+    return serialized_result
 
 
 # login as admin
@@ -132,21 +210,36 @@ def send_image(image_name):
         return "Файл не найден", 404
 
 
+def toFluidObjectId(data, name):
+    if data.get(name) and isinstance(data.get(name, [0])[0], str):
+        data[name] = [ObjectId(category_id) for category_id in json.loads(data.get(name))]
+    return data
+
 # add something in collection
 @app.route('/add', methods=['POST'])
 @jwt_required()
 def add_places():
     data = request.form.to_dict()
+    print('request.files', request.files)
     if request.files.get("image", False):
         image = request.files['image']
+        print('image', image)
         path = os.path.join(app.root_path, 'images', image.filename)
         image.save(path)
+        print('image sace path', path)
         data['image'] = image.filename
+        print('image.filename', image.filename)
 
     if data.get('walk', False):
         data['walk'] = data['walk'] == 'true'
     if data.get("_id"):
         del data['_id']
+
+    # if data.get("category") and isinstance(data.get("category", [0])[0], str):
+    #     data["category"] = [ObjectId(category_id) for category_id in json.loads(data.get("category"))]
+    data = toFluidObjectId(data, "category")
+    data = toFluidObjectId(data, "points")
+
     print('data', data)
     fill_collection(data['type'], data)
     return jsonify({"success": True}), 200
@@ -156,7 +249,7 @@ def add_places():
 @app.route('/get_details_id', methods=['GET'])
 def return_details_by_id():
     id = request.args.get('id')
-    collection = request.args.get('collection_name')
+    collection = request.args.get('table_name')
 
     details = get_place_details_id(id, collection)
 
@@ -170,7 +263,7 @@ def return_details_by_id():
 @app.route('/get_details_name', methods=['GET'])
 def return_place_by_name():
     id = request.args.get('id')
-    collection = request.args.get('collection_name')
+    collection = request.args.get('table_name')
 
     details = get_place_details_name(id, collection)
 
@@ -185,7 +278,7 @@ def return_place_by_name():
 @jwt_required()
 def delete_by_id():
     id = request.args.get('id')
-    collection = request.args.get('collection_name')
+    collection = request.args.get('table_name')
     delete_place(id, collection)
     return jsonify({'success': True})
 
@@ -203,9 +296,12 @@ def edit_by_id():
 
     print('get data for edit', data.get("type", None))
     type_collection = data.get("type")
-    id_obj = data.get("id")
+    id_obj = data.get("_id")
     del data['type']
-    del data['id']
+    del data['_id']
+    data = toFluidObjectId(data, "category")
+    data = toFluidObjectId(data, "points")
+    print('data edit',data)
     edit_collection(type_collection, data, id_obj)
     return jsonify({'success': True})
 

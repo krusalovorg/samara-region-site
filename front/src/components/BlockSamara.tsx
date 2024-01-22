@@ -200,7 +200,7 @@ function BlockSamara({ places }: { places: Place[] }) {
                                 }} className='md:text-2xl max-md:text-xl'>
                                     {information?.description}
                                 </h2>
-                                {information.time ? <h3 className='md:text-2xl max-md:text-xl text-[#2C2C2C] my-[15px] leading-[150%]'>Продолжительность: {information?.time} {declOfHours(information.time)}</h3> : <></>}
+                                {information.time && information.time > 0 ? <h3 className='md:text-2xl max-md:text-xl text-[#2C2C2C] my-[15px] leading-[150%]'>Продолжительность: {information?.time} {declOfHours(information.time)}</h3> : <></>}
                                 {information.points ?
 
                                     <>

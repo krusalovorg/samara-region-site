@@ -94,7 +94,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
             try {
                 const formDataToSend = new FormData();
                 Object.keys(formData).forEach((key) => {
-                    if (key !== 'images') {
+                    if (key !== 'images' && key !== 'category') {
                         formDataToSend.append(key, (formData as any)[key]);
                     }
                 });
@@ -103,6 +103,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
                     formDataToSend.append('image', formData.images[0], formData.images[0].name);
                 }
                 formDataToSend.append("type", "places");
+                formDataToSend.append("category", JSON.stringify(formData.category));
                 const response = await fetch(URL_SERVER+`/${type == 'edit' ? "edit" : "add"}`, {
                     method: 'POST',
                     headers: {

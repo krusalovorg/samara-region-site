@@ -79,7 +79,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
             try {
                 const formDataToSend = new FormData();
                 Object.keys(formData).forEach((key) => {
-                    if (key !== 'images') {
+                    if (key !== 'images' && key !== 'category') {
                         formDataToSend.append(key, (formData as any)[key]);
                     }
                 });
@@ -87,7 +87,8 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                     formDataToSend.append('image', formData.images[0], formData.images[0].name);
                 }
                 formDataToSend.append("type", "routes");
-                formDataToSend.append("points", selectPlacesId as any);
+                formDataToSend.append("points", JSON.stringify(selectPlacesId));
+                formDataToSend.append("category", JSON.stringify(formData.category));
 
                 const response = await fetch(URL_SERVER+`/${type == 'edit' ? 'edit' : "add"}`, {
                     method: 'POST',

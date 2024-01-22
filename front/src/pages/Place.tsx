@@ -189,7 +189,7 @@ function PlacePage({ route }: { route?: boolean }) {
         <div
           className="w-full min-h-[400px] bg-shadow-g relative"
           style={{
-            backgroundImage: `url(${getImage(data?.images)})`,
+            backgroundImage: `url(${getImage(data?.image)})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             borderRadius: 26,
@@ -227,7 +227,7 @@ function PlacePage({ route }: { route?: boolean }) {
             {data?.description}
           </p>
 
-          {data?.time ? (
+          {data?.time && data?.time > 0 ? (
             <h3 className="text-xl text-[#2C2C2C] mb-[15px] leading-[150%]">
               Продолжительность: {data?.time} {declOfHours(data.time)}
             </h3>
@@ -327,7 +327,7 @@ function PlacePage({ route }: { route?: boolean }) {
               <div className="gap-x-2 flex">
                 <VKShareButton
                   url={String(window.location)}
-                  image={getImage(data?.images)}
+                  image={getImage(data?.image)}
                   title={data?.name}
                   content={data?.description}
                 >
@@ -347,7 +347,7 @@ function PlacePage({ route }: { route?: boolean }) {
                 </WhatsappShareButton>
                 <OKShareButton
                   url={String(window.location)}
-                  image={getImage(data?.images)}
+                  image={getImage(data?.image)}
                   title={data?.name}
                 >
                   <OKIcon size={32} round />
