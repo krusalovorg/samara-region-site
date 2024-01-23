@@ -397,8 +397,4 @@ def edit_by_id():
 # start code
 if __name__ == "__main__":
     collections = ['places', 'routes', 'category', 'accounts']
-    print(find_fav('mihailgrigorev2008@gmail.com', 'places'))
-    print(find_fav('mihailgrigorev2008@gmail.com', 'routes'))
-    print(find_in_database('mihailgrigorev2008@gmail.com'))
-    print(get_full_user('mihailgrigorev2008@gmail.com'))
     app.run(host="0.0.0.0")
