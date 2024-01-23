@@ -29,6 +29,7 @@ def fill_collection(collection, data):
     db[collection].insert_one(data)
     print('Data added to collection')
 
+
 def serialize_object(obj):
     if isinstance(obj, ObjectId):
         return str(obj)
@@ -149,11 +150,18 @@ def find_in_database(email=None):
         return accounts.find_one({"email": email})['password']
 
 
+def get_full_user(email):
+    if accounts.find_one({'email': email}):
+        full_user = accounts.find_one({'email': email})
+        del full_user['password']
+        return full_user
+
+
 def find_fav(email, fav):
     if fav == 'places':
         return accounts.find_one({"email": email})['fav_places']
     elif fav == 'routes':
-        return accounts.find_obne({"email": email})['fav_routes']
+        return accounts.find_one({"email": email})['fav_routes']
 
 
 def get_user():
@@ -186,35 +194,24 @@ def login_user():
         return jsonify({'message': 'incorrect password'})
 
 
-@app.route('/add_favorite_place', methods=['POST'])
+@app.route('/add_favorite', methods=['POST'])
 @jwt_required()
-def add_favorite_place():
+def add_favorite():
     data = request.get_json()
-    data['place_id'] = ObjectId(data['place_id'])
-    # Extract user_id from JWT token
-    email = get_jwt_identity()
-    if not email:
-        return jsonify({'message': 'User Em ail not found in JWT token'}), 400
-
-    db['accounts'].update_one({"email": email}, {"$set": data})
-
-    return jsonify({'message': 'Favorite place added successfully'}), 200
-
-
-# Add a new route for adding routes to favorites
-@app.route('/add_favorite_route', methods=['POST'])
-@jwt_required()
-def add_favorite_place():
-    data = request.get_json()
-    data['route_id'] = ObjectId(data['route_id'])
-    # Extract user_id from JWT token
     email = get_jwt_identity()
     if not email:
         return jsonify({'message': 'User Email not found in JWT token'}), 400
 
-    db['accounts'].update_one({"email": email}, {"$set": data})
+    if 'place_id' in data:
+        data['place_id'] += ObjectId(data['place_id'])
+        update_field = 'fav_places'
+    elif 'route_id' in data:
+        data['route_id'] += ObjectId(data['route_id'])
+        update_field = 'fav_routes'
+    else:
+        return jsonify({'message': 'Invalid request, missing place_id or route_id'}), 400
 
-    return jsonify({'message': 'Favorite place added successfully'}), 200
+    db['accounts'].update_one({"email": email}, {"$addToSet": {update_field: data}})
 
 
 @app.route('/get_all_places', methods=['GET'])
@@ -232,6 +229,14 @@ def get_all_routes():
     email = get_jwt_identity()
     routes_all = find_fav(email, 'routes')
     return jsonify(routes_all)
+
+
+@app.route('/get_full_user', methods=['GET'])
+@jwt_required()
+def full_user():
+    email = get_jwt_identity()
+    user_full = get_full_user(email)
+    return jsonify(user_full)
 
 
 # login as admin
@@ -392,4 +397,8 @@ def edit_by_id():
 # start code
 if __name__ == "__main__":
     collections = ['places', 'routes', 'category', 'accounts']
+    print(find_fav('mihailgrigorev2008@gmail.com', 'places'))
+    print(find_fav('mihailgrigorev2008@gmail.com', 'routes'))
+    print(find_in_database('mihailgrigorev2008@gmail.com'))
+    print(get_full_user('mihailgrigorev2008@gmail.com'))
     app.run(host="0.0.0.0")
