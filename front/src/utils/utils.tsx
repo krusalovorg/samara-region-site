@@ -1,6 +1,12 @@
 import { URL_SERVER } from "./backend";
 
-export const getCookieToken = () => document.cookie.split('; ').find(row => row.startsWith('access_token='));
+export const getCookieToken = () => {
+    let res = document.cookie.split("; ").find((row) => row.startsWith("access_token="))
+    if (res) {
+        res = res.replace("access_token=", "");
+    }
+    return res;
+};
 export const getImage = (image: string) => URL_SERVER+`/image/${image}`
 
 export function declOfHours(number: number) {

@@ -87,7 +87,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         const cookieToken = getCookieToken();
         let token = null;
         if (cookieToken) {
-            token = cookieToken.split('=')[1];
+            token = cookieToken;
         }
 
         if (token) {
@@ -131,7 +131,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
         const cookieToken = getCookieToken();
         let token = '';
         if (cookieToken) {
-            token = cookieToken.split('=')[1];
+            token = cookieToken;
         }
         const result = await deleteById(formData?._id, 'places', token);
         alert("Успешно!");
@@ -311,7 +311,7 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
             <h1 className='text-2xl font-medium text-[#2C2C2C] mt-2'>Все места</h1>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
                 {places && places.length > 0 && places.map((item) => (
-                    <PlaceItem onClick={() => {
+                    <PlaceItem mini onClick={() => {
                         // console.log(item.coordinates, item?.coordinates.split(','), item?.category?.split(","))
 
                         setPoint((item?.coordinates.split(',') as any) || [0, 0])

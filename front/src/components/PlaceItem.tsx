@@ -5,7 +5,7 @@ import { Category as CategoryType, Place, getItemById } from '../utils/backend';
 import { declOfHours, getImage } from '../utils/utils';
 import { useEffect, useState } from 'react';
 
-function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClick?: any }) {
+function PlaceItem({ data, style, onClick, mini, grid }: { data?: any, style?: any, onClick?: any, mini?: boolean, grid?: boolean }) {
     const navigate = useNavigate();
     const [categorys, setCategorys] = useState<any[]>([]);
 
@@ -35,11 +35,13 @@ function PlaceItem({ data, style, onClick }: { data?: Place, style?: any, onClic
 
     return (
         <div
-            className='rounded-2xl min-w-[35%] h-[250px] relative bg-shadow-g snap-always snap-center cursor-pointer'
+            className='rounded-2xl relative bg-shadow-g snap-always snap-center cursor-pointer'
             style={{
                 backgroundImage: `url(${data?.image ? getImage(data?.image) : ImageCard2})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
+                height: mini ? 250 : 450,
+                minWidth: mini ? "35%" : (grid ? 'auto' : 600),
                 ...style
             }}
             onClick={() => {

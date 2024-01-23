@@ -72,7 +72,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
         const cookieToken = getCookieToken();
         let token = null;
         if (cookieToken) {
-            token = cookieToken.split('=')[1];
+            token = cookieToken;
         }
 
         if (token) {
@@ -116,7 +116,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
         const cookieToken = getCookieToken();
         let token = '';
         if (cookieToken) {
-            token = cookieToken.split('=')[1];
+            token = cookieToken;
         }
         const result = await deleteById(formData?._id, 'routes', token);
         alert("Успешно!");
@@ -217,7 +217,7 @@ function FragmentRoutes({ setFragment }: { setFragment?: any }) {
                         {
                             selectPlaces.map((item) => (
                                 <>
-                                    <PlaceItem style={{ marginBottom: 12 }} data={item} />
+                                    <PlaceItem mini style={{ marginBottom: 12 }} data={item} />
                                 </>
                             ))
                         }

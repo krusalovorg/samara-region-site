@@ -40,7 +40,7 @@ function FragmentCategory() {
         const cookieToken = getCookieToken();
         let token = null;
         if (cookieToken) {
-            token = cookieToken.split('=')[1];
+            token = cookieToken;
         }
 
         if (token) {
@@ -80,7 +80,7 @@ function FragmentCategory() {
         const cookieToken = getCookieToken();
         let token = '';
         if (cookieToken) {
-            token = cookieToken.split('=')[1];
+            token = cookieToken;
         }
         const result = await deleteById(formData?._id, 'category', token);
         alert("Успешно");

@@ -16,7 +16,7 @@ const CustomRangeInput = ({ value, setValue, label }: { value: number, setValue:
                 step={1}
                 onChange={handleChange}
             />
-            <h2 className='max-md:ml-0 max-md:mb-[10px] font-medium text-[16px] md:ml-5'>{label}: {value}ч</h2>
+            <h2 className='max-md:ml-0 max-md:mb-[10px] font-medium text-[16px] md:ml-5 min-w-[189px]'>{label}: {value}ч</h2>
         </div>
     );
 };

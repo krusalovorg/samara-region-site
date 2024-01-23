@@ -177,7 +177,8 @@ def register():
     data = request.get_json()
     data['password'] = generate_password_hash(data['password'], method='pbkdf2:sha256')
     fill_collection('accounts', data)
-    return jsonify({'message': 'User registered successfully'})
+    data['role'] = 'user'
+    return jsonify({'message': 'User registered successfully', 'status': True})
 
 
 # log in
@@ -189,7 +190,7 @@ def login_user():
     print('password', find_in_database(email=email), user_password)
     if check_password_hash(find_in_database(email=email), user_password):
         access_token = create_access_token(identity=email)
-        return jsonify(access_token=access_token), 200
+        return jsonify(access_token=access_token, status=True), 200
     else:
         return jsonify({'message': 'incorrect password'})
 
@@ -200,18 +201,26 @@ def add_favorite():
     data = request.get_json()
     email = get_jwt_identity()
     if not email:
-        return jsonify({'message': 'User Email not found in JWT token'}), 400
-
-    if 'place_id' in data:
-        data['place_id'] += ObjectId(data['place_id'])
-        update_field = 'fav_places'
-    elif 'route_id' in data:
-        data['route_id'] += ObjectId(data['route_id'])
-        update_field = 'fav_routes'
+        return jsonify({'message': 'User Email not found in JWT token', 'status': False}), 400
+    print(data)
+    item_id = None
+    if data.get('place_id'):
+        item_id = ObjectId(data['place_id'])
+        result = db['accounts'].update_one({"email": email}, {"$addToSet": {"favorites.places": item_id}})
+        if result.modified_count == 0:  # Если ничего не было изменено, удаляем элемент из избранных
+            db['accounts'].update_one({"email": email}, {"$pull": {"favorites.places": item_id}})
+        else:
+            return jsonify({'status': True, 'action': 'added'})
+    elif data.get('route_id') in data:
+        item_id = ObjectId(data['route_id'])
+        result = db['accounts'].update_one({"email": email}, {"$addToSet": {"favorites.routes": item_id}})
+        if result.modified_count == 0:  # Если ничего не было изменено, удаляем элемент из избранных
+            db['accounts'].update_one({"email": email}, {"$pull": {"favorites.routes": item_id}})
+        else:
+            return jsonify({'status': True, 'action': 'added'})
     else:
-        return jsonify({'message': 'Invalid request, missing place_id or route_id'}), 400
-
-    db['accounts'].update_one({"email": email}, {"$addToSet": {update_field: data}})
+        return jsonify({'message': 'Invalid request, missing place_id or route_id', 'status': False}), 400
+    return jsonify({'status': True, 'action': 'removed'})
 
 
 @app.route('/get_all_places', methods=['GET'])
@@ -236,7 +245,8 @@ def get_all_routes():
 def full_user():
     email = get_jwt_identity()
     user_full = get_full_user(email)
-    return jsonify(user_full)
+    serialized_result = json.loads(json.dumps(user_full, default=serialize_object))
+    return jsonify(serialized_result)
 
 
 # login as admin
@@ -322,6 +332,9 @@ def add_places():
         data['walk'] = data['walk'] == 'true'
     if data.get("_id"):
         del data['_id']
+        
+    if data.get("points") and len(data.get("points")) == 0:
+        del data['points']
 
     # if data.get("category") and isinstance(data.get("category", [0])[0], str):
     #     data["category"] = [ObjectId(category_id) for category_id in json.loads(data.get("category"))]

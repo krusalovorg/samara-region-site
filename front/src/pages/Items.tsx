@@ -48,7 +48,7 @@ function ItemsPage() {
         </p>
         <div className='grid max-md:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
           {data && data.length > 0 && data.map((item) => (
-            <PlaceItem data={item as any} />
+            <PlaceItem grid data={item as any} />
           ))}
         </div>
       </div>

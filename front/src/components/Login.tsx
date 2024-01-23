@@ -13,7 +13,7 @@ function Login({ children, fragment, setFragment }: any) {
     useEffect(() => {
         const cookieToken = getCookieToken();
         if (cookieToken) {
-            setToken(cookieToken.split('=')[1]);
+            setToken(cookieToken);
         }
     }, []);
 

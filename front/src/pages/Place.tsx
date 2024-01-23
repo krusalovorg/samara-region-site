@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import GerbLogo from "../assets/gerb.png";
 import Header from "../components/Header";
 import ImageCard2 from "../assets/buti2.jpg";
@@ -12,8 +12,9 @@ import {
   Route,
   URL_SERVER,
   URL_SITE,
+  addFavotiteItem,
 } from "../utils/backend";
-import { declOfHours, getImage } from "../utils/utils";
+import { declOfHours, getCookieToken, getImage } from "../utils/utils";
 import { useNavigate, useParams } from "react-router-dom";
 import PlaceItem from "../components/PlaceItem";
 import { Placemark, YMaps, Map } from "@pbe/react-yandex-maps";
@@ -46,6 +47,7 @@ import {
   WhatsappShareButton,
   WorkplaceShareButton,
 } from "react-share";
+import UserContext from "../contexts/UserContext";
 
 function PlacePage({ route }: { route?: boolean }) {
   const [data, setData] = useState<any>(null);
@@ -56,8 +58,11 @@ function PlacePage({ route }: { route?: boolean }) {
   const { id } = useParams();
   const [offset, setOffset] = useState(3);
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { favorites } = useContext(UserContext);
 
   const [copied, setCopied] = useState(false);
+  const [favorite, setFavorite] = useState(false);
 
   const handleCopy = () => {
     const linkInput = document.getElementById("link-input") as HTMLInputElement;
@@ -161,6 +166,46 @@ function PlacePage({ route }: { route?: boolean }) {
     setLoaded(true);
   }
 
+  async function addFavotite() {
+    const token = getCookieToken();
+    if (token) {
+      const result = await addFavotiteItem(token, data?._id, data?.points?.length > 0 ? true : false);
+      console.log(result)
+      if (result.status) {
+        setFavorite(!favorite)
+      }
+    } else {
+      navigate("/reg")
+    }
+  }
+
+  function loadFavorites() {
+    const token = getCookieToken();
+    setIsLoggedIn(token ? true : false)
+    if (data?.points.length > 0) {
+      if (favorites?.routes?.length > 0) {
+        if (favorites?.routes?.includes(data?._id)) {
+          setFavorite(true);
+        }
+      }
+    } else {
+      if (favorites?.places?.length > 0) {
+        console.log('trueeeeeeeeeeeeeeeeee')
+        if (favorites?.places?.includes(data?._id)) {
+          setFavorite(true);
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    loadFavorites()
+  }, [favorites])
+  
+  useEffect(()=>{
+    loadFavorites()
+  },[])
+
   // useEffect(() => {
   //   if (points.length > 0) {
   //     setTimeout(()=>loadRouters(), 200)
@@ -223,6 +268,11 @@ function PlacePage({ route }: { route?: boolean }) {
         <div
           className={`w-full md:w-[70%] bg-white rounded-[50px] h-auto px-[36px] py-[30px]`}
         >
+          <div className="mb-2">
+            <button onClick={addFavotite} className="bg-[#C8EC7B] text-[#2C2C2C] rounded text-sm py-2 px-5 mr-4 hover:bg-[#dafb93]">
+              {favorite ? "В избранном" : "Добавить в избранное"}
+            </button>
+          </div>
           <p className="text-xl mb-[30px] leading-[150%]">
             {data?.description}
           </p>
