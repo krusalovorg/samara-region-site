@@ -62,7 +62,7 @@ function Login({ children, fragment, setFragment }: any) {
                 ) : (
                     <>
                     <Header/>
-                        <div className='w-full max-w-lg px-10 py-8 mx-auto bg-white border rounded-lg shadow-2xl'>
+                        <div className='w-full max-w-lg px-10 py-8 mx-auto bg-white rounded-lg'>
                             <div className='max-w-md mx-auto space-y-3'>
                                 <h3 className="text-lg font-semibold">Вход</h3>
                                 <div>
@@ -72,7 +72,6 @@ function Login({ children, fragment, setFragment }: any) {
                                         onChange={(e) => setUsername(e.target.value)}
                                         type="email"
                                         className="border w-full py-2 px-2 rounded shadow hover:border-indigo-600 ring-1 ring-inset ring-gray-300 font-mono" />
-                                    <p className="text-sm mt-2 px-2 hidden text-gray-600">Text helper</p>
                                 </div>
                                 <div>
                                     <label className="block py-1">Пароль</label>

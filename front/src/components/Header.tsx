@@ -9,12 +9,23 @@ function Header() {
     const navigate = useNavigate();
     const [admin, setAdmin] = useState(false);
     const isMobile = useIsMobile();
-    const {role} = useContext(UserContext);
+    const {role, _id} = useContext(UserContext);
+    const [loggedIn, setLoggedIn] = useState(false);
 
     const url = window.location.pathname;
 
-    useEffect(() => {
+    function init() {
+        console.log(getCookieToken(), role)
+        setLoggedIn(_id && _id?.length > 5 ? true : false)
         setAdmin((getCookieToken() && role == 'admin') ? true : false);
+    }
+
+    useEffect(()=>{
+        init()
+    },[_id])
+
+    useEffect(() => {
+        init()
     }, [])
 
     return (
@@ -42,11 +53,11 @@ function Header() {
                     }}>
                     Места
                 </a>
-                <a className={`text-black md:mx-5 font-[600] font-[Montserrat] cursor-pointer max-md:px-3 md:px-8 py-2 rounded-3xl ${url == '/user' ? 'bg-[#D2F881]' : ''}`}
+                <a className={`text-black md:mx-5 font-[600] font-[Montserrat] cursor-pointer max-md:px-3 md:px-8 py-2 rounded-3xl ${url == ((role != 'none' && loggedIn)? "/user" : '/login') ? 'bg-[#D2F881]' : ''}`}
                     onClick={() => {
-                        navigate("/user")
+                        navigate((role != 'none' && loggedIn) ? "/user" : '/login')
                     }}>
-                    Профиль
+                    {(role != 'none' && loggedIn) ? "Профиль" : "Войти"}
                 </a>
                 {admin &&
                     <a className={`text-black mx-5 font-[600] font-[Montserrat] cursor-pointer px-8 py-2 rounded-3xl ${url == '/admin' ? 'bg-[#D2F881]' : ''}`}

@@ -1,15 +1,20 @@
 import React, { createContext } from "react";
 import { UserData } from "../utils/backend";
 
-const UserContext = createContext<UserData>({
+interface UserContextData extends UserData {
+  setUserData: (data: any) => void;
+}
+
+const UserContext = createContext<UserContextData>({
   name: '',
   email: '',
-  role: 'user',
+  role: 'none',
   favorites: {
     routes: [],
     places: []
   },
   _id: '',
+  setUserData: (data: any)=>{}
 });
 
 export default UserContext;

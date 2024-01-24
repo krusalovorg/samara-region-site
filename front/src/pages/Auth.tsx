@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import Login from '../components/Login';
 import Header from '../components/Header';
 import { getCookieToken } from '../utils/utils';
-import { URL_SERVER } from '../utils/backend';
+import { URL_SERVER, getUserData } from '../utils/backend';
 import { useNavigate } from 'react-router-dom';
+import UserContext from '../contexts/UserContext';
 
-function Auth({reg}: {reg?: boolean}) {
+function Auth({reg = false}: {reg?: boolean}) {
     const navigate = useNavigate();
 
     const [username, setUsername] = useState('');
@@ -14,7 +15,9 @@ function Auth({reg}: {reg?: boolean}) {
     const [token, setToken] = useState('');
     const [email, setEmail] = useState('');
 
-    const [isReg, setIsReg] = useState(reg ? reg : false);
+    const [isReg, setIsReg] = useState(reg);
+
+    const {setUserData} = useContext(UserContext)
 
     useEffect(() => {
         const cookieToken = getCookieToken();
@@ -30,7 +33,14 @@ function Auth({reg}: {reg?: boolean}) {
         }
     }, []);
 
+    async function openUser(access_token: string) {
+        const data_user = await getUserData(access_token);
+        setUserData(data_user)
+        navigate('/profile')
+    }
+
     const handleLogin = (login: boolean) => {
+        console.log(login ? '/register' : '/login_user')
         fetch(URL_SERVER + (login ? '/register' : '/login_user'), {
             method: 'POST',
             headers: {
@@ -54,12 +64,18 @@ function Auth({reg}: {reg?: boolean}) {
             })
             .then(data => {
                 // Сохраняем токен в куки
-                if (data?.status && !login) {
+                if (data?.message) {
+                    //console.error(data?.message)
+                    setError(data?.message)
+                    return
+                }
+                if (data?.status && login) {
+                    console.log('handel login ', data, !login, data && !login)
                     handleLogin(true);
                 } else {
                     document.cookie = `access_token = ${data.access_token}`;
                     setToken(data.access_token)
-                    navigate('/profile')
+                    openUser(data.access_token)
                 }
             })
             .catch(error => {
@@ -72,7 +88,7 @@ function Auth({reg}: {reg?: boolean}) {
             minHeight: 'calc(100vh - 277px)'
         }}>
             <Header />
-            <div className='w-full max-w-lg px-10 py-8 mx-auto bg-white border rounded-lg shadow-2xl'>
+            <div className='w-full max-w-lg px-10 py-8 mx-auto bg-white rounded-lg'>
                 <div className='max-w-md mx-auto space-y-3'>
                     <h3 className="text-lg font-semibold">{!isReg ? "Войти" : "Регистрация"}</h3>
                     {
@@ -84,7 +100,7 @@ function Auth({reg}: {reg?: boolean}) {
                                         value={username}
                                         onChange={(e) => setUsername(e.target.value)}
                                         type="name"
-                                        className="border w-full py-2 px-2 rounded shadow hover:border-indigo-600 ring-1 ring-inset ring-gray-300 font-mono" />
+                                        className="w-full py-2 px-2 rounded hover:border-indigo-600 ring-1 ring-inset ring-gray-300 font-mono" />
                                 </div>
                             </>
                             : <></>
@@ -95,7 +111,7 @@ function Auth({reg}: {reg?: boolean}) {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             type="email"
-                            className="border w-full py-2 px-2 rounded shadow hover:border-indigo-600 ring-1 ring-inset ring-gray-300 font-mono" />
+                            className="w-full py-2 px-2 rounded hover:border-indigo-600 ring-1 ring-inset ring-gray-300 font-mono" />
                     </div>
                     <div>
                         <label className="block py-1">Пароль</label>
@@ -103,20 +119,20 @@ function Auth({reg}: {reg?: boolean}) {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             type="password"
-                            className="border w-full py-2 px-2 rounded shadow hover:border-indigo-600 ring-1 ring-inset ring-gray-300 font-mono" />
+                            className="w-full py-2 px-2 rounded hover:border-indigo-600 ring-1 ring-inset ring-gray-300 font-mono" />
                     </div>
                     {error && <p className="text-red-500 mb-4">{error}</p>}
                     <div className="flex gap-3 pt-3 items-center">
                         <button
                             onClick={()=>handleLogin(isReg)}
-                            className="border hover:border-indigo-600 px-4 py-2 rounded-lg shadow ring-1 ring-inset ring-gray-300">{!isReg ? "Войти" : "Регистрация"}</button>
+                            className="hover:border-indigo-600 px-4 py-2 rounded-lg ring-1 ring-inset ring-gray-300">{!isReg ? "Войти" : "Регистрация"}</button>
                     </div>
 
                     <button
                         onClick={() => {
                             setIsReg(!isReg)
                         }}
-                        className="border hover:border-indigo-600 px-4 py-2 rounded-lg shadow ring-1 ring-inset mx-auto ring-gray-300">{isReg ? "У вас уже есть аккаунт?" : "У вас нет аккаунта? Создать аккаунт"}</button>
+                        className="hover:border-indigo-600 px-4 py-2 rounded-lg ring-1 ring-inset mx-auto ring-gray-300">{isReg ? "У вас уже есть аккаунт?" : "У вас нет аккаунта? Создать аккаунт"}</button>
                 </div>
             </div>
         </div>

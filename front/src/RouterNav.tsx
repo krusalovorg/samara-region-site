@@ -1,6 +1,6 @@
 import App from './App';
 import Header from './components/Header';
-import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Router, Routes, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { UserData, getUserData } from './utils/backend';
 import Place from './pages/Place';
@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Auth from './pages/Auth';
 import { getCookieToken } from './utils/utils';
 import UserContext from './contexts/UserContext';
+import Cookies from 'js-cookie';
 
 function RouterNav() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,34 +20,43 @@ function RouterNav() {
 
     async function loadData(token: string) {
         const data = await getUserData(token);
-        console.log(data);
-        setUserData(data);
+        console.log('get data user', data)
+        if ((data as any)?.msg) {
+            Cookies.remove('access_token')
+            setUserData({ role: 'none' } as any)
+        } else {
+            setUserData(data);
+        }
     }
 
-    useEffect(() => {
+    async function loadAll() {
         const get_token = getCookieToken();
         setIsLoggedIn(get_token ? true : false)
         if (get_token) {
             setToken(get_token);
             loadData(get_token);
         }
+    }
+
+    useEffect(() => {
+        loadAll();
     }, [])
 
     return (
         <>
             <BrowserRouter>
-                <UserContext.Provider value={(userData || {}) as UserData}>
+                <UserContext.Provider value={{...(userData || {}) as UserData, setUserData}}>
                     <Routes>
                         {
-                            (isLoggedIn && token) ?
+                            (isLoggedIn && token && userData?.role != 'none') ?
                                 <>
-                                    <Route path='/' element={<App />} />
-                                    <Route path='*' element={<App />} />
                                     <Route path='/user' element={<Profile />} />
                                 </>
                                 :
                                 <></>
                         }
+                        <Route path='/' element={<App />} />
+                        <Route path='*' element={<App />} />
 
                         <Route path='/place/:id' element={<Place />} />
                         <Route path='/route/:id' element={<Place route />} />

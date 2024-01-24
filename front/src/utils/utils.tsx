@@ -1,11 +1,8 @@
 import { URL_SERVER } from "./backend";
+import Cookies from 'js-cookie';
 
 export const getCookieToken = () => {
-    let res = document.cookie.split("; ").find((row) => row.startsWith("access_token="))
-    if (res) {
-        res = res.replace("access_token=", "");
-    }
-    return res;
+    return Cookies.get('access_token');
 };
 export const getImage = (image: string) => URL_SERVER+`/image/${image}`
 

@@ -7,7 +7,7 @@ import PlaceItem from '../components/PlaceItem';
 import { getCookieToken } from '../utils/utils';
 
 function Profile() {
-    const { name, email, _id, favorites } = useContext(UserContext);
+    const { name, email, _id, favorites, setUserData } = useContext(UserContext);
     const [places, setPlaces] = useState<Place[]>([]);
     const [routes, setRoutes] = useState<Route[]>([]);
 
@@ -29,10 +29,24 @@ function Profile() {
         }
     }
 
+    async function loadUser() {
+        const token = getCookieToken()
+        if (token) {
+            const data = await getUserData(token);
+            setUserData(data);
+        }
+    }
+
     useEffect(() => {
         loadPlaces();
         loadRoutes();
     }, [favorites])
+
+    useEffect(()=>{
+        loadPlaces();
+        loadRoutes();
+        loadUser()
+    },[])
 
     return (
         <div className={` 'flex justify-center items-center`} style={{

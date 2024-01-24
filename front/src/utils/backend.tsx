@@ -131,7 +131,7 @@ interface Favorites {
 export type UserData = {
     name: string;
     email: string;
-    role: string;
+    role: 'user' | 'admin' | 'none';
     favorites: Favorites;
     _id?: any;
 };
@@ -146,9 +146,6 @@ export const getUserData = async (token: string) => {
                 Authorization: "Bearer " + token,
             }
         });
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
         const data = await response.json();
         return data as UserData;
     } catch (error) {
@@ -171,9 +168,6 @@ export const addFavotiteItem = async (token: string, item_id: string, route: boo
                 [route ? 'route_id' : 'place_id']: item_id
             })
         });
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
         const data = await response.json();
         return data as {status: boolean};
     } catch (error) {

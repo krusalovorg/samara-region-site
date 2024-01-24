@@ -175,9 +175,14 @@ def get_user():
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
+    # Проверка наличия аккаунта с таким же email
+    existing_account = db.accounts.find_one({"email": data['email']})
+    if existing_account:
+        return jsonify({'message': 'Account with this email already exists', 'status': False})
+    # Хэширование пароля и сохранение данных в базе
     data['password'] = generate_password_hash(data['password'], method='pbkdf2:sha256')
-    fill_collection('accounts', data)
     data['role'] = 'user'
+    db.accounts.insert_one(data)
     return jsonify({'message': 'User registered successfully', 'status': True})
 
 
@@ -188,7 +193,9 @@ def login_user():
     user_password = data['password']
     email = data['email']
     print('password', find_in_database(email=email), user_password)
-    if check_password_hash(find_in_database(email=email), user_password):
+    user = find_in_database(email=email)
+    print(user)
+    if user and check_password_hash(user, user_password):
         access_token = create_access_token(identity=email)
         return jsonify(access_token=access_token, status=True), 200
     else:
@@ -332,7 +339,7 @@ def add_places():
         data['walk'] = data['walk'] == 'true'
     if data.get("_id"):
         del data['_id']
-        
+
     if data.get("points") and len(data.get("points")) == 0:
         del data['points']
 

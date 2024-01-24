@@ -13,6 +13,7 @@ import {
   URL_SERVER,
   URL_SITE,
   addFavotiteItem,
+  getUserData,
 } from "../utils/backend";
 import { declOfHours, getCookieToken, getImage } from "../utils/utils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -59,7 +60,7 @@ function PlacePage({ route }: { route?: boolean }) {
   const [offset, setOffset] = useState(3);
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { favorites } = useContext(UserContext);
+  const { favorites, setUserData } = useContext(UserContext);
 
   const [copied, setCopied] = useState(false);
   const [favorite, setFavorite] = useState(false);
@@ -142,7 +143,8 @@ function PlacePage({ route }: { route?: boolean }) {
   }
 
   function loadRouters(points: any[], yamap?: YMapsApi) {
-    if (yamap == null) return;
+    if (points?.length == 0) return;
+    if ((yamap == null || yamap == undefined)) return;
     console.log("loadddsadedse");
     const extractedCoordinates: any[] = points.map((item) => item?.coordinates);
     //console.log(extractedCoordinates)
@@ -171,8 +173,15 @@ function PlacePage({ route }: { route?: boolean }) {
     if (token) {
       const result = await addFavotiteItem(token, data?._id, data?.points?.length > 0 ? true : false);
       console.log(result)
-      if (result.status) {
+      if (result?.status && !(result as any)?.msg) {
         setFavorite(!favorite)
+
+        const data = await getUserData(token);
+        if ((data as any)?.msg) {
+            setUserData({ role: 'none' } as any)
+        } else {
+            setUserData(data);
+        }
       }
     } else {
       navigate("/reg")
@@ -182,6 +191,7 @@ function PlacePage({ route }: { route?: boolean }) {
   function loadFavorites() {
     const token = getCookieToken();
     setIsLoggedIn(token ? true : false)
+    console.log(data?.points?.length > 0 ? 'route' : 'places')
     if (data?.points.length > 0) {
       if (favorites?.routes?.length > 0) {
         if (favorites?.routes?.includes(data?._id)) {
@@ -189,8 +199,9 @@ function PlacePage({ route }: { route?: boolean }) {
         }
       }
     } else {
+      console.log('favorites',favorites)
       if (favorites?.places?.length > 0) {
-        console.log('trueeeeeeeeeeeeeeeeee')
+        console.log('places > 0', favorites?.places?.includes(data?._id), data?._id)
         if (favorites?.places?.includes(data?._id)) {
           setFavorite(true);
         }
@@ -201,7 +212,11 @@ function PlacePage({ route }: { route?: boolean }) {
   useEffect(() => {
     loadFavorites()
   }, [favorites])
-  
+
+  useEffect(() => {
+    loadFavorites()
+  }, [data])
+
   useEffect(()=>{
     loadFavorites()
   },[])
