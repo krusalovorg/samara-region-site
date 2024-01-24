@@ -6,8 +6,10 @@ from flask import Flask, jsonify, request, send_file, Response
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from pymongo import MongoClient
-from config import host, user, password, db_name
+from config import host, user, password, db_name, password_admin
 import os
+import numpy as np
+from sklearn.cluster import KMeans
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your_secret_key'
@@ -37,8 +39,8 @@ def serialize_object(obj):
 
 
 def super_print(collection_name, category=None):
-    if category and int(category) > -1:
-        query = {"category": {"$regex": category}}
+    if category and category != -1 and isinstance(category, str) and len(category) > 5:
+        query = {"category": { "$elemMatch": { "$eq": ObjectId(category) } }}
     else:
         query = {}
 
@@ -145,7 +147,7 @@ def get_place_details_name(place_name, collection_name):
     return serialized_result
 
 
-def find_in_database(email=None):
+def get_user_hash_password(email=None):
     if accounts.find_one({"email": email}):
         return accounts.find_one({"email": email})['password']
 
@@ -192,9 +194,8 @@ def login_user():
     data = request.get_json()
     user_password = data['password']
     email = data['email']
-    print('password', find_in_database(email=email), user_password)
-    user = find_in_database(email=email)
-    print(user)
+    user = get_user_hash_password(email=email)
+    print('password', user, user_password, check_password_hash(user, user_password))
     if user and check_password_hash(user, user_password):
         access_token = create_access_token(identity=email)
         return jsonify(access_token=access_token, status=True), 200
@@ -320,11 +321,19 @@ def toFluidObjectId(data, name):
     return data
 
 
+def isAdminUser():
+    user = get_user()
+    return user['role'] == 'admin'
+
 # add something in collection
 @app.route('/add', methods=['POST'])
 @jwt_required()
 def add_places():
     data = request.form.to_dict()
+
+    if not isAdminUser():
+        return jsonify({"success": False}), 400
+
     print('request.files', request.files)
     if request.files.get("image", False):
         image = request.files['image']
@@ -385,6 +394,9 @@ def return_place_by_name():
 @app.route('/delete', methods=['GET'])
 @jwt_required()
 def delete_by_id():
+    if not isAdminUser():
+        return jsonify({"success": False}), 400
+
     id = request.args.get('id')
     collection = request.args.get('table_name')
     delete_place(id, collection)
@@ -395,6 +407,9 @@ def delete_by_id():
 @app.route('/edit', methods=['POST'])
 @jwt_required()
 def edit_by_id():
+    if not isAdminUser():
+        return jsonify({"success": False}), 400
+
     data = request.form.to_dict()
     if request.files.get("image", False):
         image = request.files['image']
@@ -414,7 +429,67 @@ def edit_by_id():
     return jsonify({'success': True})
 
 
+def addAdminUser():
+    new_user_data = {
+        "email": "admin@admin.admin",
+        "name": "admin",
+        "role": "admin",
+        "favorites": {"places": [], "routes": []}
+    }
+
+    # Поиск пользователя по email
+    existing_user = accounts.find_one({"email": new_user_data["email"]})
+
+    if not existing_user:
+        # Генерация хеша пароля
+        hashed_password = generate_password_hash(password_admin, method='pbkdf2:sha256')
+        new_user_data["password"] = hashed_password
+        # Добавление пользователя в коллекцию
+        accounts.insert_one(new_user_data)
+        print("Пользователь успешно добавлен. Пароль:", password_admin)
+    else:
+        print("Пользователь уже существует в базе данных.")
+
+def generateRoute():
+    # Получаем точки из базы данных
+    points_from_db = super_print('places')
+    point_names = [point["name"] for point in points_from_db]
+    coordinates = [(int(coord[0]), int(coord[1])) for coord in
+                   [point["coordinates"].split(",") for point in points_from_db]]
+
+    # Преобразуем координаты в массив NumPy
+    points_array = np.array(coordinates)
+
+    # Количество кластеров, в данном случае мы хотим найти 3 ближайшие точки
+    n_clusters = 3
+
+    # Выполняем кластеризацию с помощью KMeans
+    kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(points_array)
+
+    # Получаем метки кластеров для каждой точки
+    cluster_labels = kmeans.predict(points_array)
+
+    # Создаем словарь, где ключи - это метки кластеров, а значения - это названия точек
+    cluster_points = {i: [] for i in range(n_clusters)}
+
+    for i, point_name in enumerate(point_names):
+        cluster_points[cluster_labels[i]].append((point_name, coordinates[i]))
+
+    for cluster, points in cluster_points.items():
+        cluster_center = kmeans.cluster_centers_[cluster]
+        sorted_points = sorted(points, key=lambda x: np.linalg.norm(np.array(x[1]) - cluster_center))
+        ordered_point_names = [point[0] for point in sorted_points]
+        print(f"Cluster {cluster + 1} visit order: {', '.join(ordered_point_names)}")
+
+    #for i, point_name in enumerate(point_names):
+    #    cluster_points[cluster_labels[i]].append(point_name)
+    #
+    # Выводим точки, относящиеся к каждому кластеру
+    #for cluster, point_list in cluster_points.items():
+    #    print(f"Cluster {cluster + 1}: {', '.join(point_list)}")
+
 # start code
 if __name__ == "__main__":
     collections = ['places', 'routes', 'category', 'accounts']
+    addAdminUser()
     app.run(host="0.0.0.0")
