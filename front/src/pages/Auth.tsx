@@ -40,7 +40,7 @@ function Auth({reg = false}: {reg?: boolean}) {
     }
 
     const handleLogin = (login: boolean) => {
-        console.log(login ? '/register' : '/login_user')
+        console.log(login,login ? '/register' : '/login_user')
         fetch(URL_SERVER + (login ? '/register' : '/login_user'), {
             method: 'POST',
             headers: {
@@ -64,18 +64,20 @@ function Auth({reg = false}: {reg?: boolean}) {
             })
             .then(data => {
                 // Сохраняем токен в куки
+                console.log('statusstatusstatus ',data, data?.status)
+                if (data?.status) {
+                    if (login) {
+                        console.log('handel register ', login)
+                        handleLogin(false);
+                    } else {
+                        document.cookie = `access_token = ${data.access_token}`;
+                        setToken(data.access_token)
+                        openUser(data.access_token)
+                    }    
+                }
                 if (data?.message) {
                     //console.error(data?.message)
                     setError(data?.message)
-                    return
-                }
-                if (data?.status && login) {
-                    console.log('handel login ', data, !login, data && !login)
-                    handleLogin(true);
-                } else {
-                    document.cookie = `access_token = ${data.access_token}`;
-                    setToken(data.access_token)
-                    openUser(data.access_token)
                 }
             })
             .catch(error => {

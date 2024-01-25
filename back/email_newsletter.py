@@ -1,35 +1,29 @@
 import smtplib
+import ssl
 from email.mime.text import MIMEText
 import config
 
-register_text = 'Не забывайте сохранить свои учетные данные в надежном месте.\n' \
-                'В случае утери пароля, вы всегда можете его восстановить\n' \
-                'Благодарим за выбор наших услуг! Желаем вам приятного путешествия по миру "Чудеса Самарского края.'
+register_title = "Добро пожаловать на сайт Чудеса Самарского Края!"
+register_text = "Здравствуйте, {username}! \n\nСпасибо за регистрацию на сайте Чудеса Самарского Края. Мы рады приветствовать вас на нашем ресурсе. \n\nС уважением, \nКоманда Чудеса Самарского Края"
 
-register_title = 'Добро пожаловать на сайт Чудеса Самарского края! Регистрация прошла успешно'
+login_title = "Добро пожаловать обратно на сайт Чудеса Самарского Края!"
+login_text = "Здравствуйте, {username}! \n\nВы успешно вошли на сайт Чудеса Самарского Края. Насладитесь удивительными местами и информацией о нашем крае. \n\nС уважением, \nКоманда Чудеса Самарского Края"
 
-login_text = 'Мы рады сообщить вам о успешном входе в ваш аккаунт на сайте "Чудеса Самарского края".\n' \
-             'Ваше вход был авторизован, и теперь вы можете полноценно пользоваться всеми возможностями нашего портала..\n' \
-             'Благодарим вас за использование наших услуг.\n' \
-             'Если у вас возникнут вопросы или замечания, не стесняйтесь обращаться к нам. Мы всегда готовы помочь.'
-
-login_title = 'Успешный вход в ваш аккаунт на сайте Чудеса Самарского края'
-
-reset_title = "Вы получили это письмо, потому что запросили восстановление пароля на сайте Чудеса Самарского края."
-
-reset_text = "Чтобы установить новый пароль для вашей учетной записи, пожалуйста, введите следующий код подтверждения в соответствующее поле на сайте:Код восстановления: "
-
+reset_title = "Сброс пароля для сайта Чудеса Самарского Края"
+reset_text = "Здравствуйте, {username}! \n\nВы запросили сброс пароля для вашего аккаунта на сайте Чудеса Самарского Края. Ваш временный код для сброса пароля: {code} \n\nС уважением, \nКоманда Чудеса Самарского Края"
 
 def send_email(receiver_email, text, title):
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.starttls()
-    try:
-        server.login(config.sender_email, config.password_email)
-        msg = MIMEText(text)
-        msg['Subject'] = title
-        server.sendmail(config.sender_email, receiver_email, msg.as_string())
+    smtp_server = "smtp.mail.ru"
+    port = 465
+    sender_email = config.sender_email
+    password_email = config.password_email
 
-        return "Message was sent"
-    except Exception as _ex:
-        return f"{_ex}\n check your password"
+    message = MIMEText(text)
+    message["Subject"] = title
+    message["From"] = sender_email
+    message["To"] = receiver_email
 
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login(sender_email, password_email)
+        server.sendmail(sender_email, receiver_email, message.as_string())
