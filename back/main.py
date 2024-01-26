@@ -218,8 +218,9 @@ def register():
     data['password'] = generate_password_hash(data['password'], method='pbkdf2:sha256')
     data['role'] = 'user'
     db.accounts.insert_one(data)
-    print(data['email'])
-    email_newsletter.send_email(data['email'], email_newsletter.register_text, email_newsletter.register_title)
+    email_newsletter.send_email(data['email'],
+                                email_newsletter.register_text(db.accounts.find_one({"email": data['email']})['name']),
+                                email_newsletter.register_title)
     return jsonify({'message': 'User registered successfully', 'status': True})
 
 
@@ -230,11 +231,13 @@ def login_user():
     user_password = data['password']
     email = data['email']
     user = get_user_hash_password(email=email)
-    print('password', user, user_password)
+    print('password', user, user_password, check_password_hash(user, user_password))
     if user and check_password_hash(user, user_password):
         access_token = create_access_token(identity=email)
-        print(data['email'])
-        email_newsletter.send_email(data['email'], email_newsletter.login_text, email_newsletter.login_title)
+        email_newsletter.send_email(data['email'],
+                                          email_newsletter.login_text(
+                                              db.accounts.find_one({"email": data['email']})['name']),
+                                          email_newsletter.login_title)
         return jsonify(access_token=access_token, status=True), 200
     else:
         return jsonify({'message': 'incorrect password'})
@@ -245,6 +248,10 @@ def reset_code():
     data = request.get_json()
     email = data['email']
     generate_reset_code(email)
+    email_newsletter.send_email(data['email'],
+                                email_newsletter.reset_text(db.accounts.find_one({"email": data['email']})['name'],
+                                                            codes[email]['code']),
+                                email_newsletter.reset_title)
     return 'код сгенерирован'
 
 
