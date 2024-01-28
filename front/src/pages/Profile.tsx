@@ -5,11 +5,16 @@ import UserContext from '../contexts/UserContext';
 import { Place, Route, getItemsById, getUserData } from '../utils/backend';
 import PlaceItem from '../components/PlaceItem';
 import { getCookieToken } from '../utils/utils';
+import RightIcon from '../assets/icons/RightIcon';
+import { useNavigate } from 'react-router-dom';
+import LogoutIcon from '../assets/icons/LogoutIcon';
+import Cookies from 'js-cookie';
 
 function Profile() {
     const { name, email, _id, favorites, setUserData } = useContext(UserContext);
     const [places, setPlaces] = useState<Place[]>([]);
     const [routes, setRoutes] = useState<Route[]>([]);
+    const navigate = useNavigate();
 
     async function loadPlaces() {
         console.log('favorites', favorites)
@@ -42,43 +47,69 @@ function Profile() {
         loadRoutes();
     }, [favorites])
 
-    useEffect(()=>{
+    useEffect(() => {
         loadPlaces();
         loadRoutes();
         loadUser()
-    },[])
+    }, [])
 
     return (
         <div className={` 'flex justify-center items-center`} style={{
             minHeight: 'calc(100vh - 277px)'
         }}>
             <Header />
-            <div className='w-full max-w-lg px-10 py-8 mx-auto bg-white border rounded-lg shadow-2xl'>
-                <h1>
-                    Имя: {name}
-                </h1>
-                <h1>
-                    email: {email}
-                </h1>
-                <h1>
-                    _id: {_id}
-                </h1>
+            <div
+                className={`w-full md:w-[70%] mx-auto flex flex-row justify-between items-center mb-5 bg-white rounded-[50px] h-auto px-[36px] py-[30px]`}
+            >
+                <div>
+                    <h1 className='text-2xl text-[#2C2C2C] font-medium'>
+                        {name}
+                    </h1>
+                    <h1>
+                        Почта: {email}
+                    </h1>
+                </div>
+
+                <LogoutIcon
+                    className="cursor-pointer"
+                    onClick={() => {
+                        setUserData({})
+                        Cookies.remove("access_token")
+                        navigate("/")
+                        window.location.reload()
+                    }}
+                />
             </div>
-            <div className='w-[800px] px-5 py-8 mx-auto bg-white border rounded-lg shadow-2xl'>
-                <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2'>Избранные точки</h1>
-                {
-                    places.length > 0 && places.map((item, index) =>
-                        <PlaceItem data={item} mini key={index} />
-                    )
-                }
-            </div>
-            <div className='w-[800px] px-5 py-8 mx-auto bg-white border rounded-lg shadow-2xl'>
-                <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2'>Избранные маршруты</h1>
-                {
-                    routes.length > 0 && routes.map((item, index) =>
-                        <PlaceItem data={item} mini key={index} />
-                    )
-                }
+
+            <div
+                className={`w-full md:w-[70%] mx-auto bg-white rounded-[50px] h-auto px-[36px] py-[30px]`}
+            >
+                <div className='px-5 py-8'>
+                    <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2 flex items-center w-full'>
+                        {places.length > 0 ? "Избранные точки" : "Пока нет избранных точек"}
+                        <RightIcon className="ml-auto cursor-pointer" onClick={() => {
+                            navigate("/all/places");
+                        }} />
+                    </h1>
+                    {
+                        places.length > 0 && places.map((item, index) =>
+                            <PlaceItem data={item} mini key={index} />
+                        )
+                    }
+                </div>
+                <div className='w-full px-5 py-8'>
+                    <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2 flex items-center w-full'>
+                        {routes.length > 0 ? "Избранные маршруты" : "Пока нет избранных маршрутов"}
+                        <RightIcon className="ml-auto cursor-pointer" onClick={() => {
+                            navigate("/all/routes");
+                        }} />
+                    </h1>
+                    {
+                        routes.length > 0 && routes.map((item, index) =>
+                            <PlaceItem data={item} mini key={index} />
+                        )
+                    }
+                </div>
             </div>
         </div>
     )

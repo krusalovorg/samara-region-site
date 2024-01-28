@@ -919,6 +919,10 @@ video {
   margin-bottom: 1rem;
 }
 
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
+
 .mb-6 {
   margin-bottom: 1.5rem;
 }
@@ -1161,10 +1165,6 @@ video {
 
 .h-\[20em\] {
   height: 20em;
-}
-
-.h-\[250px\] {
-  height: 250px;
 }
 
 .h-\[500px\] {
@@ -1421,6 +1421,10 @@ video {
   min-width: 180px;
 }
 
+.min-w-\[189px\] {
+  min-width: 189px;
+}
+
 .min-w-\[200px\] {
   min-width: 200px;
 }
@@ -1431,10 +1435,6 @@ video {
 
 .min-w-\[24px\] {
   min-width: 24px;
-}
-
-.min-w-\[35\%\] {
-  min-width: 35%;
 }
 
 .min-w-\[350px\] {
@@ -2367,6 +2367,11 @@ video {
   background-color: rgb(234 179 8 / 0.2);
 }
 
+.bg-\[\#62D572\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(98 213 114 / var(--tw-bg-opacity));
+}
+
 .bg-opacity-60 {
   --tw-bg-opacity: 0.6;
 }
@@ -2905,6 +2910,10 @@ video {
   font-weight: 600;
 }
 
+.font-black {
+  font-weight: 900;
+}
+
 .uppercase {
   text-transform: uppercase;
 }
@@ -3043,11 +3052,6 @@ video {
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
-}
-
-.text-gray-600 {
-  --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity));
 }
 
 .text-gray-700 {
@@ -3206,6 +3210,15 @@ video {
 .text-yellow-900 {
   --tw-text-opacity: 1;
   color: rgb(113 63 18 / var(--tw-text-opacity));
+}
+
+.text-\[\#62D572\] {
+  --tw-text-opacity: 1;
+  color: rgb(98 213 114 / var(--tw-text-opacity));
+}
+
+.text-\[\] {
+  color: ;
 }
 
 .antialiased {
@@ -4289,6 +4302,15 @@ li {
   border-color: rgb(79 70 229 / var(--tw-border-opacity));
 }
 
+.hover\:border-\[\]:hover {
+  border-color: ;
+}
+
+.hover\:border-\[\#62D572\]:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(98 213 114 / var(--tw-border-opacity));
+}
+
 .hover\:bg-\[\#dafb93\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(218 251 147 / var(--tw-bg-opacity));
@@ -4435,6 +4457,11 @@ li {
 .hover\:shadow-yellow-500\/40:hover {
   --tw-shadow-color: rgb(234 179 8 / 0.4);
   --tw-shadow: var(--tw-shadow-colored);
+}
+
+.hover\:ring-\[\#62D572\]:hover {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(98 213 114 / var(--tw-ring-opacity));
 }
 
 .hover\:before\:opacity-10:hover::before {
