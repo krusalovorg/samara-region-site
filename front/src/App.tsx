@@ -4,6 +4,8 @@ import Header from './components/Header';
 import PlacesList from './components/PlacesList';
 import { Place, getData } from './utils/backend';
 import { useEffect, useState } from 'react';
+import BlockSamaraScreen from './components/BlockSamaraScreen';
+import BlockSamaraFacts from './components/BlockSamaraFacts';
 
 function App() {
   const [places, setPlaces] = useState<Place[]>([]);
@@ -21,10 +23,12 @@ function App() {
   },[])
 
   return (
-    <div className="w-screen min-h-screen h-full bg-[#FFFAF1]">
+    <div className="w-screen min-h-screen h-full bg-white">
       <Header />
-      <SearchPanel />
-      <BlockSamara places={places} />
+      <BlockSamaraScreen />
+      <BlockSamaraFacts />
+      {/* <SearchPanel /> */}
+      {/* <BlockSamara places={places} /> */}
       <PlacesList places={places} />
     </div>
   );

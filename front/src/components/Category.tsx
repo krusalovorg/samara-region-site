@@ -13,7 +13,7 @@ function Category({ className, color, text, description }: { className?: string,
                 }
                 style={{ zIndex: 100 }}
                 placement="top"
-                className="border border-blue-gray-50 bg-[#FFFAF1] px-4 py-3 shadow-xl shadow-black/10 text-black"
+                className="border border-blue-gray-50 bg-white px-4 py-3 shadow-xl shadow-black/10 text-black"
                 animate={{
                     mount: { scale: 1, y: 0 },
                     unmount: { scale: 0, y: 25 },

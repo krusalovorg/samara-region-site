@@ -56,38 +56,37 @@ function PlacesList({ places }: { places: Place[] }) {
     }, [places])
 
     return (
-        <section className='px-[5%] mt-[100px]'>
+        <section className='px-[5%]'>
             <h2 style={{
                 color: "#2C2C2C",
                 fontWeight: "bold",
                 fontSize: 'calc(30px + 7 * ((100vw - 720px) / 1280))',
                 width: "auto",
-                letterSpacing: -1
+                letterSpacing: -1,
+                marginBottom: 45
             }}>
                 Лучшее в окрестностях Самарской области
             </h2>
-            <div
-                ref={scrollRef}
-                className='w-full mt-[30px] gap-[30px] overflow-x-hidden h-fit flex max-md:flex-col md:flex-row scroll-smooth'>
+            <div className='grid max-md:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
                 {data && data.length > 0 && data.slice(0, isMobile ? offset : 1000).map((item) => (
-                    <PlaceItem data={item} />
+                    <PlaceItem data={item} grid />
                 ))}
             </div>
-            {isMobile ?
-                offset < data.length ?
-                    <div className="w-full flex justify-center mt-[20px]">
-                        <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={() => { setOffset(offset + 3) }}>
-                            Раскрыть →
+            {/* {isMobile ? */}
+                {offset < data.length ?
+                    <div className="w-full flex justify-center mt-[40px]">
+                        <button className='border-none w-full h-[64px] bg-[#62D572] text-white text-lg font-medium rounded-xl py-[10px]' onClick={() => { setOffset(offset + 10) }}>
+                            Раскрыть
                         </button>
                     </div>
-                    : <></>
-                :
-                <div className='flex flex-row justify-center items-center mt-[24px]'>
+                    : <></>}
+            {/* :
+                 <div className='flex flex-row justify-center items-center mt-[24px]'>
                     <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollLeft}>{'<'}</button>
                     <h2 className='text-[#2C2C2C] font-medium text-md mx-[30px]'>{scrolled}/{data.length || 1}</h2>
-                    <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollRight}>{'>'}</button>
-                </div>
-            }
+                     <button className='rounded-full w-[64px] h-[64px] border-2 border-[#B7B7B6]' onClick={scrollRight}>{'>'}</button>
+                 </div>
+         } */}
         </section>
     )
 }

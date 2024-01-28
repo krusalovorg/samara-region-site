@@ -243,7 +243,7 @@ function PlacePage({ route }: { route?: boolean }) {
   }
 
   return (
-    <div className="w-screen min-h-screen bg-[#FFFAF1]">
+    <div className="w-screen min-h-screen bg-white">
       <Header />
       <section className="px-[5%]">
         <div

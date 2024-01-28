@@ -39,7 +39,7 @@ function ItemsPage() {
   }
 
   return (
-    <div className="w-screen min-h-screen h-full bg-[#FFFAF1]">
+    <div className="w-screen min-h-screen h-full bg-white">
       <div className='px-[5%] w-full h-full'>
         <Header />
         <h1 className='text-2xl font-medium text-[#2C2C2C]'>Все {category == 'routes' ? "маршруты" : "туристические места"}</h1>

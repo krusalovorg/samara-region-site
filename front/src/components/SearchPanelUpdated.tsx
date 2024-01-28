@@ -6,7 +6,7 @@ import { Category, Place, Route, getData } from '../utils/backend';
 import PlaceItem from './PlaceItem';
 import useIsMobile from './isMobile';
 
-function SearchPanel() {
+function SearchPanelUpdated({setPlaces, setRoutes}: {setPlaces: any, setRoutes: any}) {
     const [timeToure, setTimeToure] = useState(6);
     const [searchCategory, setSearchCategory] = useState<string | null>(null);
     const [categoryId, setCategoryId] = useState<number>(-1);
@@ -45,13 +45,14 @@ function SearchPanel() {
         if (objectsSearch.includes('places')) {
             const places_data = await getDataCategory('places');
             new_data = places_data
+            setPlaces(places_data)
         }
         if (objectsSearch.includes('routes')) {
             const route_data = await getDataCategory('routes');
             new_data = [...new_data, ...route_data]
+            setRoutes(route_data);
         }
         console.log('get new data', new_data, objectsSearch)
-        setData(new_data)
         setSearch(2);
     }
 
@@ -122,43 +123,12 @@ function SearchPanel() {
                     <button className='bg-[#62D572] px-10 py-5 rounded-2xl text-white min-w-[200px] font-medium md:ml-auto'
                         onClick={SearchE}
                     >
-                        Поиск маршрут
+                        Найти маршруты
                     </button>
                 </div>
             </div>
-            {search == 1 ? <div className='w-full px-[5%] flex justify-center items-center h-[20em]'>
-                <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-            </div>
-                : search == 2 ?
-                    <>
-                        <div className='max-md:grid-cols-1 w-full px-[5%] overflow-x-auto h-fit grid grid-cols-3 gap-4 my-20 relative transition-all'>
-                            {data.length > 0 ?
-                                data.slice(0, offset).map((item) => (
-                                    <PlaceItem data={item as any} />
-                                ))
-                                :
-                                <>
-                                    <div />
-                                    <h1 className='m-auto z-10 text-2xl'>
-                                        Результаты не найдены
-                                    </h1>
-                                    <div />
-                                </>
-                            }
-                        </div>
-                        {data.length >= offset &&
-                            <div className='w-full flex justify-center items-center px-[5%] mb-[20px]'>
-                                <button className='border border-[#595959] w-[200px] bg-[#FFFDFB] rounded-xl py-[10px]' onClick={() => { setOffset(offset + 10) }}>
-                                    Раскрыть →
-                                </button>
-                            </div>
-                        }
-                    </>
-                    : <div className='h-[5em]'></div>
-            }
-
         </>
     )
 }
 
-export default SearchPanel;
+export default SearchPanelUpdated;

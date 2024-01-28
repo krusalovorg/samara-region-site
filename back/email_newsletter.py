@@ -36,6 +36,11 @@ def send_email(receiver_email, text, title):
     message["To"] = receiver_email
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(sender_email, password_email)
-        server.sendmail(sender_email, receiver_email, message.as_string())
+
+    try:
+        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+            server.login(sender_email, password_email)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+    except Exception as e:
+        print(e)
+        return False

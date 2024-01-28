@@ -91,11 +91,13 @@ function Profile() {
                             navigate("/all/places");
                         }} />
                     </h1>
-                    {
-                        places.length > 0 && places.map((item, index) =>
-                            <PlaceItem data={item} mini key={index} />
-                        )
-                    }
+                    <div className='grid max-md:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
+                        {
+                            places.length > 0 && places.map((item, index) =>
+                                <PlaceItem data={item} mini key={index} />
+                            )
+                        }
+                    </div>
                 </div>
                 <div className='w-full px-5 py-8'>
                     <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2 flex items-center w-full'>
@@ -104,11 +106,13 @@ function Profile() {
                             navigate("/all/routes");
                         }} />
                     </h1>
-                    {
-                        routes.length > 0 && routes.map((item, index) =>
-                            <PlaceItem data={item} mini key={index} />
-                        )
-                    }
+                    <div className='grid max-md:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
+                        {
+                            routes.length > 0 && routes.map((item, index) =>
+                                <PlaceItem data={item} mini key={index} />
+                            )
+                        }
+                    </div>
                 </div>
             </div>
         </div>
