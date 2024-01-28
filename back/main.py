@@ -76,6 +76,7 @@ def super_print(collection_name, category=None):
         query = {"category": {"$elemMatch": {"$eq": ObjectId(category)}}}
     else:
         query = {}
+    print(query)
 
     if collection_name == 'places' or collection_name == 'routes':
         result = list(db[collection_name].aggregate([

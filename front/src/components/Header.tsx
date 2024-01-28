@@ -15,7 +15,7 @@ function Header() {
     const url = window.location.pathname;
 
     function init() {
-        console.log(getCookieToken(), role)
+        //console.log(getCookieToken(), role)
         setLoggedIn(_id && _id?.length > 5 ? true : false)
         setAdmin((getCookieToken() && role == 'admin') ? true : false);
     }

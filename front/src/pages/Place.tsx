@@ -335,7 +335,7 @@ function PlacePage({ route }: { route?: boolean }) {
                     return (
                       <Placemark
                         options={{
-                          iconColor: "red",
+                          iconColor: "#3b7cdf",
                         }}
                         defaultGeometry={point?.coordinates?.split(",")}
                       />
@@ -345,7 +345,7 @@ function PlacePage({ route }: { route?: boolean }) {
               ) : (
                 <Placemark
                   options={{
-                    iconColor: "red",
+                    iconColor: "#3b7cdf",
                   }}
                   defaultGeometry={data?.coordinates?.split(",")}
                 />

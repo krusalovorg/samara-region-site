@@ -25,8 +25,6 @@ function PlaceItem({ data, style, onClick, mini, grid }: { data?: any, style?: a
         } else {
             setCategorys(data?.category as any)
         }
-
-        console.log(getImage(data?.image as any))
     }
 
     useEffect(() => {

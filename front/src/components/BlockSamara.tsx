@@ -128,7 +128,7 @@ function BlockSamara({ places }: { places: Place[] }) {
                                     if (place.coordinates.split(",").length == 2) {
                                         return <Placemark
                                             options={{
-                                                iconColor: "red"
+                                                iconColor: "#3b7cdf"
                                             }}
                                             defaultGeometry={place.coordinates.split(",")} onClick={() => {
                                                 setInformation(place as any)

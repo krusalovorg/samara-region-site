@@ -36,6 +36,7 @@ export const URL_SITE = "http://localhost";
 
 export async function getData(route: "places" | "routes" | "category", category?: string | number, time?: number) {
     let url = URL_SERVER;
+    console.log('category',category)
     if (route === 'places' || route === 'routes') {
         if (category) {
             url += `/${route}?category=${category}&time=${time||24}`;

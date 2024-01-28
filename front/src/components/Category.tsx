@@ -1,13 +1,13 @@
 import { Tooltip } from "@material-tailwind/react";
 
-function Category({ className, color, text, description }: { className?: string, color?: string, text?: string, description?: string }) {
+function Category({ className, color, text, description, onClick }: { className?: string, color?: string, text?: string, description?: string, onClick?: any }) {
     return (
         <>
             <Tooltip
                 content={
                     <div className="w-80">
                         <p className="font-normal opacity-80 text-blue-gray">
-                        {description}
+                            {description}
                         </p>
                     </div>
                 }
@@ -19,7 +19,9 @@ function Category({ className, color, text, description }: { className?: string,
                     unmount: { scale: 0, y: 25 },
                 }}
             >
-                <h3 className={`text-[#2C2C2C] font-medium text-md mt-1 px-[10px] py-[7px] rounded-2xl w-fit cursor-pointer ${className || ""} ${color || "bg-[#FFEED5]"}`}>{text}</h3>
+                <h3
+                    onClick={onClick}
+                    className={`text-[#2C2C2C] font-medium text-md mt-1 px-[10px] py-[7px] rounded-2xl w-fit cursor-pointer ${className || ""} ${color || "bg-[#FFEED5]"}`}>{text}</h3>
             </Tooltip>
         </>
     )
