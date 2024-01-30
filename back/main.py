@@ -13,6 +13,7 @@ from sklearn.cluster import KMeans
 import email_newsletter
 import secrets
 import time
+import re
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your_secret_key'
@@ -207,6 +208,43 @@ def get_user():
         return result
 
 
+def search(word):
+    regex = re.compile(word, re.IGNORECASE)
+    searched_places = list(places.find({'$or': [{'name': {'$regex': regex}}, {'description': {'$regex': regex}}]}))
+    searched_routes = list(routes.find({'$or': [{'name': {'$regex': regex}}, {'description': {'$regex': regex}}]}))
+
+    for place in searched_places:
+        place['_id'] = str(place['_id'])
+    for route in searched_routes:
+        route['_id'] = str(route['_id'])
+
+    results = {
+        'places': searched_places,
+        'routes': searched_routes
+    }
+
+    return results
+
+
+@app.route('/search', methods=['GET'])
+def search_route():
+    words = request.args.get('word')  # Get the search words from the query parameters
+    if not words:
+        return jsonify({'error': 'No query provided'}), 400
+
+    # Split the search words if there are multiple
+    search_words = words.split()
+
+    # Perform search for each word and merge results
+    all_results = {}
+    for word in search_words:
+        results = search(word)
+        for key, value in results.items():
+            all_results.setdefault(key, []).extend(value)
+
+    return jsonify(all_results)
+
+
 # sign up
 @app.route('/register', methods=['POST'])
 def register():
@@ -236,9 +274,9 @@ def login_user():
     if user and check_password_hash(user, user_password):
         access_token = create_access_token(identity=email)
         email_newsletter.send_email(data['email'],
-                                          email_newsletter.login_text(
-                                              db.accounts.find_one({"email": data['email']})['name']),
-                                          email_newsletter.login_title)
+                                    email_newsletter.login_text(
+                                        db.accounts.find_one({"email": data['email']})['name']),
+                                    email_newsletter.login_title)
         return jsonify(access_token=access_token, status=True), 200
     else:
         return jsonify({'message': 'incorrect password'})
@@ -561,4 +599,5 @@ def generateRoute():
 if __name__ == "__main__":
     collections = ['places', 'routes', 'category', 'accounts']
     addAdminUser()
+    print(search('dsgsdg'))
     app.run(host="0.0.0.0")
