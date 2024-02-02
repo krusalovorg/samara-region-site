@@ -56,7 +56,8 @@ function Login({ children, fragment, setFragment }: any) {
             }}>
                 {token ? (
                     <>
-                        <AdminHeader setFragment={setFragment} fragment={fragment} />
+                        {/* <AdminHeader setFragment={setFragment} fragment={fragment} /> */}
+                        <Header/>
                         {children}
                     </>
                 ) : (

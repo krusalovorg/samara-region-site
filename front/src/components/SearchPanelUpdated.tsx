@@ -78,7 +78,7 @@ function SearchPanelUpdated({setPlaces, setRoutes}: {setPlaces: any, setRoutes: 
                             background: "white",
                             padding: "0 27px",
                             color: "black",
-                            borderRadius: 0,
+                            borderRadius: isMobile ? "1rem" : 0,
                             width: isMobile ? "100%" : 160,
                             zIndex: 1000,
                             fontSize: 16,
@@ -103,7 +103,7 @@ function SearchPanelUpdated({setPlaces, setRoutes}: {setPlaces: any, setRoutes: 
                         )}
                     </Dropdown>
                     {/* <button className='bg-[#FEEFD7] px-10 py-5 rounded-2xl font-medium ml-[20px]' onClick={SearchE}>Поиск</button> */}
-                    <div className='bg-white px-10 py-5 rounded-none font-medium md:border-x-black md:border-x flex justify-center items-center'>
+                    <div className='bg-white px-10 py-5 sm:rounded-none font-medium md:border-x-black md:border-x flex justify-center items-center max-sm:rounded-2xl'>
                         <input
                             checked={objectsSearch.includes("routes")}
                             onChange={(event) => handleUpdateCheckbox('routes')}
@@ -111,7 +111,7 @@ function SearchPanelUpdated({setPlaces, setRoutes}: {setPlaces: any, setRoutes: 
                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                         <label htmlFor="checked-checkbox" className="ms-2 text-[16px] font-medium text-gray-900 dark:text-gray-300">Маршруты</label>
                     </div>
-                    <div className='bg-white px-10 py-5 rounded-r-2xl font-medium flex justify-center items-center'>
+                    <div className='bg-white px-10 py-5 rounded-r-2xl font-medium flex justify-center items-center max-sm:rounded-2xl'>
                         <input
                             checked={objectsSearch.includes("places")}
                             onChange={(event) => handleUpdateCheckbox('places')}

@@ -3,7 +3,7 @@ import GerbLogo from '../assets/gerb.png';
 function Footer() {
     return (
         <>
-            <footer className="bg-[#101010] dark:bg-gray-900 mt-[100px]">
+            <footer className="bg-[#1E4B40] dark:bg-gray-900 mt-[100px]">
                 <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
                     <div className="md:flex md:justify-between">
                         <div className="mb-6 md:mb-0">
@@ -22,7 +22,7 @@ function Footer() {
                             </div> */}
                             <div>
                                 <h2 className="mb-6 text-sm font-semibold text-white uppercase dark:text-white">Разработчики</h2>
-                                <ul className="text-gray-500 dark:text-gray-400 font-medium">
+                                <ul className="text-white dark:text-gray-400 font-medium">
                                     <li className="mb-4">
                                         <a href="https://github.com/krusalovorg" className="hover:underline ">krusalovorg</a>
                                     </li>
@@ -33,7 +33,7 @@ function Footer() {
                             </div>
                             <div>
                                 <h2 className="mb-6 text-sm font-semibold text-white uppercase dark:text-white">Политика</h2>
-                                <ul className="text-gray-500 dark:text-gray-400 font-medium">
+                                <ul className="text-white dark:text-gray-400 font-medium">
                                     <li className="mb-4">
                                         <a href="https://telegra.ph/Politika-konfidencialnosti-11-25-8" target={"_blank"} className="hover:underline">Политика конфиденциальности</a>
                                     </li>

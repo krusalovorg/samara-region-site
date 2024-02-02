@@ -39,13 +39,21 @@ function RouterNav() {
     }
 
     useEffect(() => {
+        const get_token = getCookieToken();
+        setIsLoggedIn(get_token ? true : false)
+        if (get_token) {
+            setToken(get_token);
+        }
+    }, [userData])
+
+    useEffect(() => {
         loadAll();
     }, [])
 
     return (
         <>
             <BrowserRouter>
-                <UserContext.Provider value={{...(userData || {}) as UserData, setUserData}}>
+                <UserContext.Provider value={{ ...(userData || {}) as UserData, setUserData }}>
                     <Routes>
                         {
                             (isLoggedIn && token && userData?.role != 'none') ?

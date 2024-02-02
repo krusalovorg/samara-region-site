@@ -36,7 +36,7 @@ function Auth({ reg = false }: { reg?: boolean }) {
     async function openUser(access_token: string) {
         const data_user = await getUserData(access_token);
         setUserData(data_user)
-        navigate('/profile')
+        navigate('/user')
     }
 
     const handleLogin = (login: boolean) => {

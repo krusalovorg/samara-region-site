@@ -6,7 +6,7 @@ const CustomRangeInput = ({ value, setValue, label }: { value: number, setValue:
     };
 
     return (
-        <div className="max-md:flex-col-reverse py-[20px] min-h-[64px] px-[20px] bg-white rounded-l-2xl md:border-r-black md:border-r-[1px] flex flex-row justify-start items-center relative">
+        <div className="max-md:flex-col-reverse py-[20px] min-h-[64px] px-[20px] bg-white rounded-l-2xl max-sm:rounded-2xl md:border-r-black md:border-r-[1px] flex flex-row justify-start items-center relative">
             {/* absolute top-[10px] left-[10px] */}
             <input
                 type="range"

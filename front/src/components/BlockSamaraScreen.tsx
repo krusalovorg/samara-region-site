@@ -121,9 +121,9 @@ function BlockSamaraScreen() {
                             }
                         </Map>
                     </YMaps>
-                    <div className='absolute h-full flex items-end pb-[300px] max-md:pl-[5%] max-md:pb-[400px] z-[100] right-[5%] bottom-0'>
+                    <div className='absolute flex items-end sm:pb-[300px] h-[250px] sm:pl-[5%] sm:h-fit z-[100] max-sm:top-[13%] pointer-events-none max-sm:pb-[0px] max-sm:left-[27px] right-[5%] sm:bottom-0'>
                         {
-                            information?.name && <PlaceItem mini={isMobile} data={information}/>
+                            information?.name && <PlaceItem style={isMobile ? {width: "100%"} : {}} mini={isMobile} data={information}/>
                         }
                     </div>
                     <div className='absolute w-full bottom-[5%]'>
