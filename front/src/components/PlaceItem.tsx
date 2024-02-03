@@ -10,6 +10,7 @@ function PlaceItem({ data, style, onClick, mini, grid }: { data?: any, style?: a
     const [categorys, setCategorys] = useState<any[]>([]);
 
     async function loadCategorys() {
+        console.log('get palce items',data)
         if (data?.category && typeof data?.category == 'string' && data?.category?.split(',')?.length > 0) {
             // console.log('data ',data.category)
             // let all_data = [];
