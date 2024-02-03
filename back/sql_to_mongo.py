@@ -46,7 +46,6 @@ def sql_mongo(databases):
                     category_list = []
 
                     for category_id in categories:
-                        int(category_id)
                         category = mongo_db['category'].find_one({'old_id': int(category_id)})
                         category_list.append(category['_id'])
                         row['category'] = category_list
@@ -57,12 +56,10 @@ def sql_mongo(databases):
                     categories = row['category'].split(',')
                     category_list = []
                     for category_id in categories:
-                        int(category_id)
                         category = mongo_db['category'].find_one({'old_id': int(category_id)})
                         category_list.append(category['_id'])
                         row['category'] = category_list
                     for points_id in points:
-                        int(points_id)
                         category = mongo_db['places'].find_one({'old_id': int(points_id)})
                         points_list.append(category['_id'])
                         row['points'] = points_list
