@@ -46,13 +46,10 @@ def sql_mongo(databases):
                     category_list = []
 
                     for category_id in categories:
-                        try:
-                            int(category_id)
-                            category = mongo_db['category'].find_one({'old_id': int(category_id)})
-                            category_list.append(category['_id'])
-                            row['category'] = category_list
-                        except ValueError:
-                            print("Not a Digit")
+                        int(category_id)
+                        category = mongo_db['category'].find_one({'old_id': int(category_id)})
+                        category_list.append(category['_id'])
+                        row['category'] = category_list
                     main.fill_collection(table_name, row)
                 elif table_name == "routes":
                     points = row['points'].split(',')
