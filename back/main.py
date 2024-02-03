@@ -79,7 +79,7 @@ def super_print(collection_name, category=None):
         query = {}
     print(query)
 
-    if collection_name == 'places' or collection_name == 'routes':
+    if collection_name == 'places':
         result = list(db[collection_name].aggregate([
             {
                 "$match": query
@@ -103,6 +103,24 @@ def super_print(collection_name, category=None):
                     }
             }
         ]))
+    elif collection_name == 'routes':
+        result = list(db[collection_name].aggregate([
+            {"$match": query},
+            {"$lookup": {
+                "from": "places",
+                "localField": "points",
+                "foreignField": "_id",
+                "as": "places"
+            }},
+            {"$unwind": "$places"},
+            {"$lookup": {
+                "from": "category",
+                "localField": "places.category",
+                "foreignField": "_id",
+                "as": "places.category"
+            }},
+            {"$unwind": "$places.category"}
+        ], allowDiskUse=True))
     else:
         result = list(db[collection_name].find(query))
     serialized_result = json.loads(json.dumps(result, default=serialize_object))
