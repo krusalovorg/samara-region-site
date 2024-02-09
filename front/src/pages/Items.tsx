@@ -46,13 +46,13 @@ function ItemsPage() {
     loadPlaces()
   }, [selectCategory])
 
-  if (loading) {
-    return <div className='min-h-screen w-screen flex justify-center items-center'>
-      <div className='w-full px-[5%] flex justify-center items-center h-[20em]'>
-        <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-      </div>
-    </div>
-  }
+  // if (loading) {
+  //   return <div className='min-h-screen w-screen flex justify-center items-center'>
+  //     <div className='w-full px-[5%] flex justify-center items-center h-[20em]'>
+  //       <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+  //     </div>
+  //   </div>
+  // }
 
   return (
     <div className="w-screen min-h-screen h-full bg-white">
@@ -63,15 +63,22 @@ function ItemsPage() {
           {description[category as ("routes" | "places")]}
         </p>
         <div className='flex flex-wrap w-full mt-7 gap-2'>
-          {categorys && categorys?.length > 0 && categorys?.map((item: any) =>
-            <Category
-              onClick={() => {
-                setSelectCategory(selectCategory?._id == item?._id ? null : item)
-              }}
-              color={selectCategory?._id === item?._id ? "bg-[#62D572] text-white" : ""}
-              text={item?.name}
-              description={item?.description} />
-          )}
+          {loading ?
+            <div className='min-h-screen w-screen flex justify-center items-center'>
+              <div className='w-full px-[5%] flex justify-center items-center h-[20em]'>
+                <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+              </div>
+            </div>
+            :
+            categorys && categorys?.length > 0 && categorys?.map((item: any) =>
+              <Category
+                onClick={() => {
+                  setSelectCategory(selectCategory?._id == item?._id ? null : item)
+                }}
+                color={selectCategory?._id === item?._id ? "bg-[#62D572] text-white" : ""}
+                text={item?.name}
+                description={item?.description} />
+            )}
         </div>
         <div className='grid max-md:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 w-full h-full gap-5 mt-7'>
           {data && data.length > 0 && data.map((item) => (

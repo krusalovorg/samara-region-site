@@ -13,6 +13,7 @@ function Header() {
     const [loggedIn, setLoggedIn] = useState(false);
 
     const url = window.location.pathname;
+    const urls = ['/all/routes', '/all/places', '/route', '/places', '/user', '/login', '/reg','admin']
 
     function init() {
         //console.log(getCookieToken(), role)
@@ -68,7 +69,7 @@ function Header() {
                     </a>
                 }
             </header>
-            {url != '/' && <div className='h-[120px] mb-[5em]' />}
+            {(urls.includes(url) || url.startsWith("/places") || url.startsWith("/route" || url.startsWith('/admin'))) && <div className='h-[120px] mb-[5em]' />}
         </>
     );
 }

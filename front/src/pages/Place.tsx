@@ -171,6 +171,7 @@ function PlacePage({ route }: { route?: boolean }) {
   async function addFavotite() {
     const token = getCookieToken();
     if (token) {
+      console.log('data?._id',data?._id)
       const result = await addFavotiteItem(token, data?._id, data?.points?.length > 0 ? true : false);
       console.log(result)
       if (result?.status && !(result as any)?.msg) {
@@ -257,10 +258,10 @@ function PlacePage({ route }: { route?: boolean }) {
         >
           <div className="px-[5%] py-[20px] h-full w-full flex z-[100] flex flex-col absolute">
             <h2 className="text-white font-bold spacing-[0px] text-3xl mt-auto">
-              {data.name}
+              {data?.name}
             </h2>
             <h3 className="text-white spacing-[0px] text-lg mt-1">
-              {data.card_description}
+              {data?.card_description}
             </h3>
           </div>
         </div>
@@ -299,7 +300,7 @@ function PlacePage({ route }: { route?: boolean }) {
           ) : (
             <></>
           )}
-          {data?.points ? (
+          {data && data?.points && data?.points?.length > 0 ? (
             <>
               <h3 className="text-xl text-[#2C2C2C] mb-[15px] leading-[150%]">
                 Точек: {data?.points?.length}
@@ -327,10 +328,10 @@ function PlacePage({ route }: { route?: boolean }) {
               modules={["multiRouter.MultiRoute"]}
               defaultState={{ center: [53.2415041, 50.2212463], zoom: 7 }}
             >
-              {data?.points ? (
+              {data && data?.points ? (
                 points &&
-                points.length > 0 &&
-                points.map((point) => {
+                points?.length > 0 &&
+                points?.map((point) => {
                   if (point?.coordinates?.split(",").length == 2) {
                     return (
                       <Placemark
@@ -454,8 +455,8 @@ function PlacePage({ route }: { route?: boolean }) {
           <h1 className="text-2xl font-medium text-[#2C2C2C]">
             {data?.points ? "Все точки маршрута" : "Другие места"}
           </h1>
-          {points?.slice(0, offset).map((item: any) => {
-            return <PlaceItem data={item} />;
+          {points && points.length > 0 && points?.slice(0, offset).map((item: any) => {
+            return <PlaceItem grid data={item} />;
           })}
           {offset < points.length && (
             <button

@@ -112,14 +112,15 @@ def super_print(collection_name, category=None):
                 "foreignField": "_id",
                 "as": "places"
             }},
-            {"$unwind": "$places"},
-            {"$lookup": {
-                "from": "category",
-                "localField": "places.category",
-                "foreignField": "_id",
-                "as": "places.category"
-            }},
-            {"$unwind": "$places.category"}
+            {
+                "$lookup":
+                    {
+                        "from": "category",
+                        "localField": "category",
+                        "foreignField": "_id",
+                        "as": "category"
+                    }
+            },
         ], allowDiskUse=True))
     else:
         result = list(db[collection_name].find(query))
@@ -144,29 +145,70 @@ def edit_collection(collection_name, changes, id):
 # get something from collection by id
 def get_place_details_id(place_id, collection_name):
     print('place id get', place_id, collection_name)
-    details = list(db[collection_name].aggregate([
-        {
-            "$match": {"_id": ObjectId(place_id)}
-        },
-        {
-            "$lookup":
-                {
+    if collection_name == 'routes':
+        details = list(db[collection_name].aggregate([
+            {
+                "$match": {"_id": ObjectId(place_id)}
+            },
+            {
+                "$lookup": {
                     "from": "category",
                     "localField": "category",
                     "foreignField": "_id",
                     "as": "category"
                 }
-        },
-        {
-            "$lookup":
-                {
+            },
+            {
+                "$lookup": {
                     "from": "places",
                     "localField": "points",
                     "foreignField": "_id",
                     "as": "points"
                 }
-        }
-    ]))[0]
+            },
+            {
+                "$unwind": "$points"
+            },
+            {
+                "$lookup": {
+                    "from": "category",
+                    "localField": "points.category",
+                    "foreignField": "_id",
+                    "as": "points.category"
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$_id",
+                    "points": {"$push": "$points"},
+                    "category": {"$first": "$category"}
+                }
+            }
+        ]))[0]
+    else:
+        details = list(db[collection_name].aggregate([
+            {
+                "$match": {"_id": ObjectId(place_id)}
+            },
+            {
+                "$lookup":
+                    {
+                        "from": "category",
+                        "localField": "category",
+                        "foreignField": "_id",
+                        "as": "category"
+                    }
+            },
+            {
+                "$lookup":
+                    {
+                        "from": "places",
+                        "localField": "points",
+                        "foreignField": "_id",
+                        "as": "points"
+                    }
+            }
+        ]))[0]
     serialized_result = json.loads(json.dumps(details, default=serialize_object))
     return serialized_result
 

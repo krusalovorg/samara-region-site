@@ -59,7 +59,7 @@ function Profile() {
         }}>
             <Header />
             <div
-                className={`w-full md:w-[70%] mx-auto flex flex-row justify-between items-center mb-5 bg-white rounded-[50px] h-auto px-[36px] py-[30px]`}
+                className={`w-full md:w-[70%] mx-auto flex flex-row justify-between items-center mb-5 bg-[#f5f5f58c] rounded-[50px] h-auto px-[36px] py-[30px]`}
             >
                 <div>
                     <h1 className='text-2xl text-[#2C2C2C] font-medium'>
@@ -82,7 +82,7 @@ function Profile() {
             </div>
 
             <div
-                className={`w-full md:w-[70%] mx-auto bg-white rounded-[50px] h-auto px-[36px] py-[30px]`}
+                className={`w-full md:w-[70%] mx-auto bg-[#f5f5f58c] rounded-[50px] h-auto px-[36px] py-[30px]`}
             >
                 <div className='px-5 py-8'>
                     <h1 className='font-bold text-2xl text-[#2C2C2C] mb-2 flex items-center w-full'>
