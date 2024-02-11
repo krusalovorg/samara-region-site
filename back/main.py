@@ -145,70 +145,25 @@ def edit_collection(collection_name, changes, id):
 # get something from collection by id
 def get_place_details_id(place_id, collection_name):
     print('place id get', place_id, collection_name)
-    if collection_name == 'routes':
-        details = list(db[collection_name].aggregate([
-            {
-                "$match": {"_id": ObjectId(place_id)}
-            },
-            {
-                "$lookup": {
-                    "from": "category",
-                    "localField": "category",
-                    "foreignField": "_id",
-                    "as": "category"
-                }
-            },
-            {
-                "$lookup": {
-                    "from": "places",
-                    "localField": "points",
-                    "foreignField": "_id",
-                    "as": "points"
-                }
-            },
-            {
-                "$unwind": "$points"
-            },
-            {
-                "$lookup": {
-                    "from": "category",
-                    "localField": "points.category",
-                    "foreignField": "_id",
-                    "as": "points.category"
-                }
-            },
-            {
-                "$group": {
-                    "_id": "$_id",
-                    "points": {"$push": "$points"},
-                    "category": {"$first": "$category"}
-                }
-            }
-        ]))[0]
-    else:
-        details = list(db[collection_name].aggregate([
-            {
-                "$match": {"_id": ObjectId(place_id)}
-            },
-            {
-                "$lookup":
-                    {
-                        "from": "category",
-                        "localField": "category",
-                        "foreignField": "_id",
-                        "as": "category"
-                    }
-            },
-            {
-                "$lookup":
-                    {
-                        "from": "places",
-                        "localField": "points",
-                        "foreignField": "_id",
-                        "as": "points"
-                    }
-            }
-        ]))[0]
+    pipeline = [
+        {"$match": {"_id": ObjectId(place_id)}},
+        {"$lookup": {"from": "category", "localField": "category", "foreignField": "_id", "as": "category"}},
+        {"$lookup": {"from": "places", "localField": "points", "foreignField": "_id", "as": "points"}},
+        {"$unwind": "$points"},
+        {"$lookup": {"from": "category", "localField": "points.category", "foreignField": "_id",
+                     "as": "points.category"}},
+        {"$group": {"_id": "$_id", "points": {"$push": "$points"}, "categories": {"$push": "$category"}}}
+    ]
+    details = list(db[collection_name].aggregate(pipeline))[0]
+
+    # Преобразуем список категорий из списка списков в один плоский список
+    flat_categories = [category for sublist in details['categories'] for category in sublist]
+    details['categories'] = flat_categories
+
+    # Добавляем категории для каждой точки в объект категорий
+    for point in details['points']:
+        point['category'] = point.pop('category')[0]
+
     serialized_result = json.loads(json.dumps(details, default=serialize_object))
     return serialized_result
 
@@ -658,6 +613,6 @@ def generateRoute():
 # start code
 if __name__ == "__main__":
     collections = ['places', 'routes', 'category', 'accounts']
+    print(get_place_details_id('65c795f6b7466c57d876acdf', 'routes'))
     addAdminUser()
-    print(search('dsgsdg'))
     app.run(host="0.0.0.0")
