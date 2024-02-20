@@ -29,6 +29,8 @@ function Header() {
         init()
     }, [])
 
+    console.log(url)
+
     return (
         <>
             <header className='w-full bg-white absolute top-0 left-0 max-md:pl-[100px] py-[40px] flex flex-row max-md:justify-around md:justify-center items-center z-[1000] md:px-5'>
@@ -69,7 +71,7 @@ function Header() {
                     </a>
                 }
             </header>
-            {(urls.includes(url) || url.startsWith("/places") || url.startsWith("/route" || url.startsWith('/admin'))) && <div className='h-[120px] mb-[5em]' />}
+            {(urls.includes(url) || url.startsWith("/place") || url.startsWith("/route" || url.startsWith('/admin'))) && <div className='h-[120px] mb-[5em]' />}
         </>
     );
 }

@@ -9,7 +9,7 @@ from pymongo import MongoClient
 from config import host, user, password, db_name, password_admin
 import os
 import numpy as np
-from sklearn.cluster import KMeans
+# from sklearn.cluster import KMeans
 import email_newsletter
 import secrets
 import time
@@ -628,43 +628,43 @@ def addAdminUser():
         print("Пользователь уже существует в базе данных.")
 
 
-def generateRoute():
-    # Получаем точки из базы данных
-    points_from_db = super_print('places')
-    point_names = [point["name"] for point in points_from_db]
-    coordinates = [(int(coord[0]), int(coord[1])) for coord in
-                   [point["coordinates"].split(",") for point in points_from_db]]
-
-    # Преобразуем координаты в массив NumPy
-    points_array = np.array(coordinates)
-
-    # Количество кластеров, в данном случае мы хотим найти 3 ближайшие точки
-    n_clusters = 3
-
-    # Выполняем кластеризацию с помощью KMeans
-    kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(points_array)
-
-    # Получаем метки кластеров для каждой точки
-    cluster_labels = kmeans.predict(points_array)
-
-    # Создаем словарь, где ключи - это метки кластеров, а значения - это названия точек
-    cluster_points = {i: [] for i in range(n_clusters)}
-
-    for i, point_name in enumerate(point_names):
-        cluster_points[cluster_labels[i]].append((point_name, coordinates[i]))
-
-    for cluster, points in cluster_points.items():
-        cluster_center = kmeans.cluster_centers_[cluster]
-        sorted_points = sorted(points, key=lambda x: np.linalg.norm(np.array(x[1]) - cluster_center))
-        ordered_point_names = [point[0] for point in sorted_points]
-        print(f"Cluster {cluster + 1} visit order: {', '.join(ordered_point_names)}")
-
-    # for i, point_name in enumerate(point_names):
-    #    cluster_points[cluster_labels[i]].append(point_name)
-    #
-    # Выводим точки, относящиеся к каждому кластеру
-    # for cluster, point_list in cluster_points.items():
-    #    print(f"Cluster {cluster + 1}: {', '.join(point_list)}")
+# def generateRoute():
+#     # Получаем точки из базы данных
+#     points_from_db = super_print('places')
+#     point_names = [point["name"] for point in points_from_db]
+#     coordinates = [(int(coord[0]), int(coord[1])) for coord in
+#                    [point["coordinates"].split(",") for point in points_from_db]]
+#
+#     # Преобразуем координаты в массив NumPy
+#     points_array = np.array(coordinates)
+#
+#     # Количество кластеров, в данном случае мы хотим найти 3 ближайшие точки
+#     n_clusters = 3
+#
+#     # Выполняем кластеризацию с помощью KMeans
+#     kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(points_array)
+#
+#     # Получаем метки кластеров для каждой точки
+#     cluster_labels = kmeans.predict(points_array)
+#
+#     # Создаем словарь, где ключи - это метки кластеров, а значения - это названия точек
+#     cluster_points = {i: [] for i in range(n_clusters)}
+#
+#     for i, point_name in enumerate(point_names):
+#         cluster_points[cluster_labels[i]].append((point_name, coordinates[i]))
+#
+#     for cluster, points in cluster_points.items():
+#         cluster_center = kmeans.cluster_centers_[cluster]
+#         sorted_points = sorted(points, key=lambda x: np.linalg.norm(np.array(x[1]) - cluster_center))
+#         ordered_point_names = [point[0] for point in sorted_points]
+#         print(f"Cluster {cluster + 1} visit order: {', '.join(ordered_point_names)}")
+#
+#     # for i, point_name in enumerate(point_names):
+#     #    cluster_points[cluster_labels[i]].append(point_name)
+#     #
+#     # Выводим точки, относящиеся к каждому кластеру
+#     # for cluster, point_list in cluster_points.items():
+#     #    print(f"Cluster {cluster + 1}: {', '.join(point_list)}")
 
 
 # start code

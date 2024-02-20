@@ -82,7 +82,7 @@ function PlacePage({ route }: { route?: boolean }) {
       console.log("set data", data, route ? "routes" : "places");
 
       if (data) {
-        if (data?.points) {
+        if (data?.points?.length > 0) {
           // const result = await getItemsById(data?.points?.split(','), 'places');
           setPoints(data?.points);
         } else {
@@ -94,7 +94,7 @@ function PlacePage({ route }: { route?: boolean }) {
         setData(data);
 
 
-        if (yamap && !data?.points) {
+        if (yamap && data?.points?.length == 0) {
           setTimeout(() => loadPoints(yamap, data), 1200);
         }
       }
@@ -114,7 +114,7 @@ function PlacePage({ route }: { route?: boolean }) {
     console.log("loaded ymaps::", points);
     if (points) {
       console.log("points add obne time wisn now");
-      if (data?.points) {
+      if (data?.points?.length > 0) {
         setTimeout(() => loadRouters(data?.points, ymaps), 1200);
       }
     }
@@ -453,7 +453,7 @@ function PlacePage({ route }: { route?: boolean }) {
         </div>
         <div className="md:w-[30%] max-md:mt-[20px] md:ml-[20px] gap-[20px] flex flex-col">
           <h1 className="text-2xl font-medium text-[#2C2C2C]">
-            {data?.points ? "Все точки маршрута" : "Другие места"}
+            {data?.points?.length > 0 ? "Все точки маршрута" : "Другие места"}
           </h1>
           {points && points.length > 0 && points?.slice(0, offset).map((item: any) => {
             return <PlaceItem grid data={item} />;
