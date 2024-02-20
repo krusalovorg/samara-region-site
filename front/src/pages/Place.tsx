@@ -123,7 +123,7 @@ function PlacePage({ route }: { route?: boolean }) {
   function loadPoints(yamap: YMapsApi, data: any) {
     if (yamap == null) return;
     console.log('update coordL::::::::::::::::::::::::::::::::::::', data?.coordinates)
-    map.current.geoObjects.removeAll()
+    map?.current?.geoObjects?.removeAll()
     const placemark = new yamap.Placemark(data?.coordinates?.split(","),
       {
       },
@@ -132,7 +132,7 @@ function PlacePage({ route }: { route?: boolean }) {
       }
     );
 
-    const res = map?.current.geoObjects?.add(placemark);
+    const res = map?.current?.geoObjects?.add(placemark);
 
     // placemark.events.fire('click', {
     //   position: data?.coordinates.split(",")
@@ -163,7 +163,7 @@ function PlacePage({ route }: { route?: boolean }) {
     );
     console.log("multiRoute", multiRoute);
 
-    const res = map?.current.geoObjects?.add(multiRoute);
+    const res = map?.current?.geoObjects?.add(multiRoute);
     console.log("trwsugoil", res);
     setLoaded(true);
   }

@@ -75,7 +75,6 @@ function FragmentPlaces({ setFragment }: { setFragment?: any }) {
     };
 
     function loadMap(yamap: YMapsApi) {
-        console.log(yamap.map?.GeoObjects)
         // yamap.map.GeoObjects.events.add("click", (e: any) => {
         //     console.log(e)
         //     var coords = e.get('coords');

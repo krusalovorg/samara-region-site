@@ -72,7 +72,7 @@ function BlockSamaraScreen() {
             })
         });
 
-        const res = map?.current.geoObjects?.add(multiRoute);
+        const res = map?.current?.geoObjects?.add(multiRoute);
         console.log(res)
         //getRegions();
     }
