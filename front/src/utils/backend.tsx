@@ -31,8 +31,8 @@ export type Place = {
     time: number;
 };
 
-export const URL_SERVER = "http://localhost:5000";
-export const URL_SITE = "http://localhost";
+export const URL_SERVER = "http://5.35.93.250:5000";
+export const URL_SITE = "http://5.35.93.250";
 
 export async function getData(route: "places" | "routes" | "category", category?: string | number, time?: number) {
     let url = URL_SERVER;
